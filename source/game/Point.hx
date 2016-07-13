@@ -14,6 +14,10 @@ class Point {
     return new Point(row, col);
   }
 
+  public static function clearPool() : Void {
+    allocatedPoints = new StringMap<Point>();
+  }
+
   public var row(default, null) : Int;
   public var col(default, null) : Int;
 

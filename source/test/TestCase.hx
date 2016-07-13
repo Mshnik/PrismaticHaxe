@@ -1,8 +1,17 @@
 package test;
+import game.Point;
 import haxe.PosInfos;
 class TestCase extends haxe.unit.TestCase {
 
-  function assertNotEqual<T>( expected: T , actual: T,  ?c : PosInfos ) : Void 	{
+  public override function setup() {
+    Point.clearPool();
+  }
+
+  public override function tearDown() {
+    Point.clearPool();
+  }
+
+  public function assertNotEqual<T>( expected: T , actual: T,  ?c : PosInfos ) : Void 	{
     currentTest.done = true;
     if (actual == expected){
       currentTest.success = false;
