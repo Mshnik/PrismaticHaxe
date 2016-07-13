@@ -1,6 +1,6 @@
 package test;
 import game.Hex;
-class TestUtil extends haxe.unit.TestCase  {
+class TestUtil extends TestCase  {
 
   public function testMod() {
     assertEquals(0, Util.mod(0,1));
@@ -27,5 +27,21 @@ class TestUtil extends haxe.unit.TestCase  {
         assertEquals(null, x);
       }
     }
+  }
+
+  public function testArrayEquals() {
+    assertTrue(Util.arrayEquals([1], [1]));
+    assertTrue(Util.arrayEquals([1,2,3], [1,2,3]));
+    assertTrue(Util.arrayEquals(["Hello", "Hi"], ["Hello", "Hi"]));
+    assertFalse(Util.arrayEquals([], [1]));
+    assertFalse(Util.arrayEquals([1], [2]));
+  }
+
+  public function testArrayRotation() {
+    var arr = [1,2,3,4];
+    assertArrayEquals([4,1,2,3], Util.rotateForward(arr));
+    assertArrayEquals([3,4,1,2], Util.rotateForward(arr));
+    assertArrayEquals([4,1,2,3], Util.rotateBackward(arr));
+    assertArrayEquals([1,2,3,4], Util.rotateBackward(arr));
   }
 }

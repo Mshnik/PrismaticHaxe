@@ -2,7 +2,7 @@ package test;
 
 import game.Color;
 import game.ColorUtil;
-class TestColors extends haxe.unit.TestCase {
+class TestColors extends TestCase {
 
   public function testCompatability() {
     var arr : Array<Color> = Type.allEnums(Color);

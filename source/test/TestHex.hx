@@ -16,7 +16,7 @@ class SimpleHex extends Hex {
   }
 }
 
-class TestHex extends haxe.unit.TestCase{
+class TestHex extends TestCase{
 
   private inline function checkValidOrientation(h : Hex) {
     assertTrue(h.orientation >= 0 && h.orientation < Hex.SIDES);
@@ -27,7 +27,7 @@ class TestHex extends haxe.unit.TestCase{
     assertEquals(0, h.orientation);
     assertEquals(0, h.rotations);
 
-    for(i in 1...13) {
+    for(i in 1...14) {
       h.orientation = i;
       checkValidOrientation(h);
       assertEquals(Util.mod(i, Hex.SIDES), h.orientation);
@@ -39,7 +39,7 @@ class TestHex extends haxe.unit.TestCase{
     }
 
     var h2 = new SimpleHex();
-    for(i in 1...13) {
+    for(i in 1...14) {
       h2.rotateClockwise();
       checkValidOrientation(h2);
       assertEquals(Util.mod(i, Hex.SIDES), h2.orientation);
@@ -47,7 +47,7 @@ class TestHex extends haxe.unit.TestCase{
     }
 
     var h3 = new SimpleHex();
-    for(i in 1...13) {
+    for(i in 1...14) {
       h3.rotateCounterClockwise();
       checkValidOrientation(h3);
       assertEquals(Util.mod(-i, Hex.SIDES), h3.orientation);
