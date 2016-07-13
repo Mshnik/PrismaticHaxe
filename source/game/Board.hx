@@ -16,6 +16,18 @@ class Board {
     else return board[0].length;
   }
 
+  /** Returns a copy of the underlying 2D array representing the board.
+   * The arrays are all new instances, but the hexes stored are the same references as in the
+   * true board.
+   */
+  public function get() : Array<Array<Hex>> {
+    var b = new Array<Array<Hex>>();
+    for(arr in board) {
+      b.push(arr.copy());
+    }
+    return b;
+  }
+
   /**
    * Ensures that the board is at least rows*cols large
    * Adds empty spots to bottom and right (i.e. 0,0 is considered top left)

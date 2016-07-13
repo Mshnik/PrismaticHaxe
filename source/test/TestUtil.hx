@@ -35,6 +35,10 @@ class TestUtil extends TestCase  {
     assertTrue(Util.arrayEquals(["Hello", "Hi"], ["Hello", "Hi"]));
     assertFalse(Util.arrayEquals([], [1]));
     assertFalse(Util.arrayEquals([1], [2]));
+
+    //Check multi-dimension support
+    assertTrue(Util.arrayEquals([[1]], [[1]]));
+    assertTrue(Util.arrayEquals([[1,2],[3,4]], [[1,2],[3,4]]));
   }
 
   public function testArrayRotation() {

@@ -33,6 +33,7 @@ class Main extends Sprite {
     r.add(new TestUtil());
     r.add(new TestColors());
     r.add(new TestHex());
+    r.add(new TestBoard());
 
     r.run();
     trace(r.result);
