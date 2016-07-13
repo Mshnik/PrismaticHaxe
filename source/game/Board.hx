@@ -1,4 +1,5 @@
 package game;
+
 class Board {
 
   private var board : Array<Array<Hex>>;
@@ -20,7 +21,7 @@ class Board {
    * The arrays are all new instances, but the hexes stored are the same references as in the
    * true board.
    */
-  public function get() : Array<Array<Hex>> {
+  public function getBoard() : Array<Array<Hex>> {
     var b = new Array<Array<Hex>>();
     for(arr in board) {
       b.push(arr.copy());
@@ -31,15 +32,15 @@ class Board {
   /**
    * Ensures that the board is at least rows*cols large
    * Adds empty spots to bottom and right (i.e. 0,0 is considered top left)
+   * rows and cols both have to be greater than 0. (throws otherwise)
    */
   public function ensureSize(rows : Int, cols : Int) : Void {
-    for(arr in board) {
-      while (arr.length < cols) {
-        arr.push(null);
-      }
-    }
+    if (rows <= 0 || cols <= 0) throw "Rows and Cols have to be > 0, got " + rows + ", " + cols;
     while (getHeight() < rows) {
-      board.push(Util.emptyArray(Hex, cols));
+      addRowBottom();
+    }
+    while (getWidth() < cols) {
+      addColRight();
     }
   }
 
@@ -64,6 +65,63 @@ class Board {
   public inline function addColRight() : Void {
     for(arr in board) {
       arr.push(null);
+    }
+  }
+
+  /** Returns the Hex at the given row,col */
+  public inline function get(row : Int, col : Int) : Hex {
+    return board[row][col];
+  }
+
+  /** Returns the Hex at the given point */
+  public inline function getAt(p : Point) : Hex {
+    return board[p.row][p.col];
+  }
+
+  /** Puts a Hex at the given location. If there is already a hex there, overwrites */
+  public inline function set(row : Int, col : Int, h : Hex) : Hex {
+    board[row][col] = h;
+    return h;
+  }
+
+  /** Puts a Hex at the given location. If there is already a hex there, overwrites */
+  public inline function setAt(p : Point, h : Hex) : Hex {
+    board[p.row][p.col] = h;
+    return h;
+  }
+
+  /** Removes the hex (if any) at row,col. Returns the removed hex, if any */
+  public inline function remove(row : Int, col : Int) : Hex {
+    var h = board[row][col];
+    board[row][col] = null;
+    return h;
+  }
+
+  /** Removes the hex (if any) at p. Returns the removed hex, if any */
+  public inline function removeAt(p : Point) : Hex {
+    var h = board[p.row][p.col];
+    board[p.row][p.col] = null;
+    return h;
+  }
+
+  /** Swaps the hexes at the given locations */
+  public inline function swap(p1 : Point, p2 : Point) : Void {
+    var h = get(p1.row, p1.col);
+    var h2 = get(p2.row, p2.col);
+    set(p1.row, p1.col, h2);
+    set(p2.row, p2.col, h);
+  }
+
+  /** Swaps the hexes at the given locations. Moves each to the next location in the list */
+  public inline function swapMany(locations : List<Point>) : Void {
+    if (locations.length > 1) {
+      var iter1 : Iterator<Point> = locations.iterator();
+      var iter2 : Iterator<Point> = locations.iterator();
+      iter2.next();
+
+      while(iter2.hasNext()) {
+        swap(iter1.next(), iter2.next());
+      }
     }
   }
 
