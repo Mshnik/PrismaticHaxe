@@ -1,0 +1,9 @@
+
+#IntelliJ Local Settings
+.idea/workspace.xml
+
+#Compiled files
+export/
+
+#Mac OSX stuff
+**/.DS_STORE

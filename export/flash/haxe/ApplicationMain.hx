@@ -155,8 +155,8 @@ class ApplicationMain {
 		
 		config = {
 			
-			build: "5",
-			company: "HaxeFlixel",
+			build: "22",
+			company: "Tallwood",
 			file: "PrismaticHaxe",
 			fps: 60,
 			name: "PrismaticHaxe",
