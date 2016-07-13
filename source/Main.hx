@@ -1,5 +1,7 @@
 package;
 
+import flash.utils.Timer;
+import openfl.Lib;
 import test.*;
 import openfl.display.Sprite;
 import flixel.FlxGame;
@@ -13,6 +15,7 @@ class Main extends Sprite {
 
     if (RUN_TESTS) {
       runTests();
+      haxe.Timer.delay(quit,1000);
     } else {
       runGame();
     }
@@ -22,14 +25,19 @@ class Main extends Sprite {
     addChild(new FlxGame(0, 0, MenuState));
   }
 
-  static function runTests() {
+  function runTests() {
     trace("");
     trace("Running Tests");
     var r = new haxe.unit.TestRunner();
 
     r.add(new TestColors());
+    r.add(new TestHex());
 
     r.run();
     trace(r.result);
+  }
+
+  function quit() {
+    Lib.fscommand("quit");
   }
 }
