@@ -30,6 +30,7 @@ class Main extends Sprite {
     trace("Running Tests");
     var r = new haxe.unit.TestRunner();
 
+    r.add(new TestUtil());
     r.add(new TestColors());
     r.add(new TestHex());
 
