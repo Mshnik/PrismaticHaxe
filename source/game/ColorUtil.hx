@@ -1,6 +1,6 @@
 package game;
 class ColorUtil {
-  public function new() {
+  private function new() {
     throw "Cannont Instantiate ColorUtil";
   }
 

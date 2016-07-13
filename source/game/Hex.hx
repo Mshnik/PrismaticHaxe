@@ -12,7 +12,7 @@ package game;
 
   public function set_orientation(newOrientation : Int) : Int {
     var x = orientation;
-    var x2 = orientation = (newOrientation % SIDES);
+    var x2 = orientation = Util.mod(newOrientation, SIDES);
     if (x != x2) {
       onRotate();
     }
@@ -20,11 +20,11 @@ package game;
   }
 
   public function rotateClockwise() {
-    orientation++;
+    orientation = orientation + 1;
   }
 
   public function rotateCounterClockwise() {
-    orientation--;
+    orientation = orientation - 1;
   }
 
   @abstract public function onRotate() {
