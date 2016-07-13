@@ -2,15 +2,38 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="24042cdb-c2cc-4f3b-a1a4-1767e95938ea" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/export/flash/bin/PrismaticHaxe.swf" afterPath="$PROJECT_DIR$/export/flash/bin/PrismaticHaxe.swf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/export/.build" afterPath="$PROJECT_DIR$/export/.build" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/export/Main.hx" afterPath="$PROJECT_DIR$/export/Main.hx" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/export/MenuState.hx" afterPath="$PROJECT_DIR$/export/MenuState.hx" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/export/PlayState.hx" afterPath="$PROJECT_DIR$/export/PlayState.hx" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/export/flash/haxe/ApplicationMain.hx" afterPath="$PROJECT_DIR$/export/flash/haxe/ApplicationMain.hx" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/.build" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/AssetPaths.hx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/Main.hx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/MenuState.hx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/PlayState.hx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/data/data-goes-here.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/flash/bin/PrismaticHaxe.swf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/flash/haxe/ApplicationMain.hx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/flash/haxe/DefaultAssetLibrary.hx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/flash/haxe/NMEPreloader.hx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/flash/haxe/debug.hxml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/flash/haxe/final.hxml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/flash/haxe/release.hxml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/flash/obj/assets.swf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/flash/release/haxe/ApplicationMain.hx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/flash/release/haxe/DefaultAssetLibrary.hx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/flash/release/haxe/NMEPreloader.hx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/flash/release/haxe/debug.hxml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/flash/release/haxe/final.hxml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/flash/release/haxe/release.hxml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/flash/release/obj/assets.swf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/images/images-go-here.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/music/Main.band/Alternatives/000/Autosave/.dummy" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/music/Main.band/Alternatives/000/DisplayState.plist" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/music/Main.band/Alternatives/000/DisplayStateArchive" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/music/Main.band/Alternatives/000/MetaData.plist" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/music/Main.band/Alternatives/000/ProjectData" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/music/Main.band/Alternatives/000/WindowImage.jpg" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/music/Main.band/Resources/ProjectInformation.plist" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/music/Main.band/projectData" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/music/music-goes-here.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/export/sounds/sounds-go-here.txt" afterPath="" />
     </list>
     <ignored path="PrismaticHaxe.iws" />
     <ignored path=".idea/workspace.xml" />
