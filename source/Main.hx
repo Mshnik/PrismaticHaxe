@@ -6,7 +6,7 @@ import flixel.FlxGame;
 
 class Main extends Sprite {
 
-  @final private static var RUN_TESTS = false;
+  @final private static var RUN_TESTS = true;
 
   public function new() {
     super();

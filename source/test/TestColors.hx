@@ -5,7 +5,17 @@ import game.ColorUtil;
 class TestColors extends haxe.unit.TestCase {
 
   public function testCompatability() {
-    assertTrue(ColorUtil.areCompatable(Color.ANY, Color.ANY));
-  }
+    var arr : Array<Color> = Type.allEnums(Color);
+    for (c in arr) {
+      assertFalse(ColorUtil.areCompatable(Color.NONE, c));
+      assertFalse(ColorUtil.areCompatable(c, Color.NONE));
+    }
 
+    arr.remove(Color.NONE);
+    for (c in arr) {
+      assertTrue(ColorUtil.areCompatable(Color.ANY, c));
+      assertTrue(ColorUtil.areCompatable(c, Color.ANY));
+      assertTrue(ColorUtil.areCompatable(c, c));
+    }
+  }
 }
