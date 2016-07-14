@@ -78,7 +78,9 @@ class Board {
     return board[p.row][p.col];
   }
 
-  /** Puts a Hex at the given location. If there is already a hex there, overwrites */
+  /** Puts a Hex at the given location. If there is already a hex there, overwrites.
+   *  Returns h, for chaining? Idk.
+   */
   public inline function set(row : Int, col : Int, h : Hex) : Hex {
     board[row][col] = h;
     return h;
@@ -140,6 +142,7 @@ class Board {
 
   /** Shifts/Rotates the hexes in this board by the given deltas.
    * Positive values shift down and right, respectively, and negatives the opposite
+   * Doesn't change board size; hexes that would be pushed off the board wrap as necessary
    **/
   public function shift(dRow : Int, dCol : Int) : Void {
     if (dCol > 0) {

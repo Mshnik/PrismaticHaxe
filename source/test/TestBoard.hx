@@ -40,7 +40,7 @@ class TestBoard extends TestCase {
     var b = new Board();
     b.ensureSize(5,5);
 
-    var h : Hex = new SimpleHex();
+    var h = SimpleHex.create();
     b.set(0,0,h);
     assertEquals(h, b.get(0,0));
     b.set(0,0,null);
@@ -56,9 +56,9 @@ class TestBoard extends TestCase {
   }
 
   public function testHexSwapping() {
-    var h : Hex = new SimpleHex();
-    var h2 : Hex = new SimpleHex();
-    var h3 : Hex = new SimpleHex();
+    var h = SimpleHex.create();
+    var h2 = SimpleHex.create();
+    var h3 = SimpleHex.create();
 
     var p = Point.get(0,0);
     var p2 = Point.get(1,0);
@@ -102,6 +102,50 @@ class TestBoard extends TestCase {
     assertEquals(null, b.getAt(p4));
 
     //At this point, all hexes at their correct locations
+  }
+
+  public function testShift() {
+    var b = new Board();
+    b.ensureSize(3,3);
+
+    var h = b.set(0,0,SimpleHex.create());
+    var h2 = b.set(0,1,SimpleHex.create());
+    var h3 = b.set(1,1,SimpleHex.create());
+    var h4 = b.set(1,0,SimpleHex.create());
+
+    b.shift(1,1);
+    assertEquals(null, b.get(0,0));
+    assertEquals(null, b.get(0,1));
+    assertEquals(null, b.get(0,2));
+    assertEquals(null, b.get(1,0));
+    assertEquals(null, b.get(2,0));
+    assertEquals(h, b.get(1,1));
+    assertEquals(h2, b.get(1,2));
+    assertEquals(h3, b.get(2,2));
+    assertEquals(h4, b.get(2,1));
+
+    b.shift(-1, -1);
+    assertEquals(h, b.get(0,0));
+    assertEquals(h2, b.get(0,1));
+    assertEquals(h3, b.get(1,1));
+    assertEquals(h4, b.get(1,0));
+    assertEquals(null, b.get(2,0));
+    assertEquals(null, b.get(2,1));
+    assertEquals(null, b.get(2,2));
+    assertEquals(null, b.get(1,2));
+    assertEquals(null, b.get(0,2));
+
+    //Test wrapping around
+    b.shift(-1,-1);
+    assertEquals(h, b.get(2,2));
+    assertEquals(h2, b.get(2,0));
+    assertEquals(h3, b.get(0,0));
+    assertEquals(h4, b.get(0,2));
+    assertEquals(null, b.get(1,1));
+    assertEquals(null, b.get(0,1));
+    assertEquals(null, b.get(1,2));
+    assertEquals(null, b.get(1,0));
+    assertEquals(null, b.get(2,1));
   }
 
 }

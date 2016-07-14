@@ -9,6 +9,10 @@ class SimpleHex extends Hex {
     nextID = 0;
   }
 
+  public static function create() : Hex {
+    return new SimpleHex();
+  }
+
   public var rotations(default, null) : Int;
   public var id(default, null) : Int;
 
