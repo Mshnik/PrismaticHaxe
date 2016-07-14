@@ -5,10 +5,12 @@ class TestCase extends haxe.unit.TestCase {
 
   public override function setup() {
     Point.clearPool();
+    SimpleHex.resetIDs();
   }
 
   public override function tearDown() {
     Point.clearPool();
+    SimpleHex.resetIDs();
   }
 
   public function assertNotEqual<T>( expected: T , actual: T,  ?c : PosInfos ) : Void 	{

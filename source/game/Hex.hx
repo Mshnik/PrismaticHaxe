@@ -16,6 +16,10 @@ package game;
     acceptConnections = false;
   }
 
+  public function toString() {
+    return "orientation=" + orientation;
+  }
+
   public function set_orientation(newOrientation : Int) : Int {
     var x = orientation;
     var x2 = orientation = Util.mod(newOrientation, SIDES);

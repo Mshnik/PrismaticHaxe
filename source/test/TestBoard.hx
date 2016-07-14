@@ -49,9 +49,59 @@ class TestBoard extends TestCase {
     b.remove(0,0);
     assertEquals(null, b.get(0,0));
 
-    b.set(0,1,h);
-    b.swap(Point.get(0,1),Point.get(2,3));
-    assertEquals(h, b.get(2,3));
+    b.setAt(Point.get(0,0),h);
+    assertEquals(h, b.getAt(Point.get(0,0)));
+    b.removeAt(Point.get(0,0));
+    assertEquals(null, b.get(0,0));
+  }
+
+  public function testHexSwapping() {
+    var h : Hex = new SimpleHex();
+    var h2 : Hex = new SimpleHex();
+    var h3 : Hex = new SimpleHex();
+
+    var p = Point.get(0,0);
+    var p2 = Point.get(1,0);
+    var p3 = Point.get(1,1);
+    var p4 = Point.get(0,1);
+
+    var b = new Board();
+    b.ensureSize(2,2);
+    b.setAt(p,h);
+    b.setAt(p2,h2);
+
+    //At this point hexes 1 and 2 at their correct locations
+
+    assertEquals(h, b.getAt(p));
+    assertEquals(h2, b.getAt(p2));
+
+    b.swap(p,p2);
+
+    assertEquals(h, b.getAt(p2));
+    assertEquals(h2, b.getAt(p));
+
+    b.swap(p,p2);
+    b.setAt(p3,h3);
+
+    //At this point, all hexes at their correct locations
+
+    var arr = [p,p2,p3,p4];
+    b.swapManyForward(arr);
+
+    assertArrayEquals([p,p2,p3,p4], arr);
+    assertEquals(h, b.getAt(p2));
+    assertEquals(h2, b.getAt(p3));
+    assertEquals(h3, b.getAt(p4));
+    assertEquals(null, b.getAt(p));
+
+    b.swapManyBackward(arr);
+    assertArrayEquals([p,p2,p3,p4], arr);
+    assertEquals(h, b.getAt(p));
+    assertEquals(h2, b.getAt(p2));
+    assertEquals(h3, b.getAt(p3));
+    assertEquals(null, b.getAt(p4));
+
+    //At this point, all hexes at their correct locations
   }
 
 }

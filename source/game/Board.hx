@@ -112,8 +112,21 @@ class Board {
     set(p2.row, p2.col, h);
   }
 
-  /** Swaps the hexes at the given locations. Moves each to the next location in the list */
-  public inline function swapMany(locations : List<Point>) : Void {
+  /** Swaps the hexes at the given locations. Moves each to the next location in the list.
+   * Thus if given [p1,p2,p3,p4] which have [h1,h2,h3,h4], ending locations are [h4,h1,h2,h3]
+   **/
+  public inline function swapManyForward(locations : Array<Point>) : Void {
+    if (locations.length > 1) {
+      var l2 = locations.copy();
+      l2.reverse();
+      swapManyBackward(l2);
+    }
+  }
+
+  /** Swaps the hexes at the given locations. Moves each to the previous location in the list.
+   * Thus if given [p1,p2,p3,p4] which have [h1,h2,h3,h4], ending locations are [h2,h3,h4,h1]
+   **/
+  public inline function swapManyBackward(locations : Array<Point>) : Void {
     if (locations.length > 1) {
       var iter1 : Iterator<Point> = locations.iterator();
       var iter2 : Iterator<Point> = locations.iterator();
