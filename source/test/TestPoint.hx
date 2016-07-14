@@ -17,5 +17,21 @@ class TestPoint extends TestCase {
     checkPoint(10,-15,Point.get(10,-15));
   }
 
+  public function testMath() {
+    var p : Point = Point.get(1,2);
+    var p2 : Point = Point.get(3,4);
+    checkPoint(4,6, p.add(p2));
+    checkPoint(1,2,p);
+    checkPoint(3,4,p2);
+    checkPoint(2,2,p2.subtract(p));
+    checkPoint(1,2,p);
+    checkPoint(3,4,p2);
+
+    assertEquals(11, p.dot(p2));
+    assertEquals(11, p2.dot(p));
+    checkPoint(1,2,p);
+    checkPoint(3,4,p2);
+  }
+
 
 }

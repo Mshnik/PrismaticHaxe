@@ -1,5 +1,6 @@
 package;
 
+import game.Point;
 import flash.utils.Timer;
 import openfl.Lib;
 import test.*;
@@ -17,8 +18,13 @@ class Main extends Sprite {
       runTests();
       haxe.Timer.delay(quit,1000);
     } else {
+      prepForGame();
       runGame();
     }
+  }
+
+  function prepForGame() {
+    Point.clearPool();
   }
 
   function runGame() {

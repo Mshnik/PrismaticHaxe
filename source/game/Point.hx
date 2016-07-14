@@ -30,17 +30,14 @@ class Point {
     }
   }
 
-  @:op(A + B)
   public function add(p : Point) : Point {
     return get(row + p.row, col + p.col);
   }
 
-  @:op(A - B)
   public function subtract(p : Point) : Point {
     return get(row - p.row, col - p.col);
   }
 
-  @:op(A * B)
   public function dot(p : Point) : Int {
     return row * p.row + col * p.col;
   }

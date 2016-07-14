@@ -7,3 +7,6 @@ export/
 
 #Mac OSX stuff
 **/.DS_STORE
+
+#Garage Band Files (get too big)
+**/*.band
