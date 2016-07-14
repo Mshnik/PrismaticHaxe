@@ -40,6 +40,7 @@ package game;
   /** Function called whenever the rotation of this hex changes.
    *  Must be overridden by subclasses, but can be empty if nothing should happen when this is rotated
    */
+
   @abstract public function onRotate() {
     throw "onRotate not overridden";
   }

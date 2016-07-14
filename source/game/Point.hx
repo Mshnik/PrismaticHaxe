@@ -25,7 +25,7 @@ class Point {
     this.row = row;
     this.col = col;
     if (currentPoolSize < MAX_POOL_SIZE) {
-      allocatedPoints.set(toString(),this);
+      allocatedPoints.set(toString(), this);
       currentPoolSize++;
     }
   }

@@ -16,7 +16,7 @@ class Main extends Sprite {
 
     if (RUN_TESTS) {
       runTests();
-      haxe.Timer.delay(quit,1000);
+      haxe.Timer.delay(quit, 1000);
     } else {
       prepForGame();
       runGame();
