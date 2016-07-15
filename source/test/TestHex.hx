@@ -1,5 +1,6 @@
 package test;
 
+import game.Point;
 import game.Hex;
 
 class TestHex extends TestCase {
@@ -39,6 +40,17 @@ class TestHex extends TestCase {
       assertEquals(Util.mod(-i, Hex.SIDES), h3.orientation);
       assertEquals(i, h3.rotations);
     }
+  }
+
+  public function testPosition() {
+    var h = SimpleHex.create();
+    assertEquals(Point.get(-1,-1),h.position);
+
+    h.position = Point.get(1,1);
+    assertEquals(Point.get(1,1), h.position);
+
+    h.shift(1,1);
+    assertEquals(Point.get(2,2), h.position);
   }
 
 }

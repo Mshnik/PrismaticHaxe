@@ -4,9 +4,7 @@ import flixel.input.FlxInput.FlxInputState;
 import flixel.input.keyboard.FlxKey;
 import flixel.addons.display.FlxExtendedSprite;
 import flixel.math.FlxPoint;
-import game.Hex;
 import flixel.FlxG;
-import flixel.addons.display.FlxExtendedSprite;
 class HexSprite extends BaseSprite {
 
   private inline static var ROTATION_INC = 1.5;

@@ -46,6 +46,10 @@ class Point {
     return "(" + row + "," + col + ")";
   }
 
+  public inline function equals(p : Point) : Bool {
+    return row == p.row && col == p.col;
+  }
+
   public inline function toString() : String {
     return createString(row, col);
   }

@@ -1,5 +1,11 @@
 package game;
-@abstract class Hex {
+
+/**
+ * An instance represents a single hex tile.
+ * Each Hex is only ment to belong to a single Board instance at a time,
+ * behavior is undefined when a single hext instance is added to multiple boards.
+ */
+@:abstract class Hex {
 
   public inline static var SIDES : Int = 6;
 
@@ -11,13 +17,29 @@ package game;
    */
   public var acceptConnections(default, set) : Bool;
 
+  /** The position of this hex in the board it belongs to.
+   *  Initially (-1,-1) if this doesn't belong to a board.
+   *  Mutated if this hex is moved
+   **/
+  public var position(default, set) : Point;
+
   public function new() {
+    position = Point.get(-1,-1);
     orientation = 0;
     acceptConnections = false;
   }
 
   public function toString() {
     return "orientation=" + orientation;
+  }
+
+  public inline function set_position(newPosition : Point) : Point {
+    return position = newPosition;
+  }
+
+  /** Shifts this hex's position by dRow and dCol */
+  public inline function shift(dRow : Int, dCol : Int) {
+    position = position.add(Point.get(dRow, dCol));
   }
 
   public function set_orientation(newOrientation : Int) : Int {

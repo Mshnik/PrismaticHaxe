@@ -17,6 +17,19 @@ class TestPoint extends TestCase {
     checkPoint(10, -15, Point.get(10, -15));
   }
 
+  public function testEquality() {
+    assertTrue(Point.get(0,0).equals(Point.get(0,0)));
+    assertTrue(Point.get(1,0).equals(Point.get(1,0)));
+    assertTrue(Point.get(0,2).equals(Point.get(0,2)));
+    assertTrue(Point.get(0,0).equals(Point.get(0,0)));
+    assertTrue(Point.get(-1,0).equals(Point.get(-1,0)));
+    assertTrue(Point.get(0,-2).equals(Point.get(0,-2)));
+    assertFalse(Point.get(0,1).equals(Point.get(0,0)));
+    assertFalse(Point.get(1,0).equals(Point.get(0,0)));
+    assertFalse(Point.get(1,1).equals(Point.get(0,0)));
+
+  }
+
   public function testMath() {
     var p : Point = Point.get(1, 2);
     var p2 : Point = Point.get(3, 4);
