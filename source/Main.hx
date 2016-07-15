@@ -9,7 +9,7 @@ import flixel.FlxGame;
 
 class Main extends Sprite {
 
-  @final private static var RUN_TESTS = true;
+  @final private static var RUN_TESTS = false;
 
   public function new() {
     super();
@@ -28,7 +28,7 @@ class Main extends Sprite {
   }
 
   function runGame() {
-    addChild(new FlxGame(0, 0, MenuState));
+    addChild(new FlxGame(0, 0, PlayState));
   }
 
   function runTests() {
