@@ -1,5 +1,8 @@
 package view;
 
+import flixel.input.FlxInput.FlxInputState;
+import flixel.input.keyboard.FlxKey;
+import flixel.addons.display.FlxExtendedSprite;
 import flixel.math.FlxPoint;
 import game.Hex;
 import flixel.FlxG;
@@ -8,6 +11,8 @@ class HexSprite extends BaseSprite {
 
   private inline static var ROTATION_INC = 1.5;
   private inline static var ROTATION_DISTANCE : Float = 60.0;
+
+  private inline static var REVERSE_KEY = FlxKey.SHIFT;
 
   /** The target angle to rotate to, in degrees. Should always be in (-360,360) */
   private var angleDelta : Float;
@@ -22,19 +27,17 @@ class HexSprite extends BaseSprite {
     updateHitbox();
 
     //Input handling
-    enableMouseClicks(true);
     mouseReleasedCallback = onMouseRelease;
     disableMouseDrag();
     disableMouseThrow();
     disableMouseSpring();
   }
 
-  private static function onMouseRelease(f : FlxExtendedSprite, x : Int, y : Int) : Void {
-    var h : HexSprite = cast (f, HexSprite);
-    if (h.leftMouseInteraction) {
-      h.angleDelta += ROTATION_DISTANCE;
-    } else if (h.rightMouseInteraction) {
-      h.angleDelta -= ROTATION_DISTANCE;
+  private function onMouseRelease(f : FlxExtendedSprite, x : Int, y : Int) : Void {
+    if (FlxG.keys.checkStatus(REVERSE_KEY, FlxInputState.PRESSED)) {
+      angleDelta -= ROTATION_DISTANCE;
+    } else {
+      angleDelta += ROTATION_DISTANCE;
     }
   }
 
