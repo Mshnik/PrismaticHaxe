@@ -1,5 +1,7 @@
 package;
 
+import flixel.addons.plugin.FlxMouseControl;
+import flixel.FlxG;
 import game.Point;
 import flash.utils.Timer;
 import openfl.Lib;
@@ -28,7 +30,9 @@ class Main extends Sprite {
   }
 
   function runGame() {
-    addChild(new FlxGame(0, 0, PlayState));
+    var g = new FlxGame(0, 0, PlayState);
+    FlxG.plugins.add(new FlxMouseControl());
+    addChild(g);
   }
 
   function runTests() {

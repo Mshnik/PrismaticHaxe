@@ -1,7 +1,7 @@
 package game;
 @abstract class Hex {
 
-  @final public static var SIDES : Int = 6;
+  public inline static var SIDES : Int = 6;
 
   /** Current rotational orientation of this hex. Always in the range [0-(SIDES-1)] */
   public var orientation(default, set) : Int;
