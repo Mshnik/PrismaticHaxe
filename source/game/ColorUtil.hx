@@ -12,6 +12,9 @@ class ColorUtil {
    */
 
   public static function areCompatable(c1 : Color, c2 : Color) : Bool {
+    if (c1 == null || c2 == null) {
+      return false;
+    }
     if (Type.enumConstructor(c1) == "NONE" || Type.enumConstructor(c2) == "NONE") {
       return false;
     }

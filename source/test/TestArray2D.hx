@@ -5,8 +5,7 @@ import common.Array2D;
 import game.Hex;
 import game.Board;
 
-//This also tests Array2D heavily
-class TestBoard extends TestCase {
+class TestArray2D extends TestCase {
 
   /** Helper that asserts that each hex's position is correct */
   private function checkHexPositions(b : Array2D<Hex>) {

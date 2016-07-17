@@ -9,6 +9,8 @@ class TestColors extends TestCase {
     for (c in arr) {
       assertFalse(ColorUtil.areCompatable(Color.NONE, c));
       assertFalse(ColorUtil.areCompatable(c, Color.NONE));
+      assertFalse(ColorUtil.areCompatable(null, c));
+      assertFalse(ColorUtil.areCompatable(c, null));
     }
 
     arr.remove(Color.NONE);

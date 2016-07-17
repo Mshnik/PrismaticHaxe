@@ -11,7 +11,7 @@ import flixel.FlxGame;
 
 class Main extends Sprite {
 
-  @final private static inline var RUN_TESTS = false;
+  @final private static inline var RUN_TESTS = true;
 
   public function new() {
     super();
@@ -44,7 +44,7 @@ class Main extends Sprite {
     r.add(new TestPoint());
     r.add(new TestColors());
     r.add(new TestHex());
-    r.add(new TestBoard());
+    r.add(new TestArray2D());
 
     r.run();
     trace(r.result);

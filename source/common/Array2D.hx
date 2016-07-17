@@ -130,7 +130,6 @@ package common;
   /** Puts a T at the given location. If there is already a t there, overwrites.
    *  Returns h, for chaining? Idk.
    */
-
   public function set(row : Int, col : Int, h : T) : T {
     if (vals[row][col] != null) {
       vals[row][col].position = Point.get(-1, -1);
