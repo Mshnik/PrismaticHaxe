@@ -256,16 +256,7 @@ class TestArray2D extends TestCase {
   }
 }
 
-class SimplePositionable  implements Positionable {
-  public var position(default, set) : Point;
-
-  public function new() {
-    position = Point.get(-1,-1);
-  }
-
-  public function set_position(p : Point) {
-    return position = p;
-  }
+class SimplePositionable extends Tile<Int>{
 
   public static function create() {
     return new SimplePositionable();

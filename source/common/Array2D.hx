@@ -252,6 +252,19 @@ package common;
     }
   }
 
+  /** Fills this Array2D with the given T.
+   * Returns a reference to this, for chaining.
+   **/
+  public function fillWith(elm : T) : Array2D<T> {
+    for (r in 0...getHeight()) {
+      for (c in 0...getWidth()) {
+        set(r,c,elm);
+      }
+    }
+
+    return this;
+  }
+
 }
 
 @:generic class Array2DIterator<T : Positionable> {

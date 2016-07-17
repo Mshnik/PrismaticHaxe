@@ -49,7 +49,7 @@ import common.Point;
     var x = orientation;
     var x2 = orientation = Util.mod(newOrientation, SIDES);
     if (x != x2) {
-      onRotate();
+      onRotate(x);
     }
     return x2;
   }
@@ -66,7 +66,7 @@ import common.Point;
    *  Must be overridden by subclasses, but can be empty if nothing should happen when this is rotated
    */
 
-  @abstract public function onRotate() {
+  @abstract public function onRotate(oldOrientation : Int) {
     throw "onRotate not overridden";
   }
 

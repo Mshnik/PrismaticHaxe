@@ -22,7 +22,7 @@ class SimpleHex extends Hex {
     rotations = 0;
   }
 
-  override public function onRotate() {
+  override public function onRotate(oldOrientation : Int) {
     rotations++;
   }
 

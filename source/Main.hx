@@ -40,9 +40,10 @@ class Main extends Sprite {
 
     r.add(new TestUtil());
     r.add(new TestPoint());
+    r.add(new TestArray2D());
     r.add(new TestColors());
     r.add(new TestHex());
-    r.add(new TestArray2D());
+    r.add(new TestPrism());
 
     r.run();
     trace(r.result);
