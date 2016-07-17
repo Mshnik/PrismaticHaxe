@@ -1,5 +1,6 @@
 package view;
 
+import game.Point;
 import flixel.input.FlxInput.FlxInputState;
 import flixel.input.keyboard.FlxKey;
 import flixel.addons.display.FlxExtendedSprite;
@@ -7,25 +8,33 @@ import flixel.math.FlxPoint;
 import flixel.FlxG;
 class HexSprite extends BaseSprite {
 
-  private inline static var ROTATION_INC = 1.5;
+  private inline static var ROTATION_INC : Float = 3.0;
   private inline static var ROTATION_DISTANCE : Float = 60.0;
 
   private inline static var REVERSE_KEY = FlxKey.SHIFT;
 
-  /** The target angle to rotate to, in degrees. Should always be in (-360,360) */
+  /** The target angle to rotate to, in degrees */
   private var angleDelta : Float;
+
+  /** The position of this HexSprite in the BoardView. (-1,-1) when unset.
+   * Mutated if this HexSprite is repositioned in the BoardView.
+   **/
+  public var position(default, set) : Point;
 
   public function new(x : Float, y : Float) {
     super(x,y);
 
+    //Fields
     angleDelta = 0;
     angle = 0;
+    position = Point.get(-1,-1);
 
-    scale = FlxPoint.get(10,10);
-    updateHitbox();
+    //Graphics
+    loadGraphic(AssetPaths.hex_back__png);
 
     //Input handling
     mouseReleasedCallback = onMouseRelease;
+    enableMouseClicks(true, true);
     disableMouseDrag();
     disableMouseThrow();
     disableMouseSpring();
@@ -61,5 +70,9 @@ class HexSprite extends BaseSprite {
     }
   }
 
+
+  public inline function set_position(p : Point) : Point {
+    return position = p;
+  }
 
 }

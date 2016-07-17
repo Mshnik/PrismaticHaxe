@@ -1,5 +1,6 @@
 package test;
 
+import common.Util;
 import game.Point;
 import game.Hex;
 

@@ -1,4 +1,5 @@
 package test;
+import common.Util;
 import game.Hex;
 class TestUtil extends TestCase {
 

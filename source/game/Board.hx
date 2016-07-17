@@ -1,5 +1,6 @@
 package game;
 
+import common.Util;
 class Board {
 
   private var board : Array<Array<Hex>>;

@@ -1,4 +1,5 @@
 package test;
+import common.Util;
 import game.Point;
 import haxe.PosInfos;
 class TestCase extends haxe.unit.TestCase {
