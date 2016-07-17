@@ -1,6 +1,6 @@
 package test;
+import common.Point;
 import common.Util;
-import game.Point;
 import haxe.PosInfos;
 class TestCase extends haxe.unit.TestCase {
 

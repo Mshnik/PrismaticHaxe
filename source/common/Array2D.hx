@@ -1,7 +1,5 @@
 package common;
 
-import game.Point;
-
 /**
  * Subclasses should write an iterator() method. Would put it here, but the typing system
  * seems a bit broken.

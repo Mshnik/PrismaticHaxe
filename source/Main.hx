@@ -2,7 +2,7 @@ package;
 
 import flixel.addons.plugin.FlxMouseControl;
 import flixel.FlxG;
-import game.Point;
+import common.Point;
 import flash.utils.Timer;
 import openfl.Lib;
 import test.*;

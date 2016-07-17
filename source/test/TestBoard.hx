@@ -1,7 +1,7 @@
 package test;
 
+import common.Point;
 import common.Array2D;
-import game.Point;
 import game.Hex;
 import game.Board;
 

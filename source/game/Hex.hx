@@ -7,6 +7,7 @@ package game;
  */
 import common.Positionable;
 import common.Util;
+import common.Point;
 @:abstract class Hex implements Positionable {
 
   public inline static var SIDES : Int = 6;

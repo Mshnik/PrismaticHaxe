@@ -1,7 +1,7 @@
 package test;
 
 import common.Util;
-import game.Point;
+import common.Point;
 import game.Hex;
 
 class TestHex extends TestCase {

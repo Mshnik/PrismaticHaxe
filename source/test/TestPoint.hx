@@ -1,6 +1,6 @@
 package test;
 
-import game.Point;
+import common.Point;
 class TestPoint extends TestCase {
 
   private function checkPoint(row : Int, col : Int, actual : Point) {

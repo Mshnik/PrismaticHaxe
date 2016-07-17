@@ -1,12 +1,13 @@
 package view;
 
-import game.Point;
+import common.Positionable;
+import common.Point;
 import flixel.input.FlxInput.FlxInputState;
 import flixel.input.keyboard.FlxKey;
 import flixel.addons.display.FlxExtendedSprite;
 import flixel.math.FlxPoint;
 import flixel.FlxG;
-class HexSprite extends BaseSprite {
+class HexSprite extends BaseSprite implements Positionable {
 
   private inline static var ROTATION_INC : Float = 3.0;
   private inline static var ROTATION_DISTANCE : Float = 60.0;
