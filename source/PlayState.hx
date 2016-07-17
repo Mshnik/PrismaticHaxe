@@ -38,13 +38,28 @@ class PlayState extends FlxState {
     boardView.spriteGroup.setPosition(BOARD_MARGIN_HORIZ, BOARD_MARGIN_VERT);
   }
 
+  /** Helper function for HexSprite starting rotation callback */
+  private function onStartRotate(h : HexSprite) {
+    trace(h.position + " Started rotation");
+    var m : Hex = boardModel.getAt(h.position);
+    m.acceptConnections = false;
+  }
+
+  /** Helper function for HexSprite ending rotation callback */
+  private function onEndRotate(h : HexSprite) {
+    trace("Ended rotation on orientation " + h.getOrientation());
+    var m : Hex = boardModel.getAt(h.position);
+    m.orientation = h.getOrientation();
+    m.acceptConnections = true;
+  }
+
   public function populate() {
     for(r in 0...rows) {
       for(c in 0...cols) {
         var m = boardModel.set(r,c,new Hex());
         var v = boardView.set(r,c,new HexSprite());
-        v.rotationStartListener = function(h : HexSprite) { trace(h.position + " Started rotation");};
-        v.rotationEndListener = function(h : HexSprite) { trace("Ended rotation on orientation " + h.getOrientation());};
+        v.rotationStartListener = onStartRotate;
+        v.rotationEndListener = onEndRotate;
       }
     }
   }
