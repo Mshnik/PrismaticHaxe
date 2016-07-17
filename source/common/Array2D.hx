@@ -77,7 +77,7 @@ package common;
 
   /** Adds an empty row (full of nulls) to the top of the Array2D */
 
-  public inline function addRowTop() : Void {
+  public function addRowTop() : Void {
     var arr : Array<T> = [];
     for(i in 0...getWidth()) {
       arr.push(null);
@@ -88,7 +88,7 @@ package common;
 
   /** Adds an empty row (full of nulls) to the top of the Array2D */
 
-  public inline function addRowBottom() : Void {
+  public function addRowBottom() : Void {
     var arr : Array<T> = [];
     for(i in 0...getWidth()) {
       arr.push(null);
@@ -99,7 +99,7 @@ package common;
 
   /** Adds an empty row (full of nulls) to the top of the Array2D */
 
-  public inline function addColLeft() : Void {
+  public function addColLeft() : Void {
     for (arr in vals) {
       arr.unshift(null);
     }
@@ -108,7 +108,7 @@ package common;
 
   /** Adds an empty row (full of nulls) to the top of the Array2D */
 
-  public inline function addColRight() : Void {
+  public function addColRight() : Void {
     for (arr in vals) {
       arr.push(null);
     }
@@ -130,7 +130,6 @@ package common;
   /** Puts a T at the given location. If there is already a t there, overwrites.
    *  Returns h, for chaining? Idk.
    */
-
   public function set(row : Int, col : Int, h : T) : T {
     if (vals[row][col] != null) {
       vals[row][col].position = Point.get(-1,-1);
