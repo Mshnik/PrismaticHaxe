@@ -32,11 +32,18 @@ class HexSprite extends BaseSprite {
   }
 
   private function onMouseRelease(f : FlxExtendedSprite, x : Int, y : Int) : Void {
-    if (FlxG.keys.checkStatus(REVERSE_KEY, FlxInputState.PRESSED)) {
-      angleDelta -= ROTATION_DISTANCE;
-    } else {
-      angleDelta += ROTATION_DISTANCE;
+    var h = getHitbox();
+    var p = FlxG.mouse.getPosition();
+    //Extra check that the mouse is still there
+    if (h.containsPoint(p)){
+      if (FlxG.keys.checkStatus(REVERSE_KEY, FlxInputState.PRESSED)) {
+        angleDelta -= ROTATION_DISTANCE;
+      } else {
+        angleDelta += ROTATION_DISTANCE;
+      }
     }
+    h.put();
+    p.put();
   }
 
   public override function update(dt : Float) {
