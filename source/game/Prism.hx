@@ -79,32 +79,37 @@ class Prism extends Hex {
   /**
    * Adds a color connector connecting from to to with the given base color
    * Overwrites any existing connector on from to to
+   * Also resets lighting status, in case a connector is added in the middle of the game
+   * (this is going to need to recalculate light anyways)
    * Returns a reference to this for chaining in construction
    **/
   public inline function addConnector(from : Int, to : Int, color : Color) : Prism {
     connections.set(correctForOrientation(from), correctForOrientation(to), new ColorConnector(color));
+    resetLight();
     return this;
   }
 
   /**
    * Adds light in on the targeted side of the given color.
    * Returns the array of sides of this Prism newly outputting color.
+   * If the given side is already lit up a non-NONE color, does nothing (returns [])
    * If the color of light is acceptable but this connector or the destination side
    * is already lit up doesn't count that side in the returned array
    **/
   public function addLightIn(side : Int, c : Color) : Array<Int> {
-    if (c == Color.NONE) return [];
-
     var correctedSide = correctForOrientation(side);
+    if (c == Color.NONE || lightIn[correctedSide] != Color.NONE) return [];
+
     lightIn[correctedSide] = c;
 
     var newLightOut : Array<Int> = [];
     for(to in 0...Hex.SIDES) {
-      var connector : ColorConnector = connections.get(correctedSide, correctForOrientation(to));
+      var correctedTo = correctForOrientation(to);
+      var connector : ColorConnector = connections.get(correctedSide, correctedTo);
       if (connector != null && connector.canAcceptColor(c)) {
         connector.litColor = c;
         if (! connector.isDeadEnd() && getLightOut(side) == Color.NONE) {
-          lightOut[correctedSide] = c;
+          lightOut[correctedTo] = c;
           newLightOut.push(correctForOrientation(to));
         }
       }
@@ -113,19 +118,24 @@ class Prism extends Hex {
     return newLightOut;
   }
 
+  /** Helper that resets the lighting status of this Prism to default (all unlit) */
+  private function resetLight() {
+    for(i in 0...Hex.SIDES) {
+      lightIn[i] = Color.NONE;
+      lightOut[i] = Color.NONE;
+    }
+    for (connector in connections) {
+      connector.unlight();
+    }
+  }
+
   public override function onRotate(oldOrientation : Int) : Void {
     //do stuff here? Might not have to
   }
 
   public override function set_acceptConnections(accept : Bool) : Bool {
     if (! accept) {
-      for(i in 0...Hex.SIDES) {
-        lightIn[i] = Color.NONE;
-        lightOut[i] = Color.NONE;
-      }
-      for (connector in connections) {
-        connector.unlight();
-      }
+      resetLight();
     }
     return super.set_acceptConnections(accept);
   }

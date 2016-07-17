@@ -27,6 +27,21 @@ package common;
     ensureSize(rows, cols);
   }
 
+  public function toString() : String {
+    var s = new StringBuf();
+    s.add("[");
+    if (vals.length > 0) {
+      s.add("\n");
+    }
+    for(arr in vals) {
+      s.add("\t");
+      s.add(arr);
+      s.add("\n");
+    }
+    s.add("]");
+    return s.toString();
+  }
+
   public inline function getHeight() : Int {
     return vals.length;
   }

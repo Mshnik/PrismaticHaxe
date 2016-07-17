@@ -141,11 +141,30 @@ class TestPrism extends TestCase {
     assertFalse(p.getConnector(1,2).isLit());
   }
 
+  /** Helper that checks if the lighting status of p matches the given arrays */
   private inline function checkLight(p : Prism, expectedLightIn : Array<Color>,
                                      expectedLightOut : Array<Color>, expectedLit : Array<Array<Color>>) {
     assertArrayEquals(expectedLightIn, p.getLightInArray());
     assertArrayEquals(expectedLightOut, p.getLightOutArray());
     assertArrayEquals(expectedLit, Util.map(p.getLightingMatrix().asNestedArrays(),Tile.unWrap));
+  }
+
+  /** Helper function that resets the lighting of p and checks that it is now completely unlit.
+   * Resets the status of the arrays to be fully unlit.
+   * Doesn't add or remove connections on the prism, however.
+   **/
+  private inline function resetAndCheck(p : Prism, expectedLightIn : Array<Color>,
+                                        expectedLightOut : Array<Color>, expectedLit : Array<Array<Color>>) {
+    p.acceptConnections = false;
+    for(i in 0...Hex.SIDES) {
+      expectedLightIn[i] = Color.NONE;
+      expectedLightOut[i] = Color.NONE;
+      for(k in 0...Hex.SIDES) {
+        expectedLit[i][k] = Color.NONE;
+      }
+    }
+    p.acceptConnections = true;
+    checkLight(p, expectedLightIn, expectedLightOut, expectedLit);
   }
 
   public function testLighting() {
@@ -163,15 +182,78 @@ class TestPrism extends TestCase {
     checkLight(p, expectedLightIn, expectedLightOut, expectedLit);
 
     //Add ineffectual light
-    p.addLightIn(0, Color.BLUE);
+    var arr = p.addLightIn(0, Color.BLUE);
     expectedLightIn[0] = Color.BLUE;
+    assertArrayEquals([], arr);
     checkLight(p, expectedLightIn, expectedLightOut, expectedLit);
+    resetAndCheck(p, expectedLightIn, expectedLightOut, expectedLit);
 
-    p.addLightIn(1, Color.RED);
+    arr = p.addLightIn(1, Color.RED);
     expectedLightIn[1] = Color.RED;
+    assertArrayEquals([], arr);
     checkLight(p, expectedLightIn, expectedLightOut, expectedLit);
+    resetAndCheck(p, expectedLightIn, expectedLightOut, expectedLit);
 
     //Actually add light
-  }
+    arr = p.addLightIn(0,Color.RED);
+    expectedLightIn[0] = Color.RED;
+    expectedLightOut[1] = Color.RED;
+    expectedLit[0][1] = Color.RED;
+    assertArrayEquals([1], arr);
+    checkLight(p, expectedLightIn, expectedLightOut, expectedLit);
+    resetAndCheck(p, expectedLightIn, expectedLightOut, expectedLit);
 
+    //Check color branching
+    p.addConnector(1,2,Color.RED);
+    p.addConnector(0,2,Color.RED);
+    arr = p.addLightIn(0, Color.RED);
+    expectedLightIn[0] = Color.RED;
+    expectedLightOut[1] = Color.RED;
+    expectedLightOut[2] = Color.RED;
+    expectedLit[0][1] = Color.RED;
+    expectedLit[0][2] = Color.RED;
+    assertArrayEquals([1,2],arr);
+    checkLight(p, expectedLightIn, expectedLightOut, expectedLit);
+
+    //Check adding color doesn't do redundant addition
+    arr = p.addLightIn(1, Color.RED);
+    expectedLightIn[1] = Color.RED;
+    expectedLit[1][2] = Color.RED;
+    assertArrayEquals([], arr);
+    checkLight(p, expectedLightIn, expectedLightOut, expectedLit);
+    resetAndCheck(p, expectedLightIn, expectedLightOut, expectedLit);
+
+    //Check other colors of light don't work, but Color.ANY do
+    p.addConnector(0,4, Color.BLUE);
+    p.addConnector(0,5, Color.ANY);
+    arr = p.addLightIn(0,Color.BLUE);
+    expectedLightIn[0] = Color.BLUE;
+    expectedLightOut[4] = Color.BLUE;
+    expectedLightOut[5] = Color.BLUE;
+    expectedLit[0][4] = Color.BLUE;
+    expectedLit[0][5] = Color.BLUE;
+    assertArrayEquals([4,5],arr);
+    checkLight(p, expectedLightIn, expectedLightOut, expectedLit);
+    resetAndCheck(p, expectedLightIn, expectedLightOut, expectedLit);
+
+    //Check dead ends
+    p.addConnector(3,3,Color.RED);
+    arr = p.addLightIn(3, Color.RED);
+    expectedLightIn[3] = Color.RED;
+    expectedLit[3][3] = Color.RED;
+    assertArrayEquals([], arr);
+    checkLight(p, expectedLightIn, expectedLightOut, expectedLit);
+    resetAndCheck(p, expectedLightIn, expectedLightOut, expectedLit);
+
+    //Test rotation
+    var p2 = new Prism().addConnector(0,1,Color.RED);
+    p2.rotateCounterClockwise();
+    arr = p2.addLightIn(1, Color.RED);
+    expectedLightIn[1] = Color.RED;
+    expectedLightOut[2] = Color.RED;
+    expectedLit[1][2] = Color.RED;
+    assertArrayEquals([1], arr);
+    checkLight(p2, expectedLightIn, expectedLightOut, expectedLit);
+    resetAndCheck(p2, expectedLightIn, expectedLightOut, expectedLit);
+  }
 }

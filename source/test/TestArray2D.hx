@@ -33,11 +33,13 @@ class TestArray2D extends TestCase {
     assertEquals(0, b.getHeight());
     assertEquals(0, b.getWidth());
     assertArrayEquals([], b.asNestedArrays());
+    assertEquals("[]", b.toString());
 
     var b = new Array2D<SimplePositionable>(3,3);
     assertEquals(3, b.getHeight());
     assertEquals(3, b.getWidth());
     assertArrayEquals([[null, null, null],[null, null, null],[null, null, null]], b.asNestedArrays());
+    assertEquals("[\n\t[null,null,null]\n\t[null,null,null]\n\t[null,null,null]\n]", b.toString());
   }
 
   public function testAddRowAndCol() {
