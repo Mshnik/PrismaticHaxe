@@ -34,6 +34,12 @@ class BoardView extends Array2D<HexSprite> {
     setGraphicPosition(getAt(p));
   }
 
+  /** Overridden to narrow return type */
+  public inline override function ensureSize(rows : Int, cols : Int) : BoardView {
+    super.ensureSize(rows, cols);
+    return this;
+  }
+
   /** In addition to shifting array, shifts everything down by one row */
   public override function addRowTop() {
     super.addRowTop();
@@ -83,5 +89,11 @@ class BoardView extends Array2D<HexSprite> {
   public override function shift(dRow : Int, dCol : Int) : Void {
     super.shift(dRow, dCol);
     spriteGroup.forEach(setGraphicPosition);
+  }
+
+  /** Overridden to narrow return type */
+  public inline override function fillWith(elmCreator : Void->HexSprite) : BoardView {
+    super.fillWith(elmCreator);
+    return this;
   }
 }

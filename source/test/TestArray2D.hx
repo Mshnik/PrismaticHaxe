@@ -18,6 +18,15 @@ class TestArray2D extends TestCase {
     }
   }
 
+  public function testTiles() {
+    var t : Tile<Int> = Tile.create(5);
+    assertEquals(5, t.data);
+    assertEquals("Tile(5)", t.toString());
+    assertEquals(Point.get(-1,-1), t.position);
+    t.position = Point.get(1,2);
+    assertEquals(Point.get(1,2), t.position);
+  }
+
   public function testCreation() {
     var b = new Array2D<SimplePositionable>();
     assertEquals(0, b.getHeight());
@@ -252,6 +261,14 @@ class TestArray2D extends TestCase {
       b.removeAt(iter1.next().position);
       expectedSize--;
       assertEquals(expectedSize, b.size);
+    }
+  }
+
+  public function testFill() {
+    var b = new Array2D<Tile<Int>>().ensureSize(5,5).fillWith(Tile.creator(5));
+    var iter : Iterator<Tile<Int>> = b.iterator();
+    while(iter.hasNext()) {
+      assertEquals(5, iter.next().data);
     }
   }
 }

@@ -8,19 +8,28 @@ interface Positionable {
 }
 
 /** A generic Positionable implementation for wrapping simple classes and the like.
+ * Tile is immutable by default, trying to set data after initial construction will
+ * result in thrown error. To change this behavior, override set_data(..)
  * Position is initally (-1,-1) until set
  **/
 class Tile<T> implements Positionable {
 
-  public var data(default, null) : T;
+  public var data(default, set) : T;
+  private var dataSet : Bool;
   public var position(default, set) : Point;
+
 
   public function new(t : T = null) {
     data = t;
+    dataSet = true;
     position = Point.get(-1,-1);
   }
 
-  public static function create<T>(t : T = null) {
+  public function toString() : String {
+    return "Tile(" + data + ")";
+  }
+
+  public static function create<T>(t : T = null) : Tile<T> {
     return new Tile<T>(t);
   }
 
@@ -29,6 +38,12 @@ class Tile<T> implements Positionable {
    **/
   public static function creator<T>(t : T = null) : Void->Tile<T> {
     return return function(){return create(t);};
+  }
+
+  public function set_data(newData : T) : T {
+    if (dataSet) throw "Can't change immutable tile, data already set to " + data;
+    dataSet = true;
+    return data = newData;
   }
 
   public function set_position(p : Point) : Point {

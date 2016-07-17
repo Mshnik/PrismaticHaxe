@@ -252,16 +252,17 @@ package common;
     }
   }
 
-  /** Fills this Array2D with the given T.
+  /**
+   * Fills this Array2D with the given T. Calls elmCreator for each position
+   * so instances are unique to each slot
    * Returns a reference to this, for chaining.
    **/
-  public function fillWith(elm : T) : Array2D<T> {
+  public function fillWith(elmCreator : Void->T) : Array2D<T> {
     for (r in 0...getHeight()) {
       for (c in 0...getWidth()) {
-        set(r,c,elm);
+        set(r,c,elmCreator());
       }
     }
-
     return this;
   }
 
