@@ -18,7 +18,7 @@ package common;
    * Size changes and Shifts not allowed because they make the internal count of the iterator invalid
    * Swaps not allowed because they may lead to double-iterating over the same element
    **/
-  public var modCount(default,null) : Int;
+  public var modCount(default, null) : Int;
 
   public function new(rows : Int = 0, cols : Int = 0) {
     vals = new Array<Array<T>>();
@@ -79,7 +79,7 @@ package common;
 
   public function addRowTop() : Void {
     var arr : Array<T> = [];
-    for(i in 0...getWidth()) {
+    for (i in 0...getWidth()) {
       arr.push(null);
     }
     vals.unshift(arr);
@@ -90,7 +90,7 @@ package common;
 
   public function addRowBottom() : Void {
     var arr : Array<T> = [];
-    for(i in 0...getWidth()) {
+    for (i in 0...getWidth()) {
       arr.push(null);
     }
     vals.push(arr);
@@ -130,9 +130,10 @@ package common;
   /** Puts a T at the given location. If there is already a t there, overwrites.
    *  Returns h, for chaining? Idk.
    */
+
   public function set(row : Int, col : Int, h : T) : T {
     if (vals[row][col] != null) {
-      vals[row][col].position = Point.get(-1,-1);
+      vals[row][col].position = Point.get(-1, -1);
       size--;
     }
     vals[row][col] = h;
@@ -151,10 +152,10 @@ package common;
 
   /** Removes the t (if any) at row,col. Returns the removed t, if any */
 
-  public inline function remove(row : Int, col : Int) : T {
-    var h = vals[row][col];
+  public function remove(row : Int, col : Int) : T {
+    var h : T = vals[row][col];
     if (h != null) {
-      h.position = Point.get(-1,-1);
+      h.position = Point.get(-1, -1);
       size--;
     }
     vals[row][col] = null;
@@ -169,7 +170,7 @@ package common;
 
   /** Swaps the Ts at the given locations */
 
-  public inline function swap(p1 : Point, p2 : Point) : Void {
+  public function swap(p1 : Point, p2 : Point) : Void {
     var h = get(p1.row, p1.col);
     var h2 = get(p2.row, p2.col);
     set(p1.row, p1.col, h2);
@@ -245,9 +246,9 @@ package common;
     if (dCol != 0 && dRow != 0) {
       var delta = Point.get(dRow, dCol);
       var iter = new Array2DIterator<T>(this);
-      while(iter.hasNext()){
+      while (iter.hasNext()) {
         var t : T = iter.next();
-        t.position = Point.get(Util.mod(t.position.row + delta.row, getHeight()),Util.mod(t.position.col + delta.col, getWidth()));
+        t.position = Point.get(Util.mod(t.position.row + delta.row, getHeight()), Util.mod(t.position.col + delta.col, getWidth()));
       }
     }
   }
@@ -264,13 +265,13 @@ package common;
   public function new(b : Array2D<T>) {
     this.b = b;
     expectedModCount = b.modCount;
-    p = Point.get(0,0);
+    p = Point.get(0, 0);
     count = 0;
   }
 
   public function next() : T {
     var h : T = null;
-    while((h = b.getAt(p)) == null){
+    while ((h = b.getAt(p)) == null) {
       incPosition();
     }
     incPosition();
@@ -279,10 +280,10 @@ package common;
   }
 
   private function incPosition() : Void {
-    if(p.col < b.getWidth() - 1) {
-      p = Point.get(p.row, p.col+1);
+    if (p.col < b.getWidth() - 1) {
+      p = Point.get(p.row, p.col + 1);
     } else if (p.row < b.getHeight() - 1) {
-      p = Point.get(p.row+1, 0);
+      p = Point.get(p.row + 1, 0);
     }
   }
 

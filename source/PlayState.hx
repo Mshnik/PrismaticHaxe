@@ -27,6 +27,9 @@ class PlayState extends FlxState {
     bg.scrollFactor.y=0;
     add(bg);
 
+    boardModel = new Board(5,5);
+    boardView = new BoardView(5,5);
+
     populate();
   }
 
