@@ -29,7 +29,7 @@ class Tile<T> implements Positionable {
     return "Tile(" + data + ")";
   }
 
-  public static function create<T>(t : T = null) : Tile<T> {
+  public static function wrap<T>(t : T = null) : Tile<T> {
     return new Tile<T>(t);
   }
 
@@ -37,7 +37,7 @@ class Tile<T> implements Positionable {
    * Inner data. Inner data is not copied, each will reference the same in mem.
    **/
   public static function creator<T>(t : T = null) : Void->Tile<T> {
-    return return function(){return create(t);};
+    return return function(){return wrap(t);};
   }
 
   public function set_data(newData : T) : T {

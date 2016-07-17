@@ -142,35 +142,34 @@ class TestPrism extends TestCase {
 
   private inline function checkLight(p : Prism, expectedLightIn : Array<Color>,
                                      expectedLightOut : Array<Color>, expectedLit : Array<Array<Bool>>) {
-    assertArrayEquals(expectedLightIn, p.getLightOutArray());
+    assertArrayEquals(expectedLightIn, p.getLightInArray());
     assertArrayEquals(expectedLightOut, p.getLightOutArray());
   }
 
-//  public function testLighting() {
-//    var p : Prism = new Prism().addConnector(0,1,Color.RED);
-//
-//    var expectedLightIn : Array<Color> = Util.arrayOf(Color.NONE, Hex.SIDES);
-//    var expectedLightOut : Array<Color> = Util.arrayOf(Color.NONE, Hex.SIDES);
-//
-//    var falseArray : Array<Bool> = Util.arrayOf(false, Hex.SIDES);
-//    var expectedLit : Array<Array<Bool>> = [];
-//    for(i in 0...Hex.SIDES) {
-//      expectedLit.push(falseArray.copy());
-//    }
-//
-//    checkLight(p, expectedLightIn, expectedLightOut, expectedLit);
-//
-//    //Add ineffectual light
-//    p.addLightIn(0, Color.BLUE);
-//    expectedLightIn[0] = Color.BLUE;
-//    checkLight(p, expectedLightIn, expectedLightOut, expectedLit);
-//
-//    p.addLightIn(1, Color.RED);
-//    expectedLightIn[1] = Color.RED;
-//    checkLight(p, expectedLightIn, expectedLightOut, expectedLit);
+  public function testLighting() {
+    var p : Prism = new Prism().addConnector(0,1,Color.RED);
 
+    var expectedLightIn : Array<Color> = Util.arrayOf(Color.NONE, Hex.SIDES);
+    var expectedLightOut : Array<Color> = Util.arrayOf(Color.NONE, Hex.SIDES);
+
+    var falseArray : Array<Bool> = Util.arrayOf(false, Hex.SIDES);
+    var expectedLit : Array<Array<Bool>> = [];
+    for(i in 0...Hex.SIDES) {
+      expectedLit.push(falseArray.copy());
+    }
+
+    checkLight(p, expectedLightIn, expectedLightOut, expectedLit);
+
+    //Add ineffectual light
+    p.addLightIn(0, Color.BLUE);
+    expectedLightIn[0] = Color.BLUE;
+    checkLight(p, expectedLightIn, expectedLightOut, expectedLit);
+
+    p.addLightIn(1, Color.RED);
+    expectedLightIn[1] = Color.RED;
+    checkLight(p, expectedLightIn, expectedLightOut, expectedLit);
 
     //Actually add light
-//  }
+  }
 
 }

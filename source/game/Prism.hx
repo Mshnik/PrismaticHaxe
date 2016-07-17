@@ -62,19 +62,19 @@ class Prism extends Hex {
     return connections.get(correctForOrientation(from), correctForOrientation(to));
   }
 
-//
-//  /** Returns a Array2D of the lit colors in this prism. */
-//  public inline function getLightingMatrix() : Array2D<Tile<Color>> {
-//    var arr2d = new Array2D<Tile<Color>>().ensureSize(Hex.SIDES, Hex.SIDES).fillWith(Color.NONE);
-//    for(r in 0...Hex.SIDES) {
-//      for(c in 0...Hex.SIDES) {
-//        var con = getConnector(r,c);
-//        if (con != null) {
-//          arr2d.set();
-//        }
-//      }
-//    }
-//  }
+  /** Returns a Array2D of the lit colors in this prism. */
+  public inline function getLightingMatrix() : Array2D<Tile<Color>> {
+    var arr2d = new Array2D<Tile<Color>>().ensureSize(Hex.SIDES, Hex.SIDES).fillWith(Tile.creator(Color.NONE));
+    for(r in 0...Hex.SIDES) {
+      for(c in 0...Hex.SIDES) {
+        var con = getConnector(r,c);
+        if (con != null) {
+          arr2d.set(r,c,Tile.wrap(con.litColor));
+        }
+      }
+    }
+    return arr2d;
+  }
 
   /**
    * Adds a color connector connecting from to to with the given base color
