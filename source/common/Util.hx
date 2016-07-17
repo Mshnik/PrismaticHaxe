@@ -54,6 +54,16 @@ class Util {
     return arr;
   }
 
+  /** Convienence function that maps each element in an Array<Array<T>>.
+   * Can't fully map within Array2D because of the positionable requirement.
+   **/
+  public static function map<T,S>(arr : Array<Array<T>>, f : T -> S) : Array<Array<S>> {
+    var m = function(a : Array<T>) : Array<S> {
+      return a.map(f);
+    }
+    return arr.map(m);
+  }
+
   /**
    * Rotates once forward - takes the element at the end of the array and puts it at the beginning
    * Shifting all other elements forward one

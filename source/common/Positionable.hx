@@ -29,8 +29,14 @@ class Tile<T> implements Positionable {
     return "Tile(" + data + ")";
   }
 
+  /** Convienence function that wraps a given t in a tile, for functional use */
   public static function wrap<T>(t : T = null) : Tile<T> {
     return new Tile<T>(t);
+  }
+
+  /** Convienence function that returns the data in the tile, for functional use */
+  public static function unWrap<T>(tile : Tile<T>) : T {
+    return tile.data;
   }
 
   /** Returns a function that, upon application, returns a fresh tile wrapping the same

@@ -21,6 +21,7 @@ class TestArray2D extends TestCase {
   public function testTiles() {
     var t : Tile<Int> = Tile.wrap(5);
     assertEquals(5, t.data);
+    assertEquals(5, Tile.unWrap(t));
     assertEquals("Tile(5)", t.toString());
     assertEquals(Point.get(-1,-1), t.position);
     t.position = Point.get(1,2);

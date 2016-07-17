@@ -265,7 +265,6 @@ package common;
     }
     return this;
   }
-
 }
 
 @:generic class Array2DIterator<T : Positionable> {

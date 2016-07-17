@@ -1,4 +1,5 @@
 package test;
+import common.Positionable.Tile;
 import common.Util;
 import game.Hex;
 import common.Point;
@@ -141,9 +142,10 @@ class TestPrism extends TestCase {
   }
 
   private inline function checkLight(p : Prism, expectedLightIn : Array<Color>,
-                                     expectedLightOut : Array<Color>, expectedLit : Array<Array<Bool>>) {
+                                     expectedLightOut : Array<Color>, expectedLit : Array<Array<Color>>) {
     assertArrayEquals(expectedLightIn, p.getLightInArray());
     assertArrayEquals(expectedLightOut, p.getLightOutArray());
+    assertArrayEquals(expectedLit, Util.map(p.getLightingMatrix().asNestedArrays(),Tile.unWrap));
   }
 
   public function testLighting() {
@@ -152,10 +154,10 @@ class TestPrism extends TestCase {
     var expectedLightIn : Array<Color> = Util.arrayOf(Color.NONE, Hex.SIDES);
     var expectedLightOut : Array<Color> = Util.arrayOf(Color.NONE, Hex.SIDES);
 
-    var falseArray : Array<Bool> = Util.arrayOf(false, Hex.SIDES);
-    var expectedLit : Array<Array<Bool>> = [];
+    var noneArray : Array<Color> = Util.arrayOf(Color.NONE, Hex.SIDES);
+    var expectedLit : Array<Array<Color>> = [];
     for(i in 0...Hex.SIDES) {
-      expectedLit.push(falseArray.copy());
+      expectedLit.push(noneArray.copy());
     }
 
     checkLight(p, expectedLightIn, expectedLightOut, expectedLit);

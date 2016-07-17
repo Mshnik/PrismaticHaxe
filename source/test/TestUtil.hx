@@ -59,4 +59,10 @@ class TestUtil extends TestCase {
     assertArrayEquals([4, 1, 2, 3], Util.rotateBackward(arr));
     assertArrayEquals([1, 2, 3, 4], Util.rotateBackward(arr));
   }
+
+  public function testMap2D() {
+    var arr = [["Hello","Hi"],["Sup","Blah"]];
+    var arr2 = [[5,2],[3,4]];
+    assertArrayEquals(arr2, Util.map(arr, function(s : String){return s.length;}));
+  }
 }
