@@ -1,5 +1,7 @@
 package view;
 
+import game.Hex;
+import common.Util;
 import common.Positionable;
 import common.Point;
 import flixel.input.FlxInput.FlxInputState;
@@ -10,25 +12,43 @@ import flixel.FlxG;
 class HexSprite extends BaseSprite implements Positionable {
 
   private inline static var ROTATION_INC : Float = 3.0;
-  private inline static var ROTATION_DISTANCE : Float = 60.0;
+  private inline static var ROTATION_DISTANCE : Int = 60;
 
   private inline static var REVERSE_KEY = FlxKey.SHIFT;
 
   /** The target angle to rotate to, in degrees */
   private var angleDelta : Float;
 
+  /** True if this is currently rotating, false otherwise */
+  public var isRotating(default, null) : Bool;
+
+  /** Listener to call when this starts rotating */
+  public var rotationStartListener(default, default) : Void -> Void;
+
+  /** Listener to call when this stops rotating. Arg is new oritentation, in [0..Hex.SIDES) */
+  public var rotationEndListener(default, default) : Int -> Void;
+
   /** The position of this HexSprite in the BoardView. (-1,-1) when unset.
    * Mutated if this HexSprite is repositioned in the BoardView.
    **/
   public var position(default, set) : Point;
 
+  /** Constructor for HexSprite
+   *
+   *  @param x - x position, graphically
+   *  @param y - y position, graphically
+   *
+   **/
   public function new(x : Float, y : Float) {
     super(x,y);
 
     //Fields
     angleDelta = 0;
     angle = 0;
+    isRotating = false;
     position = Point.get(-1,-1);
+    rotationStartListener = null;
+    rotationEndListener = null;
 
     //Graphics
     loadGraphic(AssetPaths.hex_back__png);
@@ -51,6 +71,10 @@ class HexSprite extends BaseSprite implements Positionable {
       } else {
         angleDelta += ROTATION_DISTANCE;
       }
+      if (! isRotating) {
+        isRotating = true;
+        if (rotationStartListener != null) rotationStartListener();
+      }
     }
     h.put();
     p.put();
@@ -69,11 +93,18 @@ class HexSprite extends BaseSprite implements Positionable {
       angleDelta += ROTATION_INC;
       angle -= ROTATION_INC;
     }
+    if (angleDelta == 0 && isRotating) {
+      isRotating = false;
+      if (rotationEndListener != null) rotationEndListener(getOrientation());
+    }
   }
-
 
   public inline function set_position(p : Point) : Point {
     return position = p;
   }
 
+  /** Returns the current orientation. Result is only dependable when this isn't currently rotating */
+  public inline function getOrientation() : Int {
+    return Util.mod(Std.int(angle/ROTATION_DISTANCE),Hex.SIDES);
+  }
 }
