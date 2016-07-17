@@ -11,18 +11,16 @@ import flixel.FlxGame;
 
 class Main extends Sprite {
 
-  @final private static inline var RUN_TESTS = true;
-
   public function new() {
     super();
 
-    if (RUN_TESTS) {
-      runTests();
-      haxe.Timer.delay(quit, 1000);
-    } else {
-      prepForGame();
-      runGame();
-    }
+    #if TEST_MODE
+    runTests();
+    haxe.Timer.delay(quit, 1000);
+    #else
+    prepForGame();
+    runGame();
+    #end
   }
 
   function prepForGame() {

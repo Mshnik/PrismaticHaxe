@@ -46,6 +46,9 @@
 
 	<!-- ______________________________ Haxedefines _____________________________ -->
 
+	<!-- When true, runs tests. When false, runs game -->
+	<haxedef name="TEST_MODE" />
+
 	<!--Enable the Flixel core recording system-->
 	<!--<haxedef name="FLX_RECORD" />-->
 
