@@ -11,6 +11,8 @@ import flixel.math.FlxPoint;
 import flixel.FlxG;
 class HexSprite extends BaseSprite implements Positionable {
 
+  public inline static var SCALE = 1.0;
+
   private inline static var ROTATION_INC : Float = 3.0;
   private inline static var ROTATION_DISTANCE : Int = 60;
 
@@ -22,11 +24,11 @@ class HexSprite extends BaseSprite implements Positionable {
   /** True if this is currently rotating, false otherwise */
   public var isRotating(default, null) : Bool;
 
-  /** Listener to call when this starts rotating */
-  public var rotationStartListener(default, default) : Void -> Void;
+  /** Listener to call when this starts rotating. Arg is this HexSprite */
+  public var rotationStartListener(default, default) : HexSprite -> Void;
 
-  /** Listener to call when this stops rotating. Arg is new oritentation, in [0..Hex.SIDES) */
-  public var rotationEndListener(default, default) : Int -> Void;
+  /** Listener to call when this stops rotating. Arg is this HexSprite */
+  public var rotationEndListener(default, default) : HexSprite -> Void;
 
   /** The position of this HexSprite in the BoardView. (-1,-1) when unset.
    * Mutated if this HexSprite is repositioned in the BoardView.
@@ -49,6 +51,7 @@ class HexSprite extends BaseSprite implements Positionable {
     position = Point.get(-1,-1);
     rotationStartListener = null;
     rotationEndListener = null;
+    scale = FlxPoint.get(SCALE,SCALE);
 
     //Graphics
     loadGraphic(AssetPaths.hex_back__png);
@@ -73,7 +76,7 @@ class HexSprite extends BaseSprite implements Positionable {
       }
       if (! isRotating) {
         isRotating = true;
-        if (rotationStartListener != null) rotationStartListener();
+        if (rotationStartListener != null) rotationStartListener(this);
       }
     }
     h.put();
@@ -95,7 +98,7 @@ class HexSprite extends BaseSprite implements Positionable {
     }
     if (angleDelta == 0 && isRotating) {
       isRotating = false;
-      if (rotationEndListener != null) rotationEndListener(getOrientation());
+      if (rotationEndListener != null) rotationEndListener(this);
     }
   }
 

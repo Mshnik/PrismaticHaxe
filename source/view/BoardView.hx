@@ -8,10 +8,10 @@ import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 class BoardView extends Array2D<HexSprite> {
 
   /** Graphic height of a row of hexes. Amount to shift when a row moves. */
-  private static inline var ROW_HEIGHT = 50;
+  private static inline var ROW_HEIGHT = 103 * HexSprite.SCALE;
 
   /** Graphic width of a col of hexes. Amount to shift when a col moves. */
-  private static inline var COL_WIDTH = 50;
+  private static inline var COL_WIDTH = 91 * HexSprite.SCALE;
 
   @final public var spriteGroup(default, null) : FlxTypedSpriteGroup<HexSprite>;
 
@@ -24,8 +24,8 @@ class BoardView extends Array2D<HexSprite> {
   /** Helper function for setting position of a HexSprite based on its row,col position */
   private static inline function setGraphicPosition(h : HexSprite) {
     if (h != null) {
-      h.y = h.position.row * ROW_HEIGHT;
-      h.x = h.position.col + Util.mod(h.position.row,2) * COL_WIDTH;
+      h.y = (h.position.row + Util.mod(h.position.col,2)/2) * ROW_HEIGHT;
+      h.x = h.position.col * COL_WIDTH;
     }
   }
 

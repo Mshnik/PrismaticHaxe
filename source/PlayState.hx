@@ -1,6 +1,6 @@
 package;
 
-import flixel.text.FlxText;
+import game.Hex;
 import game.Board;
 import view.BoardView;
 import flixel.util.FlxColor;
@@ -11,12 +11,14 @@ import flixel.FlxState;
 
 class PlayState extends FlxState {
 
+  private static inline var BOARD_MARGIN_VERT = 20;
+  private static inline var BOARD_MARGIN_HORIZ = 50;
+
+  private var rows : Int = 5;
+  private var cols : Int = 9;
+
   private var boardModel : Board;
   private var boardView : BoardView;
-
-  //Temp test stuff
-  private var h : HexSprite;
-  private var t : FlxText;
 
   override public function create() : Void {
     super.create();
@@ -27,27 +29,27 @@ class PlayState extends FlxState {
     bg.scrollFactor.y=0;
     add(bg);
 
-    boardModel = new Board(5,5);
-    boardView = new BoardView(5,5);
+    boardModel = new Board(rows,cols);
+    boardView = new BoardView(rows,cols);
+    add(boardView.spriteGroup);
 
     populate();
+
+    boardView.spriteGroup.setPosition(BOARD_MARGIN_HORIZ, BOARD_MARGIN_VERT);
   }
 
   public function populate() {
-    h = new HexSprite(200,200);
-    h.rotationStartListener = function() { trace("Started rotation");};
-    h.rotationEndListener = function(x : Int) { trace("Ended rotation on orientation " + x);};
-
-
-    t = new FlxText(100,100);
-
-    add(h);
-    add(t);
+    for(r in 0...rows) {
+      for(c in 0...cols) {
+        var m = boardModel.set(r,c,new Hex());
+        var v = boardView.set(r,c,new HexSprite());
+        v.rotationStartListener = function(h : HexSprite) { trace(h.position + " Started rotation");};
+        v.rotationEndListener = function(h : HexSprite) { trace("Ended rotation on orientation " + h.getOrientation());};
+      }
+    }
   }
 
   override public function update(elapsed : Float) : Void {
     super.update(elapsed);
-
-    t.text = Std.string(h.getOrientation());
   }
 }
