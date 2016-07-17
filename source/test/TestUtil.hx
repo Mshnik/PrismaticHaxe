@@ -30,6 +30,16 @@ class TestUtil extends TestCase {
     }
   }
 
+  public function testFilledArray() {
+    for (i in 0...5) {
+      var arr = Util.arrayOf("Hello", i);
+      assertEquals(i, arr.length);
+      for (x in arr) {
+        assertEquals("Hello", x);
+      }
+    }
+  }
+
   public function testArrayEquals() {
     assertTrue(Util.arrayEquals([1], [1]));
     assertTrue(Util.arrayEquals([1, 2, 3], [1, 2, 3]));

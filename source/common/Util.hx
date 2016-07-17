@@ -45,6 +45,15 @@ class Util {
     return arr;
   }
 
+  /** Creates an array filled with the given T */
+  @:generic public static function arrayOf<T>(t : T, length : Int) : Array<T> {
+    var arr : Array<T> = [];
+    for(i in 0...length) {
+      arr.push(t);
+    }
+    return arr;
+  }
+
   /**
    * Rotates once forward - takes the element at the end of the array and puts it at the beginning
    * Shifting all other elements forward one
