@@ -1,12 +1,15 @@
 package test;
 
+import common.Array2D;
 import game.Point;
 import game.Hex;
 import game.Board;
+
+//This also tests Array2D heavily
 class TestBoard extends TestCase {
 
   /** Helper that asserts that each hex's position is correct */
-  private function checkHexPositions(b : Board) {
+  private function checkHexPositions(b : Array2D<Hex>) {
     for(r in 0...b.getHeight()) {
       for(c in 0...b.getWidth()) {
         var h = b.get(r,c);
@@ -22,6 +25,11 @@ class TestBoard extends TestCase {
     assertEquals(0, b.getHeight());
     assertEquals(0, b.getWidth());
     assertArrayEquals([], b.getBoard());
+
+    var b = new Board(3,3);
+    assertEquals(3, b.getHeight());
+    assertEquals(3, b.getWidth());
+    assertArrayEquals([[null, null, null],[null, null, null],[null, null, null]], b.getBoard());
   }
 
   public function testAddRowAndCol() {
@@ -135,7 +143,7 @@ class TestBoard extends TestCase {
   }
 
   public function testShift() {
-    var b = new Board();
+    var b : Board = new Board();
     b.ensureSize(3, 3);
 
     var h = b.set(0, 0, SimpleHex.create());
@@ -198,7 +206,8 @@ class TestBoard extends TestCase {
   }
 
   public function testIteration() {
-    var b = new Board().ensureSize(3,3);
+    var b = new Board();
+    b.ensureSize(3,3);
     assertEquals(0, b.size);
 
     var h = b.set(0,0,SimpleHex.create());

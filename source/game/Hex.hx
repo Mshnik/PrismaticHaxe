@@ -5,8 +5,9 @@ package game;
  * Each Hex is only ment to belong to a single Board instance at a time,
  * behavior is undefined when a single hext instance is added to multiple boards.
  */
+import common.Positionable;
 import common.Util;
-@:abstract class Hex {
+@:abstract class Hex implements Positionable {
 
   public inline static var SIDES : Int = 6;
 
