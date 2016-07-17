@@ -129,10 +129,6 @@ class Prism extends Hex {
     }
   }
 
-  public override function onRotate(oldOrientation : Int) : Void {
-    //do stuff here? Might not have to
-  }
-
   public override function set_acceptConnections(accept : Bool) : Bool {
     if (! accept) {
       resetLight();

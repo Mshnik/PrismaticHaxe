@@ -20,10 +20,10 @@ class SimpleHex extends Hex {
     super();
     id = nextID++;
     rotations = 0;
-  }
-
-  override public function onRotate(oldOrientation : Int) {
-    rotations++;
+    rotationListener = function(h : Hex, i : Int) {
+      var sH : SimpleHex = cast(h, SimpleHex);
+      sH.rotations++;
+    };
   }
 
   public override function toString() {

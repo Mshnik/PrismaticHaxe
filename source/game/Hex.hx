@@ -26,6 +26,9 @@ import common.Point;
    **/
   public var position(default, set) : Point;
 
+  /** A listener to call when this rotates. Args are (this, oldOrientation) */
+  public var rotationListener : Hex->Int -> Void;
+
   public function new() {
     position = Point.get(-1,-1);
     orientation = 0;
@@ -48,8 +51,8 @@ import common.Point;
   public function set_orientation(newOrientation : Int) : Int {
     var x = orientation;
     var x2 = orientation = Util.mod(newOrientation, SIDES);
-    if (x != x2) {
-      onRotate(x);
+    if (rotationListener != null && x != x2) {
+      rotationListener(this,x);
     }
     return x2;
   }
@@ -60,14 +63,6 @@ import common.Point;
 
   public function rotateCounterClockwise() {
     orientation = orientation - 1;
-  }
-
-  /** Function called whenever the rotation of this hex changes.
-   *  Must be overridden by subclasses, but can be empty if nothing should happen when this is rotated
-   */
-
-  @abstract public function onRotate(oldOrientation : Int) {
-    throw "onRotate not overridden";
   }
 
   public function set_acceptConnections(b : Bool) : Bool {
