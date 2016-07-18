@@ -3,20 +3,42 @@ import common.Util;
 
 class Spark extends Hex {
 
-  private var availableColors(default, set) : Array<Color>;
+  private var availableColors(null, null) : Array<Color>;
   private var currentIndex(default, set) : Int;
 
   public function new() {
     super();
-    availableColors = [];
+    availableColors = [Color.NONE];
     currentIndex = 0;
   }
 
+  /** Helper to make sure light out is consistent with current active color */
+  private function updateLightOut() {
+    for(i in 0...Hex.SIDES) {
+      lightOut[i] = getCurrentColor();
+    }
+  }
+
   /** Adds the given color to the array of available colors, if it isn't already present.
+   * If adding Color.NONE, does nothing.
+   * If adding a duplicate, does nothing
    * Returns a reference to this for chaining
-   */
+   **/
   public function addColor(c : Color) : Spark {
-    ArrayHelper.addUnique(availableColors, c);
+    if (c == Color.NONE){
+      return this;
+    }
+    var needsUpdate = false;
+    if (availableColors[0] == Color.NONE){
+      availableColors = [];
+      needsUpdate = true;
+    }
+    if (availableColors.indexOf(c) == -1){
+      availableColors[availableColors.length] = c;
+    }
+    if(needsUpdate) {
+      updateLightOut();
+    }
     return this;
   }
 
@@ -33,18 +55,28 @@ class Spark extends Hex {
   }
 
   /** Returns the current color liting this spark */
-  public function getCurrentColor() {
+  public inline function getCurrentColor() {
     return availableColors[currentIndex];
   }
 
-  public function set_currentIndex(i : Int) : Int {
-    if (availableColors.length > 0)
-      return currentIndex = Util.mod(i, availableColors.length);
-    else
-      return currentIndex = i;
+  public inline function getAvailableColors() {
+    return availableColors.copy();
   }
 
-  public function set_availableColors(arr : Array<Color>) : Array<Color> {
-    return availableColors = arr;
+  public function set_currentIndex(i : Int) : Int {
+      currentIndex = Util.mod(i, availableColors.length);
+      updateLightOut();
+      return currentIndex;
   }
+
+  /** For sparks, adding light in doesn't cause anything. Do keep track of it though */
+  public override function addLightIn(side : Int, c : Color) : Array<Int> {
+    var correctedSide = correctForOrientation(side);
+    if(lightIn[correctedSide] == Color.NONE) {
+      lightIn[correctedSide] = c;
+    }
+
+    return [];
+  }
+
 }

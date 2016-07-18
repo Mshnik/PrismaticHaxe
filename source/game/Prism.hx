@@ -8,53 +8,12 @@ class Prism extends Hex {
 
   private var connections : Array2D<ColorConnector>;
 
-  private var lightIn : Array<Color>;
-  private var lightOut : Array<Color>;
-
   public function new() {
     //Create fields first so overriden setters don't hit NPEs. Could add logic.. or just do this
     // "bad practice" lol... this is going to come back to bite me I'm sure
     connections = new Array2D<ColorConnector>().ensureSize(Hex.SIDES, Hex.SIDES);
-    lightIn = Util.arrayOf(Color.NONE, Hex.SIDES);
-    lightOut = Util.arrayOf(Color.NONE, Hex.SIDES);
 
     super();
-  }
-
-  /** Helper that corrects for the current orientation of the Prism.
-   * Corrects for accessing the given side. Should be called whenever accessing an aribtrary
-   * side of the Prism. Also mods to always be in range, in case of negatives or OOB.
-   **/
-  private inline function correctForOrientation(side : Int) : Int {
-    return Util.mod(orientation + side, Hex.SIDES);
-  }
-
-  /** Returns the light coming on the given side (corrected for orientation) */
-  public inline function getLightIn(side : Int) : Color {
-    return lightIn[correctForOrientation(side)];
-  }
-
-  /** Returns a write-safe copy of the light entering this Prism */
-  public inline function getLightInArray() : Array<Color> {
-    var arr : Array<Color> = [];
-    for(i in 0...Hex.SIDES) {
-      arr[i] = getLightIn(i);
-    }
-    return arr;
-  }
-
-  /** Returns the light going out the given side (corrected for orientation) */
-  public inline function getLightOut(side : Int) : Color {
-    return lightOut[correctForOrientation(side)];
-  }
-
-  /** Returns a write-safe copy of the light leaving this Prism */
-  public inline function getLightOutArray() : Array<Color> {
-    var arr : Array<Color> = [];
-    for(i in 0...Hex.SIDES) {
-      arr[i] = getLightOut(i);
-    }
-    return arr;
   }
 
   /** Returns the color connector (if any) from, to. Corrects for orientation */
@@ -96,7 +55,7 @@ class Prism extends Hex {
    * If the color of light is acceptable but this connector or the destination side
    * is already lit up doesn't count that side in the returned array
    **/
-  public function addLightIn(side : Int, c : Color) : Array<Int> {
+  public override function addLightIn(side : Int, c : Color) : Array<Int> {
     var correctedSide = correctForOrientation(side);
     if (c == Color.NONE || lightIn[correctedSide] != Color.NONE) return [];
 
@@ -118,14 +77,12 @@ class Prism extends Hex {
     return newLightOut;
   }
 
-  /** Helper that resets the lighting status of this Prism to default (all unlit) */
-  private function resetLight() {
-    for(i in 0...Hex.SIDES) {
-      lightIn[i] = Color.NONE;
-      lightOut[i] = Color.NONE;
-    }
-    for (connector in connections) {
-      connector.unlight();
+  private override function resetLight() {
+    super.resetLight();
+    if (connections != null) {
+      for (connector in connections) {
+        connector.unlight();
+      }
     }
   }
 

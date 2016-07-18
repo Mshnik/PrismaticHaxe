@@ -26,6 +26,17 @@ import common.Point;
    **/
   public var position(default, set) : Point;
 
+  /** An array of light going into the this hex.
+   * Has length Hex.SIDES, correct indexing is handled by correctForOrientation(..)
+   **/
+  private var lightIn : Array<Color>;
+
+  /**
+   * An array of light coming out of this hex
+   * Has length Hex.SIDES, correct indexing is handled by correctForOrientation(..)
+   * */
+  private var lightOut : Array<Color>;
+
   /** A listener to call when this rotates. Args are (this, oldOrientation) */
   public var rotationListener : Hex->Int -> Void;
 
@@ -33,6 +44,8 @@ import common.Point;
     position = Point.get(-1,-1);
     orientation = 0;
     acceptConnections = false;
+    lightIn = Util.arrayOf(Color.NONE, Hex.SIDES);
+    lightOut = Util.arrayOf(Color.NONE, Hex.SIDES);
   }
 
   public function toString() {
@@ -69,4 +82,57 @@ import common.Point;
     return acceptConnections = b;
   }
 
+  /** Helper that corrects for the current orientation of the Prism.
+   * Corrects for accessing the given side. Should be called whenever accessing an aribtrary
+   * side of the Prism. Also mods to always be in range, in case of negatives or OOB.
+   **/
+  private inline function correctForOrientation(side : Int) : Int {
+    return Util.mod(orientation + side, Hex.SIDES);
+  }
+
+/** Returns the light coming on the given side (corrected for orientation) */
+  public inline function getLightIn(side : Int) : Color {
+    return lightIn[correctForOrientation(side)];
+  }
+
+  /** Returns a write-safe copy of the light entering this Hex */
+  public inline function getLightInArray() : Array<Color> {
+    var arr : Array<Color> = [];
+    for(i in 0...Hex.SIDES) {
+      arr[i] = getLightIn(i);
+    }
+    return arr;
+  }
+
+  /** Returns the light going out the given side (corrected for orientation) */
+  public inline function getLightOut(side : Int) : Color {
+    return lightOut[correctForOrientation(side)];
+  }
+
+  /** Returns a write-safe copy of the light leaving this Hex */
+  public inline function getLightOutArray() : Array<Color> {
+    var arr : Array<Color> = [];
+    for(i in 0...Hex.SIDES) {
+      arr[i] = getLightOut(i);
+    }
+    return arr;
+  }
+
+  /** Helper that resets the lighting status of this Hex to default (all unlit) */
+  private function resetLight() {
+    for(i in 0...Hex.SIDES) {
+      if(lightIn != null) lightIn[i] = Color.NONE;
+      if(lightOut != null) lightOut[i] = Color.NONE;
+    }
+  }
+
+  /**
+   * Abstract function to be implemented by subclasses.
+   * Called when light of color c is added on side.
+   * Should make alterations to lightIn and lightOut as necessary.
+   * Return is an array of the sides that are newly outputting light, for recursive use.
+   **/
+  public function addLightIn(side : Int, c : Color) : Array<Int> {
+    throw "Add Light not implemented";
+  }
 }
