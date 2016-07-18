@@ -32,7 +32,7 @@ class Util {
 
   /** Creates an empty (all null) array of length, for the given type */
 
-  @:generic public static function emptyArray<T>(ArrayType : Class<T>, length : Int) : Array<T> {
+  @:generic public inline static function emptyArray<T>(ArrayType : Class<T>, length : Int) : Array<T> {
     if (length < 0) {
       throw "Can't create array of length " + length;
     }
@@ -46,7 +46,7 @@ class Util {
   }
 
   /** Creates an array filled with the given T */
-  @:generic public static function arrayOf<T>(t : T, length : Int) : Array<T> {
+  @:generic public inline static function arrayOf<T>(t : T, length : Int) : Array<T> {
     var arr : Array<T> = [];
     for(i in 0...length) {
       arr.push(t);
@@ -57,11 +57,32 @@ class Util {
   /** Convienence function that maps each element in an Array<Array<T>>.
    * Can't fully map within Array2D because of the positionable requirement.
    **/
-  public static function map<T,S>(arr : Array<Array<T>>, f : T -> S) : Array<Array<S>> {
+  @:generic public inline static function map<T,S>(arr : Array<Array<T>>, f : T -> S) : Array<Array<S>> {
     var m = function(a : Array<T>) : Array<S> {
       return a.map(f);
     }
     return arr.map(m);
+  }
+
+  /** Fold Left operation, as usually defined functionally */
+  @:generic public inline static function foldLeft<T,R>(arr : Array<T>, start : R, f : T->R->R) : R {
+    for (t in arr) {
+      start = f(t,start);
+    }
+    return start;
+  }
+
+  /** Removes duplicates (using ==) from the given array. Removes in place, but returns a reference */
+  @:generic public static function removeDups<T>(arr : Array<T>) : Array<T> {
+    var i = 0;
+    while(i < arr.length) {
+      if (arr.indexOf(arr[i]) < i) {
+        arr.remove(arr[i]);
+      } else {
+        i++;
+      }
+    }
+    return arr;
   }
 
   /**

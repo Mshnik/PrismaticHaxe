@@ -65,4 +65,13 @@ class TestUtil extends TestCase {
     var arr2 = [[5,2],[3,4]];
     assertArrayEquals(arr2, Util.map(arr, function(s : String){return s.length;}));
   }
+
+  public function testFold() {
+    assertEquals(10, Util.foldLeft([1,2,3,4],0,function(a,b){return a+b;}));
+    assertEquals(6, Util.foldLeft(["A","BC","DEF"],0,function(a,b){return a.length + b;}));
+  }
+
+  public function removeDups() {
+    assertArrayEquals([1,2,3], Util.removeDups([1,1,1,1,2,2,2,3,3,3,1,2]));
+  }
 }
