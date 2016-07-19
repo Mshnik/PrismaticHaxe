@@ -118,12 +118,20 @@ import common.Point;
     return arr;
   }
 
-  /** Helper that resets the lighting status of this Hex to default (all unlit) */
-  private function resetLight() {
+  /** Resets the lighting status of this Hex to default (all unlit).
+   * Returns an array of the sides that this was providing light to, so recursive recalculation
+   * can be done
+   **/
+  public function resetLight() : Array<Int> {
+    var arr : Array<Int> = [];
     for(i in 0...Hex.SIDES) {
       if(lightIn != null) lightIn[i] = Color.NONE;
-      if(lightOut != null) lightOut[i] = Color.NONE;
+      if(lightOut != null) {
+        lightOut[i] = Color.NONE;
+        arr.push(i);
+      }
     }
+    return arr;
   }
 
   /**

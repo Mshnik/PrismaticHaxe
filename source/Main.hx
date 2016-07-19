@@ -45,6 +45,7 @@ class Main extends Sprite {
     r.add(new TestHex());
     r.add(new TestPrism());
     r.add(new TestSource());
+    r.add(new TestSink());
 
     r.run();
     trace(r.result);

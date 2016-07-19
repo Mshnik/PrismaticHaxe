@@ -77,13 +77,13 @@ class Prism extends Hex {
     return newLightOut;
   }
 
-  private override function resetLight() {
-    super.resetLight();
+  public override function resetLight() : Array<Int> {
     if (connections != null) {
       for (connector in connections) {
         connector.unlight();
       }
     }
+    return super.resetLight();
   }
 
   public override function set_acceptConnections(accept : Bool) : Bool {
