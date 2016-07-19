@@ -1,5 +1,6 @@
 package test;
 
+import game.Color;
 import common.Util;
 import common.Point;
 import game.Hex;
@@ -52,6 +53,37 @@ class TestHex extends TestCase {
 
     h.shift(1,1);
     assertEquals(Point.get(2,2), h.position);
+  }
+
+  public function testLightInLightOut() {
+    var h = SimpleHex.create();
+
+    var expectedLight : Array<Color> = Util.arrayOf(Color.NONE, Hex.SIDES);
+
+    var arr = h.addLightIn(0, Color.RED);
+    expectedLight[0] = Color.RED;
+    assertArrayEquals([0], arr);
+    assertArrayEquals(expectedLight, h.getLightInArray());
+    assertArrayEquals(expectedLight, h.getLightOutArray());
+
+    arr = h.addLightIn(0,Color.BLUE);
+    expectedLight[0] = Color.BLUE;
+    assertArrayEquals([0], arr);
+    assertArrayEquals(expectedLight, h.getLightInArray());
+    assertArrayEquals(expectedLight, h.getLightOutArray());
+
+    arr = h.addLightIn(1,Color.YELLOW);
+    expectedLight[1] = Color.YELLOW;
+    assertArrayEquals([1], arr);
+    assertArrayEquals(expectedLight, h.getLightInArray());
+    assertArrayEquals(expectedLight, h.getLightOutArray());
+
+    arr = h.resetLight();
+    expectedLight[0] = Color.NONE;
+    expectedLight[1] = Color.NONE;
+    assertArrayEquals([0, 1], arr);
+    assertArrayEquals(expectedLight, h.getLightInArray());
+    assertArrayEquals(expectedLight, h.getLightOutArray());
   }
 
 }

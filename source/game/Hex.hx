@@ -127,8 +127,10 @@ import common.Point;
     for(i in 0...Hex.SIDES) {
       if(lightIn != null) lightIn[i] = Color.NONE;
       if(lightOut != null) {
+        if (lightOut[i] != Color.NONE) {
+          arr.push(i);
+        }
         lightOut[i] = Color.NONE;
-        arr.push(i);
       }
     }
     return arr;
