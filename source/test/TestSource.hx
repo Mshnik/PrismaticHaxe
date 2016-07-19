@@ -1,7 +1,7 @@
 package test;
-import game.Hex;
-import game.Color;
-import game.Source;
+import model.Hex;
+import model.Color;
+import model.Source;
 class TestSource extends TestCase {
 
   public function testConstructionAndAddColors() {

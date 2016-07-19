@@ -1,4 +1,4 @@
-package game;
+package model;
 import common.Util;
 
 class Source extends Hex {

@@ -1,9 +1,9 @@
 package test;
 
-import game.Color;
+import model.Color;
 import common.Util;
 import common.Point;
-import game.Hex;
+import model.Hex;
 
 class TestHex extends TestCase {
 

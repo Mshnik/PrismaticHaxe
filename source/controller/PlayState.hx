@@ -1,7 +1,7 @@
 package controller;
 
-import game.Hex;
-import game.Board;
+import model.Hex;
+import model.Board;
 import view.BoardView;
 import flixel.util.FlxColor;
 import flixel.FlxG;

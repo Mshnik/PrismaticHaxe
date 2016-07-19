@@ -1,6 +1,6 @@
 package view;
 
-import game.Hex;
+import model.Hex;
 import common.Util;
 import common.Positionable;
 import common.Point;

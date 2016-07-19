@@ -1,4 +1,4 @@
-package game;
+package model;
 class Sink extends Hex {
 
   private var currentColor : Color;

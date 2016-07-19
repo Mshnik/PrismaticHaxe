@@ -1,4 +1,4 @@
-package game;
+package model;
 
 /**
  * An instance represents a single hex tile.

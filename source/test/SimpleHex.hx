@@ -1,7 +1,7 @@
 package test;
 
-import game.Color;
-import game.Hex;
+import model.Color;
+import model.Hex;
 
 /** A simple hex extension, for testing.
  *  Functions as a prism that just reflects all light sent in back out.

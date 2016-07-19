@@ -1,4 +1,4 @@
-package game;
+package model;
 
 import common.Array2D;
 class Board extends Array2D<Hex> {

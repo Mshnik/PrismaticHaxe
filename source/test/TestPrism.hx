@@ -1,11 +1,11 @@
 package test;
 import common.Positionable.Tile;
 import common.Util;
-import game.Hex;
+import model.Hex;
 import common.Point;
-import game.Color;
-import game.Prism;
-import game.Prism.ColorConnector;
+import model.Color;
+import model.Prism;
+import model.Prism.ColorConnector;
 
 class TestPrism extends TestCase {
 

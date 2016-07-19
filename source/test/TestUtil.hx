@@ -1,6 +1,6 @@
 package test;
 import common.Util;
-import game.Hex;
+import model.Hex;
 class TestUtil extends TestCase {
 
   public function testMod() {

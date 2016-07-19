@@ -1,4 +1,4 @@
-package game;
+package model;
 class ColorUtil {
   private function new() {
     throw "Cannont Instantiate ColorUtil";
