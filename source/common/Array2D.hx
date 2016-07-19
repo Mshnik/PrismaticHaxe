@@ -56,7 +56,7 @@ package common;
   }
 
   /** Returns a copy of the underlying 2D array representing the Array2D.
-   * The arrays are all new instances, but the Ts stored are the same references as in the
+   * The arrays are all Source instances, but the Ts stored are the same references as in the
    * true Array2D.
    */
 

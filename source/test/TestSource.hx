@@ -1,11 +1,11 @@
 package test;
 import game.Hex;
 import game.Color;
-import game.Spark;
-class TestSpark extends TestCase {
+import game.Source;
+class TestSource extends TestCase {
 
   public function testConstructionAndAddColors() {
-    var s = new Spark();
+    var s = new Source();
     assertArrayEquals([Color.NONE], s.getAvailableColors());
     assertEquals(Color.NONE, s.getCurrentColor());
 
@@ -49,7 +49,7 @@ class TestSpark extends TestCase {
   }
 
   public function testLightInOut() {
-    var s = new Spark();
+    var s = new Source();
 
     for(i in 0...Hex.SIDES) {
       assertEquals(Color.NONE, s.getLightOut(i));

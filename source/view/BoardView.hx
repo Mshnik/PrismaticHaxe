@@ -53,7 +53,7 @@ class BoardView extends Array2D<HexSprite> {
   }
 
   /** In addition to setting element, removes old element from group,
-   *   adds and sets position of new element
+   *   adds and sets position of Source element
    **/
   public override function set(row : Int, col : Int, h : HexSprite) : HexSprite {
     var oldH = get(row,col);

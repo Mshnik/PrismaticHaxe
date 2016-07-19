@@ -1,7 +1,7 @@
 package game;
 import common.Util;
 
-class Spark extends Hex {
+class Source extends Hex {
 
   private var availableColors(null, null) : Array<Color>;
   private var currentIndex(default, set) : Int;
@@ -24,7 +24,7 @@ class Spark extends Hex {
    * If adding a duplicate, does nothing
    * Returns a reference to this for chaining
    **/
-  public function addColor(c : Color) : Spark {
+  public function addColor(c : Color) : Source {
     if (c == Color.NONE){
       return this;
     }
@@ -43,13 +43,13 @@ class Spark extends Hex {
   }
 
   /** Rotates to use the next available color */
-  public function useNextColor() : Spark {
+  public function useNextColor() : Source {
     currentIndex++;
     return this;
   }
 
   /** Rotates to use the previous available color */
-  public function usePreviousColor() : Spark {
+  public function usePreviousColor() : Source {
     currentIndex--;
     return this;
   }
