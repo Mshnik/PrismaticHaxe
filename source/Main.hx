@@ -1,13 +1,16 @@
 package;
 
-import flixel.addons.plugin.FlxMouseControl;
-import flixel.FlxG;
-import common.Point;
 import flash.utils.Timer;
 import openfl.Lib;
-import test.*;
 import openfl.display.Sprite;
+
+import flixel.addons.plugin.FlxMouseControl;
+import flixel.FlxG;
 import flixel.FlxGame;
+
+import common.Point;
+import controller.PlayState;
+import test.*;
 
 class Main extends Sprite {
 

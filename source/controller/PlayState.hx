@@ -1,4 +1,4 @@
-package;
+package controller;
 
 import game.Hex;
 import game.Board;
