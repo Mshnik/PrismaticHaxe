@@ -11,6 +11,32 @@ class TestHex extends TestCase {
     assertTrue(h.orientation >= 0 && h.orientation < Hex.SIDES);
   }
 
+  public function testIDs() {
+    var h = SimpleHex.create();
+    assertEquals(1, h.id);
+
+    var h2 = SimpleHex.create();
+    assertEquals(1, h.id);
+    assertEquals(2, h2.id);
+
+    var h3 = SimpleHex.create();
+    assertEquals(1, h.id);
+    assertEquals(2, h2.id);
+    assertEquals(3, h3.id);
+
+    Hex.resetIDs();
+
+    var h4 = SimpleHex.create();
+    assertEquals(1, h.id);
+    assertEquals(2, h2.id);
+    assertEquals(3, h3.id);
+    assertEquals(1, h4.id);
+
+    var arr = [h2,h3,h];
+    arr.sort(function(a,b){return a.id - b.id;});
+    assertArrayEquals([h,h2,h3], arr);
+  }
+
   public function testRotation() {
     var h : SimpleHex = new SimpleHex();
     assertEquals(0, h.orientation);

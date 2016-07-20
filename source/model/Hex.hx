@@ -10,7 +10,17 @@ import common.Util;
 import common.Point;
 @:abstract class Hex implements Positionable {
 
+  /** 0 Used to denote uninitialized ID, thus 1 is the first valid ID */
+  private static var nextID : Int = 1;
+
+  public static function resetIDs() {
+    nextID = 1;
+  }
+
   public inline static var SIDES : Int = 6;
+
+  /** The unique id assigned to this Hex upon instantiation. */
+  @final public var id(default, set) : Int;
 
   /** Current rotational orientation of this hex. Always in the range [0-(SIDES-1)] */
   public var orientation(default, set) : Int;
@@ -38,18 +48,26 @@ import common.Point;
   private var lightOut : Array<Color>;
 
   /** A listener to call when this rotates. Args are (this, oldOrientation) */
-  public var rotationListener : Hex->Int -> Void;
+  public var rotationListener : Hex->Int->Void;
 
   public function new() {
     position = Point.get(-1,-1);
     orientation = 0;
     acceptConnections = false;
+    id = nextID++;
     lightIn = Util.arrayOf(Color.NONE, Hex.SIDES);
     lightOut = Util.arrayOf(Color.NONE, Hex.SIDES);
   }
 
   public function toString() {
-    return "orientation=" + orientation;
+    return "id= " + id + ", orientation=" + orientation;
+  }
+
+  public function set_id(i : Int) : Int {
+    if (id != 0) {
+      throw "Can't reset final ID field";
+    }
+    return id = i;
   }
 
   public inline function set_position(newPosition : Point) : Point {

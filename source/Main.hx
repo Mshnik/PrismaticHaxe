@@ -1,5 +1,6 @@
 package;
 
+import model.Hex;
 import flash.utils.Timer;
 import openfl.Lib;
 import openfl.display.Sprite;
@@ -28,6 +29,7 @@ class Main extends Sprite {
 
   function prepForGame() {
     Point.clearPool();
+    Hex.resetIDs();
   }
 
   function runGame() {
