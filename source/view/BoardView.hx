@@ -41,15 +41,29 @@ class BoardView extends Array2D<HexSprite> {
   }
 
   /** In addition to shifting array, shifts everything down by one row */
-  public override function addRowTop() {
+  public override function addRowTop() : BoardView {
     super.addRowTop();
     spriteGroup.forEach(setGraphicPosition);
+    return this;
+  }
+
+  /** Overridden to narrow return type */
+  public override function addRowBottom() : BoardView {
+    super.addRowBottom();
+    return this;
   }
 
   /** In addition to shifting array, shifts everything right by one column */
-  public override function addColLeft() {
+  public override function addColLeft() : BoardView {
     super.addColLeft();
     spriteGroup.forEach(setGraphicPosition);
+    return this;
+  }
+
+  /** Overridden to narrow return type */
+  public override function addColRight() : BoardView {
+    super.addColRight();
+    return this;
   }
 
   /** In addition to setting element, removes old element from group,
@@ -79,16 +93,30 @@ class BoardView extends Array2D<HexSprite> {
   /** In addition to swapping the elements, makes sure their graphic positions stay up to date
    * and they stay in the group
    **/
-  public override function swap(p1 : Point, p2 : Point) : Void {
+  public override function swap(p1 : Point, p2 : Point) : BoardView {
     super.swap(p1,p2);
     setGraphicPosition(spriteGroup.add(getAt(p1)));
     setGraphicPosition(spriteGroup.add(getAt(p2)));
+    return this;
+  }
+
+  /** Overridden to narrow return type */
+  public override function swapManyForward(locations : Array<Point>) : BoardView {
+    super.swapManyForward(locations);
+    return this;
+  }
+
+  /** Overridden to narrow return type */
+  public override function swapManyBackward(locations : Array<Point>) : BoardView {
+    super.swapManyBackward(locations);
+    return this;
   }
 
   /** In addition to shifting the array, makes sure their graphic positions stay up to date */
-  public override function shift(dRow : Int, dCol : Int) : Void {
+  public override function shift(dRow : Int, dCol : Int) : BoardView {
     super.shift(dRow, dCol);
     spriteGroup.forEach(setGraphicPosition);
+    return this;
   }
 
   /** Overridden to narrow return type */

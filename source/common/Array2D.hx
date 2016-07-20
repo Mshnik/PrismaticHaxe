@@ -90,54 +90,60 @@ package common;
     return this;
   }
 
-  /** Adds an empty row (full of nulls) to the top of the Array2D */
-
-  public function addRowTop() : Void {
+  /** Adds an empty row (full of nulls) to the top of the Array2D.
+   * Returns this.
+  **/
+  public function addRowTop() : Array2D<T> {
     var arr : Array<T> = [];
     for (i in 0...getWidth()) {
       arr.push(null);
     }
     vals.unshift(arr);
     modCount++;
+    return this;
   }
 
-  /** Adds an empty row (full of nulls) to the top of the Array2D */
-
-  public function addRowBottom() : Void {
+  /** Adds an empty row (full of nulls) to the top of the Array2D.
+   * Returns this.
+  **/
+  public function addRowBottom() : Array2D<T> {
     var arr : Array<T> = [];
     for (i in 0...getWidth()) {
       arr.push(null);
     }
     vals.push(arr);
     modCount++;
+    return this;
   }
 
-  /** Adds an empty row (full of nulls) to the top of the Array2D */
-
-  public function addColLeft() : Void {
+  /** Adds an empty row (full of nulls) to the top of the Array2D
+  * Returns this.
+  **/
+  public function addColLeft() : Array2D<T> {
     for (arr in vals) {
       arr.unshift(null);
     }
     modCount++;
+    return this;
   }
 
-  /** Adds an empty row (full of nulls) to the top of the Array2D */
-
-  public function addColRight() : Void {
+  /** Adds an empty row (full of nulls) to the top of the Array2D
+   * Returns this.
+   **/
+  public function addColRight() : Array2D<T> {
     for (arr in vals) {
       arr.push(null);
     }
     modCount++;
+    return this;
   }
 
   /** Returns the T at the given row,col */
-
   public inline function get(row : Int, col : Int) : T {
     return vals[row][col];
   }
 
   /** Returns the T at the given point */
-
   public inline function getAt(p : Point) : T {
     return get(p.row, p.col);
   }
@@ -182,9 +188,9 @@ package common;
     return remove(p.row, p.col);
   }
 
-  /** Swaps the Ts at the given locations */
+  /** Swaps the Ts at the given locations, returns this. */
 
-  public function swap(p1 : Point, p2 : Point) : Void {
+  public function swap(p1 : Point, p2 : Point) : Array2D<T> {
     var h = get(p1.row, p1.col);
     var h2 = get(p2.row, p2.col);
     set(p1.row, p1.col, h2);
@@ -194,25 +200,29 @@ package common;
     if (h != null) h.position = p2;
 
     modCount++;
+    return this;
   }
 
   /** Swaps the Ts at the given locations. Moves each to the next location in the list.
    * Thus if given [p1,p2,p3,p4] which have [h1,h2,h3,h4], ending locations are [h4,h1,h2,h3]
+   * Returns this.
    **/
 
-  public inline function swapManyForward(locations : Array<Point>) : Void {
+  public function swapManyForward(locations : Array<Point>) : Array2D<T> {
     if (locations.length > 1) {
       var l2 = locations.copy();
       l2.reverse();
       swapManyBackward(l2);
     }
+    return this;
   }
 
   /** Swaps the Ts at the given locations. Moves each to the previous location in the list.
    * Thus if given [p1,p2,p3,p4] which have [h1,h2,h3,h4], ending locations are [h2,h3,h4,h1]
+   * Returns this.
    **/
 
-  public inline function swapManyBackward(locations : Array<Point>) : Void {
+  public function swapManyBackward(locations : Array<Point>) : Array2D<T> {
     if (locations.length > 1) {
       var iter1 : Iterator<Point> = locations.iterator();
       var iter2 : Iterator<Point> = locations.iterator();
@@ -222,14 +232,16 @@ package common;
         swap(iter1.next(), iter2.next());
       }
     }
+    return this;
   }
 
   /** Shifts/Rotates the Ts in this Array2D by the given deltas.
    * Positive values shift down and right, respectively, and negatives the opposite
-   * Doesn't change Array2D size; Ts that would be pushed off the Array2D wrap as necessary
+   * Doesn't change Array2D size; Ts that would be pushed off the Array2D wrap as necessary.
+   * Returns this.
    **/
 
-  public function shift(dRow : Int, dCol : Int) : Void {
+  public function shift(dRow : Int, dCol : Int) : Array2D<T> {
     if (dCol > 0) {
       for (i in 0...dCol) {
         Util.rotateForward(vals);
@@ -265,6 +277,7 @@ package common;
         t.position = Point.get(Util.mod(t.position.row + delta.row, getHeight()), Util.mod(t.position.col + delta.col, getWidth()));
       }
     }
+    return this;
   }
 
   /**
