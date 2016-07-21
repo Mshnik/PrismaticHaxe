@@ -108,6 +108,6 @@ class HexSprite extends BaseSprite implements Positionable {
 
   /** Returns the current orientation. Result is only dependable when this isn't currently rotating */
   public inline function getOrientation() : Int {
-    return Util.mod(Std.int(angle/ROTATION_DISTANCE),Hex.SIDES);
+    return Util.mod(Std.int(-angle/ROTATION_DISTANCE),Hex.SIDES);
   }
 }

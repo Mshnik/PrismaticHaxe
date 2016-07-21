@@ -55,7 +55,7 @@ class TestHex extends TestCase {
 
     var h2 = new SimpleHex();
     for (i in 1...14) {
-      h2.rotateClockwise();
+      h2.rotateCounterClockwise();
       checkValidOrientation(h2);
       assertEquals(Util.mod(i, Hex.SIDES), h2.orientation);
       assertEquals(i, h2.rotations);
@@ -63,7 +63,7 @@ class TestHex extends TestCase {
 
     var h3 = new SimpleHex();
     for (i in 1...14) {
-      h3.rotateCounterClockwise();
+      h3.rotateClockwise();
       checkValidOrientation(h3);
       assertEquals(Util.mod(-i, Hex.SIDES), h3.orientation);
       assertEquals(i, h3.rotations);

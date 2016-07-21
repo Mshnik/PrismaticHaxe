@@ -88,7 +88,7 @@ class TestSource extends TestCase {
       assertEquals(Color.RED, s.getLightOut(i));
     }
 
-    s.rotateCounterClockwise();
+    s.rotateClockwise();
     assertEquals(Color.RED, s.getLightIn(1));
     assertEquals(Color.YELLOW, s.getLightIn(2));
     for(i in 0...Hex.SIDES) {

@@ -96,7 +96,7 @@ class TestPrism extends TestCase {
     assertFalse(p.getConnector(1,2).isLit());
 
     //Let's start rotating!
-    p.rotateCounterClockwise(); //all old indexes now +1
+    p.rotateClockwise(); //all old indexes now +1
     assertEquals(Color.BLUE, p.getConnector(1,2).baseColor);
     assertEquals(Color.BLUE, p.getConnector(1,3).baseColor);
     assertEquals(Color.GREEN, p.getConnector(2,3).baseColor);
@@ -106,7 +106,7 @@ class TestPrism extends TestCase {
     assertEquals(null, p.getConnector(0,1));
     assertEquals(null, p.getConnector(0,2));
 
-    p.rotateClockwise();
+    p.rotateCounterClockwise();
     assertEquals(Color.BLUE, p.getConnector(0,1).baseColor);
     assertEquals(Color.BLUE, p.getConnector(0,2).baseColor);
     assertEquals(Color.GREEN, p.getConnector(1,2).baseColor);
@@ -114,7 +114,7 @@ class TestPrism extends TestCase {
     assertFalse(p.getConnector(0,2).isLit());
     assertFalse(p.getConnector(1,2).isLit());
 
-    p.rotateCounterClockwise();
+    p.rotateClockwise();
     assertEquals(Color.BLUE, p.getConnector(1,2).baseColor);
     assertEquals(Color.BLUE, p.getConnector(1,3).baseColor);
     assertEquals(Color.GREEN, p.getConnector(2,3).baseColor);
@@ -130,7 +130,7 @@ class TestPrism extends TestCase {
     assertEquals(Color.BLUE, p.getConnector(1,3).baseColor);
     assertEquals(Color.GREEN, p.getConnector(2,3).baseColor);
 
-    p.rotateClockwise();
+    p.rotateCounterClockwise();
     assertEquals(Color.YELLOW, p.getConnector(5,0).baseColor);
     assertEquals(Color.BLUE, p.getConnector(0,1).baseColor);
     assertEquals(Color.BLUE, p.getConnector(0,2).baseColor);
@@ -247,7 +247,7 @@ class TestPrism extends TestCase {
 
     //Test rotation
     var p2 = new Prism().addConnector(0,1,Color.RED);
-    p2.rotateCounterClockwise();
+    p2.rotateClockwise();
     arr = p2.addLightIn(1, Color.RED);
     expectedLightIn[1] = Color.RED;
     expectedLightOut[2] = Color.RED;

@@ -22,7 +22,9 @@ import common.Point;
   /** The unique id assigned to this Hex upon instantiation. */
   @final public var id(default, set) : Int;
 
-  /** Current rotational orientation of this hex. Always in the range [0-(SIDES-1)] */
+  /** Current rotational orientation of this hex. Always in the range [0-(SIDES-1)].
+   * Value is the side index currently point up.
+   **/
   public var orientation(default, set) : Int;
 
   /** True if this hex is currently allowed to connect to adjacent hexes.
@@ -89,11 +91,11 @@ import common.Point;
   }
 
   public function rotateClockwise() {
-    orientation = orientation + 1;
+    orientation = orientation - 1;
   }
 
   public function rotateCounterClockwise() {
-    orientation = orientation - 1;
+    orientation = orientation + 1;
   }
 
   public function set_acceptConnections(b : Bool) : Bool {
