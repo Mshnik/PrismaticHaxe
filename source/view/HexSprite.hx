@@ -14,6 +14,8 @@ using common.IntExtender;
 class HexSprite extends BaseSprite implements Positionable {
 
   public inline static var SCALE = 1.0;
+  public inline static var WIDTH = 100;
+  public inline static var HEIGHT = 100;
 
   private inline static var ROTATION_INC : Float = 3.0;
   private inline static var ROTATION_DISTANCE : Int = 60;
