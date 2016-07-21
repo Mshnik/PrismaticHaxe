@@ -1,8 +1,10 @@
 package model;
 
-import common.Util;
 import common.Point;
 import common.Array2D;
+
+using common.IntExtender;
+
 class Board extends Array2D<Hex> {
 
   private var sources : Array<Source>;
@@ -201,7 +203,7 @@ class LightPusher {
 
   public static inline function get(startLoc : Point, c : Color, exitSide : Int) : LightPusher {
     return new LightPusher(startLoc.add(Point.NEIGHBOR_DELTAS[startLoc.col%2][exitSide]),
-                           c, Util.mod(exitSide + Std.int(Hex.SIDES/2), Hex.SIDES));
+                           c, (exitSide + Std.int(Hex.SIDES/2)).mod(Hex.SIDES));
   }
 
   public inline function toString() : String {

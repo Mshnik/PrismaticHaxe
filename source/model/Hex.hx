@@ -8,6 +8,9 @@ package model;
 import common.Positionable;
 import common.Util;
 import common.Point;
+
+using common.IntExtender;
+
 @:abstract class Hex implements Positionable {
 
   /** 0 Used to denote uninitialized ID, thus 1 is the first valid ID */
@@ -83,7 +86,7 @@ import common.Point;
 
   public function set_orientation(newOrientation : Int) : Int {
     var x = orientation;
-    var x2 = orientation = Util.mod(newOrientation, SIDES);
+    var x2 = orientation = newOrientation.mod(SIDES);
     if (rotationListener != null && x != x2) {
       rotationListener(this,x);
     }
@@ -107,7 +110,7 @@ import common.Point;
    * side of the Prism. Also mods to always be in range, in case of negatives or OOB.
    **/
   public inline function correctForOrientation(side : Int) : Int {
-    return Util.mod(orientation + side, Hex.SIDES);
+    return (orientation + side).mod(Hex.SIDES);
   }
 
 /** Returns the light coming on the given side (corrected for orientation) */

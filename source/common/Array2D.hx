@@ -1,5 +1,8 @@
 package common;
 
+using common.ArrayExtender;
+using common.IntExtender;
+
 /**
  * Subclasses should write an iterator() method. Would put it here, but the typing system
  * seems a bit broken.
@@ -252,26 +255,26 @@ package common;
   public function shift(dRow : Int, dCol : Int) : Array2D<T> {
     if (dCol > 0) {
       for (i in 0...dCol) {
-        Util.rotateForward(vals);
+        vals.rotateForward();
       }
       modCount++;
     } else if (dCol < 0) {
       for (i in 0...(-dCol)) {
-        Util.rotateBackward(vals);
+        vals.rotateBackward();
       }
       modCount++;
     }
     if (dRow > 0) {
       for (i in 0...dRow) {
         for (r in 0...getHeight()) {
-          Util.rotateForward(vals[r]);
+          vals[r].rotateForward();
         }
       }
       modCount++;
     } else if (dRow < 0) {
       for (i in 0...(-dRow)) {
         for (r in 0...getHeight()) {
-          Util.rotateBackward(vals[r]);
+          vals[r].rotateBackward();
         }
       }
       modCount++;
@@ -282,7 +285,7 @@ package common;
       var iter = new Array2DIterator<T>(this);
       while (iter.hasNext()) {
         var t : T = iter.next();
-        t.position = Point.get(Util.mod(t.position.row + delta.row, getHeight()), Util.mod(t.position.col + delta.col, getWidth()));
+        t.position = Point.get((t.position.row + delta.row).mod(getHeight()), (t.position.col + delta.col).mod(getWidth()));
       }
     }
     return this;

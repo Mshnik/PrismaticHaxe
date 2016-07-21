@@ -1,5 +1,6 @@
 package model;
-import common.Util;
+
+using common.IntExtender;
 
 class Source extends Hex {
 
@@ -64,7 +65,7 @@ class Source extends Hex {
   }
 
   public function set_currentIndex(i : Int) : Int {
-      currentIndex = Util.mod(i, availableColors.length);
+      currentIndex = i.mod(availableColors.length);
       updateLightOut();
       return currentIndex;
   }

@@ -5,6 +5,8 @@ import view.HexSprite;
 import common.Array2D;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 
+using common.IntExtender;
+
 class BoardView extends Array2D<HexSprite> {
 
   /** Graphic height of a row of hexes. Amount to shift when a row moves. */
@@ -24,7 +26,7 @@ class BoardView extends Array2D<HexSprite> {
   /** Helper function for setting position of a HexSprite based on its row,col position */
   private static inline function setGraphicPosition(h : HexSprite) {
     if (h != null) {
-      h.y = (h.position.row + Util.mod(h.position.col,2)/2) * ROW_HEIGHT;
+      h.y = (h.position.row + h.position.col.mod(2)/2) * ROW_HEIGHT;
       h.x = h.position.col * COL_WIDTH;
     }
   }

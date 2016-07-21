@@ -5,6 +5,8 @@ import common.Util;
 import common.Point;
 import model.Hex;
 
+using common.IntExtender;
+
 class TestHex extends TestCase {
 
   private inline function checkValidOrientation(h : Hex) {
@@ -45,7 +47,7 @@ class TestHex extends TestCase {
     for (i in 1...14) {
       h.orientation = i;
       checkValidOrientation(h);
-      assertEquals(Util.mod(i, Hex.SIDES), h.orientation);
+      assertEquals(i.mod(Hex.SIDES), h.orientation);
       assertEquals(i, h.rotations);
 
       //Check that setting orientation to existing orientation doesn't call onRotate
@@ -57,7 +59,7 @@ class TestHex extends TestCase {
     for (i in 1...14) {
       h2.rotateCounterClockwise();
       checkValidOrientation(h2);
-      assertEquals(Util.mod(i, Hex.SIDES), h2.orientation);
+      assertEquals(i.mod(Hex.SIDES), h2.orientation);
       assertEquals(i, h2.rotations);
     }
 
@@ -65,7 +67,7 @@ class TestHex extends TestCase {
     for (i in 1...14) {
       h3.rotateClockwise();
       checkValidOrientation(h3);
-      assertEquals(Util.mod(-i, Hex.SIDES), h3.orientation);
+      assertEquals((-i).mod(Hex.SIDES), h3.orientation);
       assertEquals(i, h3.rotations);
     }
   }

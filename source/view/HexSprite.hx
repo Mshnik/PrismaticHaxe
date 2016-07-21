@@ -1,7 +1,6 @@
 package view;
 
 import model.Hex;
-import common.Util;
 import common.Positionable;
 import common.Point;
 import flixel.input.FlxInput.FlxInputState;
@@ -9,6 +8,9 @@ import flixel.input.keyboard.FlxKey;
 import flixel.addons.display.FlxExtendedSprite;
 import flixel.math.FlxPoint;
 import flixel.FlxG;
+
+using common.IntExtender;
+
 class HexSprite extends BaseSprite implements Positionable {
 
   public inline static var SCALE = 1.0;
@@ -108,6 +110,6 @@ class HexSprite extends BaseSprite implements Positionable {
 
   /** Returns the current orientation. Result is only dependable when this isn't currently rotating */
   public inline function getOrientation() : Int {
-    return Util.mod(Std.int(-angle/ROTATION_DISTANCE),Hex.SIDES);
+    return Std.int(-angle/ROTATION_DISTANCE).mod(Hex.SIDES);
   }
 }
