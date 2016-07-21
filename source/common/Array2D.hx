@@ -51,8 +51,12 @@ package common;
     else return vals[0].length;
   }
 
-  public inline function isInBounds(p : Point) : Bool {
-    return p.row >= 0 && p.col >= 0 && p.row < getHeight() && p.col < getWidth();
+  public inline function isInBounds(row : Int, col : Int) : Bool {
+    return row >= 0 && col >= 0 && row < getHeight() && col < getWidth();
+  }
+
+  public inline function isPointInBounds(p : Point) : Bool {
+    return isInBounds(p.row, p.col);
   }
 
   /** Returns a copy of the underlying 2D array representing the Array2D.
@@ -138,14 +142,18 @@ package common;
     return this;
   }
 
-  /** Returns the T at the given row,col */
-  public inline function get(row : Int, col : Int) : T {
-    return vals[row][col];
+  /** Returns the T at the given row,col. If safe, returns null if OOB */
+  public inline function get(row : Int, col : Int, safe : Bool = false) : T {
+    if (safe && ! isInBounds(row, col)) {
+      return null;
+    } else {
+      return vals[row][col];
+    }
   }
 
   /** Returns the T at the given point */
-  public inline function getAt(p : Point) : T {
-    return get(p.row, p.col);
+  public inline function getAt(p : Point, safe : Bool = false) : T {
+    return get(p.row, p.col, safe);
   }
 
   /** Puts a T at the given location. If there is already a t there, overwrites.
@@ -292,6 +300,21 @@ package common;
       }
     }
     return this;
+  }
+
+  /** Returns the elements located at the neighbors of the given point
+   * Nulls put in place of OOB locations.
+   * If filterNulls, doesn't add OOB or null elements
+   **/
+  public function getNeighborsOf(p : Point, filterNulls : Bool = false) : Array<T> {
+    var arr : Array<T> = [];
+    for(n in p.getNeighbors()) {
+      var t = getAt(n, true);
+      if (t != null || !filterNulls) {
+        arr.push(t);
+      }
+    }
+    return arr;
   }
 }
 

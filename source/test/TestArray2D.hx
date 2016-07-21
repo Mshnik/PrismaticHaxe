@@ -51,13 +51,13 @@ class TestArray2D extends TestCase {
     b.addColRight();
     assertEquals(1, b.getHeight());
     assertEquals(1, b.getWidth());
-    assertTrue(b.isInBounds(Point.get(0,0)));
-    assertFalse(b.isInBounds(Point.get(-1,0)));
-    assertFalse(b.isInBounds(Point.get(0,-1)));
-    assertFalse(b.isInBounds(Point.get(-1,-1)));
-    assertFalse(b.isInBounds(Point.get(1,0)));
-    assertFalse(b.isInBounds(Point.get(0,1)));
-    assertFalse(b.isInBounds(Point.get(1,1)));
+    assertTrue(b.isInBounds(0,0));
+    assertFalse(b.isInBounds(-1,0));
+    assertFalse(b.isInBounds(0,-1));
+    assertFalse(b.isInBounds(-1,-1));
+    assertFalse(b.isInBounds(1,0));
+    assertFalse(b.isInBounds(0,1));
+    assertFalse(b.isInBounds(1,1));
     assertArrayEquals([[null]], b.asNestedArrays());
 
     b.addRowTop();
@@ -71,11 +71,11 @@ class TestArray2D extends TestCase {
 
     var b2 = new Array2D<SimplePositionable>();
     b2.ensureSize(2, 2);
-    assertTrue(b2.isInBounds(Point.get(0,0)));
-    assertTrue(b2.isInBounds(Point.get(1,0)));
-    assertTrue(b2.isInBounds(Point.get(0,1)));
-    assertTrue(b2.isInBounds(Point.get(1,1)));
-    assertFalse(b2.isInBounds(Point.get(2,1)));
+    assertTrue(b2.isInBounds(0,0));
+    assertTrue(b2.isInBounds(1,0));
+    assertTrue(b2.isInBounds(0,1));
+    assertTrue(b2.isInBounds(1,1));
+    assertFalse(b2.isInBounds(2,1));
     assertArrayEquals([[null, null], [null, null]], b2.asNestedArrays());
   }
 
@@ -97,6 +97,13 @@ class TestArray2D extends TestCase {
     assertEquals(h, b.getAt(Point.get(0, 0)));
     b.removeAt(Point.get(0, 0));
     assertEquals(null, b.get(0, 0));
+
+    assertEquals(null, b.get(-1,0,true));
+    assertEquals(null, b.get(0,-1,true));
+    assertEquals(null, b.get(-2,-2,true));
+    assertEquals(null, b.get(5,4,true));
+    assertEquals(null, b.get(3,5,true));
+    assertEquals(null, b.get(10,10,true));
   }
 
   public function testSimplePositionableSwapping() {
@@ -273,6 +280,24 @@ class TestArray2D extends TestCase {
     while(iter.hasNext()) {
       assertEquals(5, iter.next().data);
     }
+  }
+
+  public function testGetNeighbors() {
+    var b = new Array2D<Tile<Int>>().ensureSize(3,3);
+
+    assertArrayEquals([null,null,null,null,null,null], b.getNeighborsOf(Point.get(1,1)));
+    assertArrayEquals([], b.getNeighborsOf(Point.get(1,1),true));
+
+
+    var t = b.set(0,1,Tile.wrap(1));
+    assertArrayEquals([t,null,null,null,null,null], b.getNeighborsOf(Point.get(1,1)));
+    assertArrayEquals([t], b.getNeighborsOf(Point.get(1,1),true));
+
+    var t2 = b.set(2,1,Tile.wrap(3));
+    assertArrayEquals([t,null,null,t2,null,null], b.getNeighborsOf(Point.get(1,1)));
+    assertArrayEquals([t,t2], b.getNeighborsOf(Point.get(1,1),true));
+
+    assertArrayEquals([null,null,t,null,null,null], b.getNeighborsOf(Point.get(0,0)));
   }
 }
 
