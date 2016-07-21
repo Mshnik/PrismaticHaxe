@@ -1,5 +1,6 @@
 package model;
 
+import common.Util;
 import common.Point;
 import common.Array2D;
 class Board extends Array2D<Hex> {
@@ -135,6 +136,76 @@ class Board extends Array2D<Hex> {
   public override function fillWith(elmCreator : Void->Hex) : Board {
     super.fillWith(elmCreator);
     return this;
+  }
+
+  /** Causes the board to relight entirely. */
+  public function relight() {
+
+    //First, remove light from the whole board.
+    for(h in this) {
+      h.resetLight();
+    }
+
+    var queue : Array<LightPusher> = [];
+    //Setup - all sources push their color of light out in all directions
+    for(s in sources) {
+      s.updateLightOut();
+      for(i in 0...Hex.SIDES) {
+        queue.push(LightPusher.get(s.position, s.getCurrentColor(), i));
+      }
+    }
+
+    //Iteration - pop light pusher, push light in, add pushers for any continuing light
+    while (queue.length > 0) {
+      var l = queue.shift();
+      var h : Hex = getAt(l.destination, true);
+      if (h != null) {
+        var newOut = h.addLightIn(h.correctForOrientation(l.inDirection),l.color);
+        for (x in newOut) {
+          queue.push(LightPusher.get(h.position,h.getLightOut(x),x));
+        }
+      }
+    }
+  }
+//
+//  /** Updates the set connections attribute of the given hex. If this causes a change, relights */
+//  public function setAcceptConnections(row : Int, col : Int, accept : Bool) : Board {
+//    var h : Hex = get(row, col);
+//    if (h != null) {
+//      var currentlyAccepting = h.acceptConnections;
+//      h.acceptConnections = accept;
+//
+//      if (currentlyAccepting != accept) {
+//        relight();
+//      }
+//    }
+//
+//    return this;
+//  }
+}
+
+/** Represents light of a given color being pushed to a given destination,
+  * coming from the given direction
+  **/
+class LightPusher {
+
+  public var color(default, null) : Color;
+  public var destination(default, null) : Point;
+  public var inDirection(default, null) : Int;
+
+  private function new (destination : Point, c : Color, inDirection : Int) {
+    this.destination = destination;
+    color = c;
+    this.inDirection = inDirection;
+  }
+
+  public static inline function get(startLoc : Point, c : Color, exitSide : Int) : LightPusher {
+    return new LightPusher(startLoc.add(Point.NEIGHBOR_DELTAS[startLoc.col%2][exitSide]),
+                           c, Util.mod(exitSide + Std.int(Hex.SIDES/2), Hex.SIDES));
+  }
+
+  public inline function toString() : String {
+    return "(" + destination + ", " + color + ", " + inDirection + ")";
   }
 
 }

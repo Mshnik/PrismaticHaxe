@@ -16,6 +16,11 @@ class Point {
   public static var DOWNLEFT : Point = get(1,-1);
   public static var DOWNRIGHT : Point = get(1,1);
 
+  public static var NEIGHBOR_DELTAS : Array<Array<Point>> = [
+    [Point.UP, Point.UPRIGHT, Point.RIGHT, Point.DOWN, Point.LEFT, Point.UPLEFT],
+    [Point.UP, Point.RIGHT, Point.DOWNRIGHT, Point.DOWN, Point.DOWNLEFT, Point.LEFT]
+  ];
+
   public static inline function get(row : Int, col : Int) : Point {
     var s = createString(row, col);
     if (allocatedPoints.exists(s)) {
@@ -82,11 +87,7 @@ class Point {
    * May include points that will be OOB in an Array2D, so should be filtered before applied.
    **/
   public inline function getNeighbors() : Array<Point> {
-    if (col % 2 == 0) {
-      return [add(UP), add(UPRIGHT), add(RIGHT), add(DOWN), add(LEFT),add(UPLEFT)];
-    } else {
-      return [add(UP), add(RIGHT), add(DOWNRIGHT), add(DOWN), add(DOWNLEFT),add(LEFT)];
-    }
+    return NEIGHBOR_DELTAS[col%2].map(add);
   }
 
 }

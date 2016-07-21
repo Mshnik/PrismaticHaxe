@@ -13,7 +13,7 @@ class Source extends Hex {
   }
 
   /** Helper to make sure light out is consistent with current active color */
-  private function updateLightOut() {
+  public function updateLightOut() {
     for(i in 0...Hex.SIDES) {
       lightOut[i] = getCurrentColor();
     }
@@ -55,11 +55,11 @@ class Source extends Hex {
   }
 
   /** Returns the current color liting this spark */
-  public inline function getCurrentColor() {
+  public inline function getCurrentColor() : Color {
     return availableColors[currentIndex];
   }
 
-  public inline function getAvailableColors() {
+  public inline function getAvailableColors() : Array<Color> {
     return availableColors.copy();
   }
 

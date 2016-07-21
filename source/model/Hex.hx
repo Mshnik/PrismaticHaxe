@@ -104,7 +104,7 @@ import common.Point;
    * Corrects for accessing the given side. Should be called whenever accessing an aribtrary
    * side of the Prism. Also mods to always be in range, in case of negatives or OOB.
    **/
-  private inline function correctForOrientation(side : Int) : Int {
+  public inline function correctForOrientation(side : Int) : Int {
     return Util.mod(orientation + side, Hex.SIDES);
   }
 
