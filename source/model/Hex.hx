@@ -165,4 +165,19 @@ import common.Point;
   public function addLightIn(side : Int, c : Color) : Array<Int> {
     throw "Add Light not implemented";
   }
+
+  public inline function asPrism() : Prism {
+    if(Std.is(this, Prism)) return Std.instance(this, Prism);
+    throw this + " isn't Prism";
+  }
+
+  public inline function asSource() : Source {
+    if(Std.is(this, Source)) return Std.instance(this, Source);
+    throw this + " isn't Source";
+  }
+
+  public function asSink() : Sink {
+    if(Std.is(this, Sink)) return Std.instance(this, Sink);
+    throw this + " isn't SINK";
+  }
 }

@@ -62,14 +62,57 @@ class TestBoard extends TestCase {
     assertEquals(Color.RED, b.get(0,2).getLightOut(2));
     assertEquals(Color.RED, b.get(0,2).getLightOut(3));
 
-//    b.get(0,1).rotateClockwise();
-//    b.relight();
-//
-//    assertArrayEquals(Util.arrayOf(Color.RED, Hex.SIDES), b.get(0,0).getLightOutArray());
-//    assertArrayEquals([], b.get(0,1).getLightInArray());
-//    assertEquals(Color.NONE, b.get(0,1).getLightOut(1));
-//    assertEquals(Color.NONE, b.get(0,2).getLightIn(4));
-//    assertEquals(Color.NONE, b.get(0,2).getLightOut(2));
-//    assertEquals(Color.NONE, b.get(0,2).getLightOut(3));
+    b.get(0,1).rotateClockwise();
+    b.relight();
+
+    assertArrayEquals(Util.arrayOf(Color.RED, Hex.SIDES), b.get(0,0).getLightOutArray());
+    assertEquals(Color.RED, b.get(0,1).getLightIn(4));
+    assertEquals(Color.NONE, b.get(0,1).getLightOut(1));
+    assertEquals(Color.NONE, b.get(0,2).getLightIn(4));
+    assertEquals(Color.NONE, b.get(0,2).getLightOut(2));
+    assertEquals(Color.NONE, b.get(0,2).getLightOut(3));
+
+    b.set(1,2,new Prism().addConnector(0,0,Color.RED));
+    b.get(0,1).rotateCounterClockwise();
+    b.relight();
+
+    assertArrayEquals(Util.arrayOf(Color.RED, Hex.SIDES), b.get(0,0).getLightOutArray());
+    assertEquals(Color.RED, b.get(0,1).getLightIn(5));
+    assertEquals(Color.RED, b.get(0,1).getLightOut(1));
+    assertEquals(Color.RED, b.get(0,2).getLightIn(4));
+    assertEquals(Color.RED, b.get(0,2).getLightOut(2));
+    assertEquals(Color.RED, b.get(0,2).getLightOut(3));
+    assertEquals(Color.RED, b.get(1,2).getLightIn(0));
+
+    //Add a second color
+    b.set(1,0,new Source().addColor(Color.BLUE));
+    b.relight();
+
+    assertArrayEquals(Util.arrayOf(Color.RED, Hex.SIDES), b.get(0,0).getLightOutArray());
+    assertArrayEquals(Util.arrayOf(Color.BLUE, Hex.SIDES), b.get(1,0).getLightOutArray());
+    assertEquals(Color.RED, b.get(0,1).getLightIn(5));
+    assertEquals(Color.RED, b.get(0,1).getLightOut(1));
+    assertEquals(Color.RED, b.get(0,2).getLightIn(4));
+    assertEquals(Color.RED, b.get(0,2).getLightOut(2));
+    assertEquals(Color.RED, b.get(0,2).getLightOut(3));
+    assertEquals(Color.RED, b.get(1,2).getLightIn(0));
+
+    b.set(1,1,new Prism().addConnector(5,0,Color.BLUE));
+    b.get(0,1).asPrism().addConnector(3,2,Color.BLUE);
+
+    b.relight();
+
+    assertArrayEquals(Util.arrayOf(Color.RED, Hex.SIDES), b.get(0,0).getLightOutArray());
+    assertArrayEquals(Util.arrayOf(Color.BLUE, Hex.SIDES), b.get(1,0).getLightOutArray());
+    assertEquals(Color.RED, b.get(0,1).getLightIn(5));
+    assertEquals(Color.RED, b.get(0,1).getLightOut(1));
+    assertEquals(Color.RED, b.get(0,2).getLightIn(4));
+    assertEquals(Color.RED, b.get(0,2).getLightOut(2));
+    assertEquals(Color.RED, b.get(0,2).getLightOut(3));
+    assertEquals(Color.RED, b.get(1,2).getLightIn(0));
+    assertEquals(Color.BLUE, b.get(1,1).getLightIn(5));
+    assertEquals(Color.BLUE, b.get(1,1).getLightOut(0));
+    assertEquals(Color.BLUE, b.get(0,1).getLightIn(3));
+    assertEquals(Color.BLUE, b.get(0,1).getLightOut(2));
   }
 }
