@@ -1,4 +1,5 @@
 package test;
+import flixel.math.FlxPoint;
 import common.Util;
 import model.Hex;
 class TestUtil extends TestCase {
@@ -39,5 +40,13 @@ class TestUtil extends TestCase {
     var arr = [["Hello","Hi"],["Sup","Blah"]];
     var arr2 = [[5,2],[3,4]];
     assertArrayEquals(arr2, Util.map(arr, function(s : String){return s.length;}));
+  }
+
+  public function testLinearInterpolate() {
+    assertFlxPointEquals(FlxPoint.get(0,0), Util.linearInterpolate([], true));
+    assertFlxPointEquals(FlxPoint.get(1,1), Util.linearInterpolate([FlxPoint.get(1,1)], true));
+    assertFlxPointEquals(FlxPoint.get(1,1), Util.linearInterpolate([FlxPoint.get(2,2), FlxPoint.get(0,0)], true));
+
+    assertFlxPointEquals(FlxPoint.get(0,0), Util.linearInterpolate([FlxPoint.get(1,1), FlxPoint.get(0,0), FlxPoint.get(-1,-1)], true));
   }
 }

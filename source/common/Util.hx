@@ -1,4 +1,5 @@
 package common;
+import flixel.math.FlxPoint;
 class Util {
   private function new() {}
 
@@ -54,5 +55,22 @@ class Util {
       return a.map(f);
     }
     return arr.map(m);
+  }
+
+  /** Linearly interpolates the given points.
+   * If dispose, calls put() on points in array before returning. Do this if points are not
+   * needed after this call
+   **/
+  public static inline function linearInterpolate(points : Array<FlxPoint>, dispose : Bool = false) : FlxPoint {
+    var p = FlxPoint.get(0,0);
+    for(pt in points) {
+      p.addPoint(pt.scale(1/points.length));
+      if (dispose) {
+        pt.put();
+      } else {
+        pt.scale(points.length);
+      }
+    }
+    return p;
   }
 }
