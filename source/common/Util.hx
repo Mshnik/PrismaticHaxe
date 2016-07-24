@@ -3,6 +3,14 @@ import flixel.math.FlxPoint;
 class Util {
   private function new() {}
 
+  public static var ROOT2 : Float;
+  public static var ROOT3 : Float;
+
+  private static function __init__() {
+    ROOT2 = Math.sqrt(2);
+    ROOT3 = Math.sqrt(3);
+  }
+
   /** Returns true iff the two arrays contain equal elements */
 
   public static function arrayEquals(expected : Array<Dynamic>, actual : Array<Dynamic>) : Bool {

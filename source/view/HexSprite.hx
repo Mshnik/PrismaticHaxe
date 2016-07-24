@@ -13,9 +13,9 @@ using common.IntExtender;
 
 class HexSprite extends BaseSprite implements Positionable {
 
-  public inline static var SCALE = 1.0;
-  public inline static var WIDTH = 100;
-  public inline static var HEIGHT = 100;
+  //Magic number corresponds to graphic size
+  public inline static var HEX_SIDE_LENGTH : Float = SCALE * 55.5;
+  public inline static var SCALE : Float = 1.0;
 
   private inline static var ROTATION_INC : Float = 3.0;
   private inline static var ROTATION_DISTANCE : Int = 60;
@@ -48,6 +48,12 @@ class HexSprite extends BaseSprite implements Positionable {
   public function new(x : Float = 0, y : Float = 0) {
     super(x,y);
 
+    //Graphics
+    loadGraphic(AssetPaths.hex_back__png, false, 0, 0, true);
+
+    //TODO - use rotateGraphic and animations to increase speed
+    //    loadRotatedGraphic(AssetPaths.hex_back__png, Std.int(360.0/ROTATION_INC));
+
     //Fields
     angleDelta = 0;
     angle = 0;
@@ -56,9 +62,6 @@ class HexSprite extends BaseSprite implements Positionable {
     rotationStartListener = null;
     rotationEndListener = null;
     scale = FlxPoint.get(SCALE,SCALE);
-
-    //Graphics
-    loadGraphic(AssetPaths.hex_back__png);
 
     //Input handling
     mouseReleasedCallback = onMouseRelease;
@@ -113,5 +116,13 @@ class HexSprite extends BaseSprite implements Positionable {
   /** Returns the current orientation. Result is only dependable when this isn't currently rotating */
   public inline function getOrientation() : Int {
     return Std.int(-angle/ROTATION_DISTANCE).mod(Hex.SIDES);
+  }
+
+  /** Helper that corrects for the current orientation of the Prism.
+   * Corrects for accessing the given side. Should be called whenever accessing an aribtrary
+   * side of the Prism. Also mods to always be in range, in case of negatives or OOB.
+   **/
+  public inline function correctForOrientation(side : Int) : Int {
+    return (getOrientation() + side).mod(Hex.SIDES);
   }
 }

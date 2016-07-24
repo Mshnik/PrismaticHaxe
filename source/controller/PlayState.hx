@@ -15,8 +15,8 @@ class PlayState extends FlxState {
   private static inline var BOARD_MARGIN_VERT = 20;
   private static inline var BOARD_MARGIN_HORIZ = 50;
 
-  private var rows : Int = 5;
-  private var cols : Int = 9;
+  private var rows : Int = 6;
+  private var cols : Int = 6;
 
   private var boardModel : Board;
   private var boardView : BoardView;
