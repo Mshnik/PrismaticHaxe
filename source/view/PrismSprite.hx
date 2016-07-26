@@ -12,6 +12,11 @@ using flixel.util.FlxSpriteUtil;
 
 class PrismSprite extends HexSprite {
 
+  /** Returns a graphic point that represents the graphic location given side.
+   * Doesn't correct for rotation of sprite
+   */
+  private static var HEX_MIDPOINTS : Array<FlxPoint>;
+
   private static var CONNECTOR_FRAME_WIDTH : Float;
   private static var CONNECTOR_FRAME_HEIGHT : Float;
   private static var CONNECTOR_FRAME_CENTER_PT : FlxPoint;
@@ -19,6 +24,15 @@ class PrismSprite extends HexSprite {
   private static var connectorSprites : Array<Array<FlxSprite>>;
 
   public static function __init__() {
+
+    HEX_MIDPOINTS = [
+      FlxPoint.get(HexSprite.HEX_SIDE_LENGTH, 0),
+      FlxPoint.get(HexSprite.HEX_SIDE_LENGTH * 7/4, (HexSprite.HEX_SIDE_LENGTH * (Util.ROOT3-1)/2)),
+      FlxPoint.get(HexSprite.HEX_SIDE_LENGTH * 7/4, (HexSprite.HEX_SIDE_LENGTH * (Util.ROOT3+1)/2)),
+      FlxPoint.get(HexSprite.HEX_SIDE_LENGTH, HexSprite.HEX_SIDE_LENGTH * Util.ROOT3),
+      FlxPoint.get(HexSprite.HEX_SIDE_LENGTH / 4, (HexSprite.HEX_SIDE_LENGTH * (Util.ROOT3+1)/2)),
+      FlxPoint.get(HexSprite.HEX_SIDE_LENGTH / 4, (HexSprite.HEX_SIDE_LENGTH * (Util.ROOT3-1)/2))
+    ];
 
     CONNECTOR_FRAME_WIDTH = 2 * HexSprite.HEX_SIDE_LENGTH;
     CONNECTOR_FRAME_HEIGHT = Util.ROOT3 * HexSprite.HEX_SIDE_LENGTH;
@@ -32,8 +46,8 @@ class PrismSprite extends HexSprite {
                     FlxColor.TRANSPARENT,
                     true, "base_connector " + r + c);
 
-      var start = getGraphicPositionOfSide(r);
-      var end = getGraphicPositionOfSide(c);
+      var start = HEX_MIDPOINTS[r];
+      var end = HEX_MIDPOINTS[c];
       var middle = Util.linearInterpolate([start, end, CONNECTOR_FRAME_CENTER_PT]);
 
       s.drawLine(start.x, start.y, middle.x ,middle.y, CONNECTOR_LINE_STYLE);
@@ -41,8 +55,6 @@ class PrismSprite extends HexSprite {
 
       //s.drawCurve(start.x, start.y, middle.x, middle.y, end.x, end.y, FlxColor.RED, CONNECTOR_LINE_STYLE);
 
-      start.put();
-      end.put();
       middle.put();
 
       return s;
@@ -54,21 +66,6 @@ class PrismSprite extends HexSprite {
       for(c in 0...Hex.SIDES) {
         connectorSprites[r][c] = createConnector(r,c);
       }
-    }
-  }
-
-  /** Returns a graphic point that represents the graphic location given side.
-   * Doesn't correct for rotation of sprite
-   **/
-  public static inline function getGraphicPositionOfSide(side : Int) : FlxPoint {
-    switch(side) {
-      case 0: return FlxPoint.get(HexSprite.HEX_SIDE_LENGTH, 0);
-      case 1: return FlxPoint.get(HexSprite.HEX_SIDE_LENGTH * (2 + Util.ROOT3)/2, (HexSprite.HEX_SIDE_LENGTH * (Util.ROOT3-1)/2));
-      case 2: return FlxPoint.get(HexSprite.HEX_SIDE_LENGTH * (2 + Util.ROOT3)/2, (HexSprite.HEX_SIDE_LENGTH * (Util.ROOT3+1)/2));
-      case 3: return FlxPoint.get(HexSprite.HEX_SIDE_LENGTH, HexSprite.HEX_SIDE_LENGTH * Util.ROOT3);
-      case 4: return FlxPoint.get(HexSprite.HEX_SIDE_LENGTH * (2 - Util.ROOT3)/2, (HexSprite.HEX_SIDE_LENGTH * (Util.ROOT3+1)/2));
-      case 5: return FlxPoint.get(HexSprite.HEX_SIDE_LENGTH * (2 - Util.ROOT3)/2, (HexSprite.HEX_SIDE_LENGTH * (Util.ROOT3-1)/2));
-      default: throw "Illegal side value " + side;
     }
   }
 
