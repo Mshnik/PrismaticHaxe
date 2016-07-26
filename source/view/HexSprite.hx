@@ -123,4 +123,32 @@ class HexSprite extends BaseSprite implements Positionable {
   public inline function correctForOrientation(side : Int) : Int {
     return (getOrientation() + side).mod(Util.HEX_SIDES);
   }
+
+
+  public inline function isPrismSprite() : Bool {
+    return Std.is(this, PrismSprite);
+  }
+
+//  public inline function isSink() : Bool {
+//    return Std.is(this, Sink);
+//  }
+//
+//  public inline function isSource() : Bool {
+//    return Std.is(this, Source);
+//  }
+
+  public inline function asPrismSprite() : PrismSprite {
+    if(Std.is(this, PrismSprite)) return Std.instance(this, PrismSprite);
+    throw this + " isn't PrismSprite";
+  }
+
+//  public inline function asSource() : Source {
+//    if(Std.is(this, Source)) return Std.instance(this, Source);
+//    throw this + " isn't Source";
+//  }
+//
+//  public function asSink() : Sink {
+//    if(Std.is(this, Sink)) return Std.instance(this, Sink);
+//    throw this + " isn't SINK";
+//  }
 }

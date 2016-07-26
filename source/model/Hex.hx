@@ -108,6 +108,14 @@ using common.IntExtender;
     return (orientation + side).mod(Util.HEX_SIDES);
   }
 
+  /** Helper that corrects for the current orientation of the Prism.
+   * Corrects for accessing the given side. Should be called whenever accessing an aribtrary
+   * side of the Prism. Also mods to always be in range, in case of negatives or OOB.
+   **/
+  public inline function correctPtForOrientation(point : Point) : Point {
+    return Point.get(correctForOrientation(point.row), correctForOrientation(point.col));
+  }
+
 /** Returns the light coming on the given side (corrected for orientation) */
   public inline function getLightIn(side : Int) : Color {
     return lightIn[correctForOrientation(side)];
@@ -162,6 +170,18 @@ using common.IntExtender;
    **/
   public function addLightIn(side : Int, c : Color) : Array<Int> {
     throw "Add Light not implemented";
+  }
+
+  public inline function isPrism() : Bool {
+    return Std.is(this, Prism);
+  }
+
+  public inline function isSink() : Bool {
+    return Std.is(this, Sink);
+  }
+
+  public inline function isSource() : Bool {
+    return Std.is(this, Source);
   }
 
   public inline function asPrism() : Prism {

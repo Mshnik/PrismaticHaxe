@@ -27,7 +27,7 @@ class PrismSprite extends HexSprite {
   private static var CONNECTOR_LINE_STYLE : LineStyle;
   private static var connectorSprites : Array<Array<FlxSprite>>;
 
-  public static function __init__() {
+  private static function __init__() {
 
     HEX_MIDPOINTS = [
       FlxPoint.get(HexSprite.HEX_SIDE_LENGTH, 0),
@@ -87,6 +87,11 @@ class PrismSprite extends HexSprite {
 
   }
 
+  public function setLighting(from : Int, to : Int, lit : Bool) : PrismSprite {
+    litArr[from][to] = lit;
+    return this;
+  }
+
   public function addConnection(color : Color, from : Int, to : Int) : PrismSprite {
     colorArr[from][to] = color;
     if (color != Color.NONE) {
@@ -96,7 +101,6 @@ class PrismSprite extends HexSprite {
     }
     return this;
   }
-
 
   public override function draw() : Void {
     super.draw();
@@ -108,4 +112,4 @@ class PrismSprite extends HexSprite {
 }
 
 /** Can't delete this without crashing, not sure why... */
-class ASDF {}
+class UNUSED {}

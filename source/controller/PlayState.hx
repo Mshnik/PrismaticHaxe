@@ -1,5 +1,6 @@
 package controller;
 
+import model.Prism;
 import common.Util;
 import common.Color;
 import view.PrismSprite;
@@ -71,5 +72,28 @@ class PlayState extends FlxState {
 
   override public function update(elapsed : Float) : Void {
     super.update(elapsed);
+  }
+
+  private function updateLighting() : Void {
+    for (r in 0...boardModel.getHeight()) {
+      for(c in 0...boardView.getWidth()) {
+        var h : Hex = boardModel.get(r,c);
+        if (h != null) {
+          if (h.isPrism()) {
+            var prism : Prism = h.asPrism();
+            for(p in prism.getConnectionLocations()) {
+              boardView.get(r,c).asPrismSprite().setLighting(p.row, p.col, prism.isConnectorLit(r,c));
+            }
+
+          } else if (h.isSink()) {
+
+          } else if (h.isSource()) {
+
+          } else {
+            throw "Illegal Hex created : " + h;
+          }
+        }
+      }
+    }
   }
 }

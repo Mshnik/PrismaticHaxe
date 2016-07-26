@@ -68,6 +68,16 @@ class BoardView extends Array2D<HexSprite> {
     return this;
   }
 
+  /** Returns the T at the given row,col. If safe, returns null if OOB */
+  public override function get(row : Int, col : Int, safe : Bool = false) : HexSprite {
+    return super.get(row, col, safe);
+  }
+
+  /** Returns the T at the given point */
+  public override function getAt(p : Point, safe : Bool = false) : HexSprite {
+    return super.getAt(p, safe);
+  }
+
   /** In addition to setting element, removes old element from group,
    *   adds and sets position of Source element
    **/

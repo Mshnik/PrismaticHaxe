@@ -5,14 +5,27 @@ import common.*;
 
 class Prism extends Hex {
 
+  private var connectionArr : Array<Point>;
   private var connections : Array2D<ColorConnector>;
 
   public function new() {
     //Create fields first so overriden setters don't hit NPEs. Could add logic.. or just do this
     // "bad practice" lol... this is going to come back to bite me I'm sure
     connections = new Array2D<ColorConnector>().ensureSize(Util.HEX_SIDES, Util.HEX_SIDES);
+    connectionArr = [];
 
     super();
+  }
+
+  /** Returns the list of locations that this has a connector */
+  public inline function getConnectionLocations() : Array<Point> {
+    return connectionArr.map(correctPtForOrientation);
+  }
+
+  /** Returns true if there is a connection from,to, and it is lit */
+  public inline function isConnectorLit(from : Int, to : Int) : Bool {
+    var c =  getConnector(from, to);
+    return c != null && c.isLit();
   }
 
   /** Returns the color connector (if any) from, to. Corrects for orientation */
@@ -36,13 +49,15 @@ class Prism extends Hex {
 
   /**
    * Adds a color connector connecting from to to with the given base color
-   * Overwrites any existing connector on from to to
+   * Overwrites any existing connector on from to to.
+   * adds from,to to list to not have to search for connections.
    * Also resets lighting status, in case a connector is added in the middle of the game
    * (this is going to need to recalculate light anyways)
    * Returns a reference to this for chaining in construction
    **/
   public inline function addConnector(from : Int, to : Int, color : Color) : Prism {
     connections.set(correctForOrientation(from), correctForOrientation(to), new ColorConnector(color));
+    connectionArr.push(Point.get(correctForOrientation(from),correctForOrientation(to)));
     resetLight();
     return this;
   }

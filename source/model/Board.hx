@@ -79,6 +79,16 @@ class Board extends Array2D<Hex> {
     return this;
   }
 
+  /** Returns the T at the given row,col. If safe, returns null if OOB */
+  public override function get(row : Int, col : Int, safe : Bool = false) : Hex {
+    return super.get(row, col, safe);
+  }
+
+  /** Returns the T at the given point */
+  public override function getAt(p : Point, safe : Bool = false) : Hex {
+    return super.getAt(p, safe);
+  }
+
   /** In addition to calling super.set, updates sources/sinks as necessary */
   public override function set(row : Int, col : Int, h : Hex) : Hex {
     var oldH : Hex = get(row, col);

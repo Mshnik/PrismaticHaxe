@@ -168,6 +168,9 @@ class TestPrism extends TestCase {
   }
 
   public function testLighting() {
+    //TODO - add test for isConnectorLit
+    assertEquals(0,1);
+
     var p : Prism = new Prism().addConnector(0,1,Color.RED);
 
     var expectedLightIn : Array<Color> = Util.arrayOf(Color.NONE, Util.HEX_SIDES);
@@ -255,5 +258,10 @@ class TestPrism extends TestCase {
     assertArrayEquals([1], arr);
     checkLight(p2, expectedLightIn, expectedLightOut, expectedLit);
     resetAndCheck(p2, expectedLightIn, expectedLightOut, expectedLit);
+  }
+
+  public function testConnetionLocations() {
+    //TODO
+    //Make sure to test with rotation
   }
 }

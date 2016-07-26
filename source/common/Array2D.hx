@@ -146,7 +146,7 @@ using common.IntExtender;
   }
 
   /** Returns the T at the given row,col. If safe, returns null if OOB */
-  public inline function get(row : Int, col : Int, safe : Bool = false) : T {
+  public function get(row : Int, col : Int, safe : Bool = false) : T {
     if (safe && ! isInBounds(row, col)) {
       return null;
     } else {
@@ -155,7 +155,7 @@ using common.IntExtender;
   }
 
   /** Returns the T at the given point */
-  public inline function getAt(p : Point, safe : Bool = false) : T {
+  public function getAt(p : Point, safe : Bool = false) : T {
     return get(p.row, p.col, safe);
   }
 
