@@ -46,12 +46,6 @@ class HexSprite extends BaseSprite implements Positionable {
   public function new(x : Float = 0, y : Float = 0) {
     super(x,y);
 
-    //Graphics
-    loadGraphic(AssetPaths.hex_back__png, false, 0, 0, true);
-
-    //TODO - use rotateGraphic and animations to increase speed
-    //    loadRotatedGraphic(AssetPaths.hex_back__png, Std.int(360.0/ROTATION_INC));
-
     //Fields
     angleDelta = 0;
     angle = 0;
@@ -133,19 +127,19 @@ class HexSprite extends BaseSprite implements Positionable {
 //    return Std.is(this, Sink);
 //  }
 //
-//  public inline function isSource() : Bool {
-//    return Std.is(this, Source);
-//  }
+  public inline function isSourceSprite() : Bool {
+    return Std.is(this, SourceSprite);
+  }
 
   public inline function asPrismSprite() : PrismSprite {
     if(Std.is(this, PrismSprite)) return Std.instance(this, PrismSprite);
     throw this + " isn't PrismSprite";
   }
 
-//  public inline function asSource() : Source {
-//    if(Std.is(this, Source)) return Std.instance(this, Source);
-//    throw this + " isn't Source";
-//  }
+  public inline function asSourceSprite() : SourceSprite {
+    if(Std.is(this, SourceSprite)) return Std.instance(this, SourceSprite);
+    throw this + " isn't SourceSprite";
+  }
 //
 //  public function asSink() : Sink {
 //    if(Std.is(this, Sink)) return Std.instance(this, Sink);

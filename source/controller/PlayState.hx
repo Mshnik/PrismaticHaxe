@@ -1,16 +1,13 @@
 package controller;
 
-import model.Prism;
-import common.Util;
-import common.Color;
-import view.PrismSprite;
-import model.Hex;
-import model.Board;
-import view.BoardView;
+
+import model.*;
+import view.*;
+import common.*;
+
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import view.HexSprite;
 import flixel.FlxState;
 
 class PlayState extends FlxState {
@@ -59,7 +56,14 @@ class PlayState extends FlxState {
 
   public function populate() {
     for(r in 0...rows) {
-      for(c in 0...cols) {
+      boardModel.set(r,0,new Source());
+      var s = new SourceSprite();
+      s.litColor = r % 2 == 0 ? Color.RED : Color.BLUE;
+      s.rotationStartListener = onStartRotate;
+      s.rotationEndListener = onEndRotate;
+      boardView.set(r,0,s);
+
+      for(c in 1...cols) {
         var m = boardModel.set(r,c,new Hex());
         var v = boardView.set(r,c,new PrismSprite()
           .addConnection(r %2 == 0 ? Color.RED : Color.BLUE, r,c)

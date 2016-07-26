@@ -77,6 +77,12 @@ class PrismSprite extends HexSprite {
   public function new(x : Float = 0, y : Float = 0) {
     super(x,y);
 
+    //Graphics
+    loadGraphic(AssetPaths.hex_back__png, false, 0, 0, true);
+
+    //TODO - use rotateGraphic and animations to increase speed
+    //    loadRotatedGraphic(AssetPaths.hex_back__png, Std.int(360.0/ROTATION_INC));
+
     litArr = Util.arrayOf(null, Util.HEX_SIDES);
     colorArr = Util.arrayOf(null, Util.HEX_SIDES);
     hasConnector = [];
