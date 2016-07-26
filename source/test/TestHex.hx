@@ -72,6 +72,41 @@ class TestHex extends TestCase {
     }
   }
 
+  public function testOrientationConverters() {
+    var h = SimpleHex.create();
+
+
+    for(i in 0...Util.HEX_SIDES) {
+      assertEquals(i, h.correctForOrientation(i));
+      assertEquals(i, h.uncorrectForOrientation(i));
+    }
+
+    var p = Point.get(0,1);
+    assertEquals(p, h.correctPtForOrientation(p));
+    assertEquals(p, h.uncorrectPtForOrientation(p));
+
+    h.rotateClockwise();
+    for(i in 0...Util.HEX_SIDES) {
+      assertEquals((i-1).mod(Util.HEX_SIDES), h.correctForOrientation(i));
+      assertEquals(i, h.uncorrectForOrientation(h.correctForOrientation(i)));
+    }
+
+    var p2 = Point.get(5,0);
+    assertEquals(p2, h.correctPtForOrientation(p));
+    assertEquals(p, h.uncorrectPtForOrientation(h.correctPtForOrientation(p)));
+
+    h.rotateCounterClockwise();
+    h.rotateCounterClockwise();
+    for(i in 0...Util.HEX_SIDES) {
+      assertEquals((i+1).mod(Util.HEX_SIDES), h.correctForOrientation(i));
+      assertEquals(i, h.uncorrectForOrientation(h.correctForOrientation(i)));
+    }
+
+    var p3 = Point.get(1,2);
+    assertEquals(p3, h.correctPtForOrientation(p));
+    assertEquals(p, h.uncorrectPtForOrientation(h.correctPtForOrientation(p)));
+  }
+
   public function testPosition() {
     var h = SimpleHex.create();
     assertEquals(Point.get(-1,-1),h.position);

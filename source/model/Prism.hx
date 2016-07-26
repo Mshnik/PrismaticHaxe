@@ -19,7 +19,7 @@ class Prism extends Hex {
 
   /** Returns the list of locations that this has a connector */
   public inline function getConnectionLocations() : Array<Point> {
-    return connectionArr.map(correctPtForOrientation);
+    return connectionArr.map(uncorrectPtForOrientation);
   }
 
   /** Returns true if there is a connection from,to, and it is lit */
@@ -56,8 +56,10 @@ class Prism extends Hex {
    * Returns a reference to this for chaining in construction
    **/
   public inline function addConnector(from : Int, to : Int, color : Color) : Prism {
-    connections.set(correctForOrientation(from), correctForOrientation(to), new ColorConnector(color));
-    connectionArr.push(Point.get(correctForOrientation(from),correctForOrientation(to)));
+    var p = Point.get(correctForOrientation(from), correctForOrientation(to));
+    connections.set(p.row, p.col, new ColorConnector(color));
+    connectionArr.remove(p); //Make sure no duplicates
+    connectionArr.push(p);
     resetLight();
     return this;
   }

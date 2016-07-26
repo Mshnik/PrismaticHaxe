@@ -9,7 +9,7 @@ import model.Prism.ColorConnector;
 
 class TestPrism extends TestCase {
 
-  private static var COLORS;
+  private static var COLORS : Array<Color>;
 
   public override function setup() {
     super.setup();
@@ -147,6 +147,11 @@ class TestPrism extends TestCase {
     assertArrayEquals(expectedLightIn, p.getLightInArray());
     assertArrayEquals(expectedLightOut, p.getLightOutArray());
     assertArrayEquals(expectedLit, Util.map(p.getLightingMatrix().asNestedArrays(),Tile.unWrap));
+    for(from in 0...Util.HEX_SIDES) {
+      for(to in 0...Util.HEX_SIDES) {
+        assertEquals(expectedLit[from][to] != Color.NONE, p.isConnectorLit(from,to));
+      }
+    }
   }
 
   /** Helper function that resets the lighting of p and checks that it is now completely unlit.
@@ -168,9 +173,6 @@ class TestPrism extends TestCase {
   }
 
   public function testLighting() {
-    //TODO - add test for isConnectorLit
-    assertEquals(0,1);
-
     var p : Prism = new Prism().addConnector(0,1,Color.RED);
 
     var expectedLightIn : Array<Color> = Util.arrayOf(Color.NONE, Util.HEX_SIDES);
@@ -260,8 +262,23 @@ class TestPrism extends TestCase {
     resetAndCheck(p2, expectedLightIn, expectedLightOut, expectedLit);
   }
 
-  public function testConnetionLocations() {
-    //TODO
-    //Make sure to test with rotation
+  public function testConnectionLocations() {
+    var p = new Prism();
+    assertArrayEquals([], p.getConnectionLocations());
+
+    p.addConnector(0,1,Color.RED);
+    assertEquals(Color.RED, p.getConnector(0,1).baseColor);
+    assertArrayEquals([Point.get(0,1)], p.getConnectionLocations());
+
+    p.rotateClockwise();
+    assertEquals(Color.RED, p.getConnector(1,2).baseColor);
+    assertArrayEquals([Point.get(1,2)], p.getConnectionLocations());
+
+    p.rotateCounterClockwise();
+    p.addConnector(0,2,Color.BLUE);
+    assertArrayEquals([Point.get(0,1), Point.get(0,2)], p.getConnectionLocations());
+
+    p.addConnector(0,2,Color.GREEN);
+    assertArrayEquals([Point.get(0,1), Point.get(0,2)], p.getConnectionLocations());
   }
 }

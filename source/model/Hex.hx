@@ -100,7 +100,7 @@ using common.IntExtender;
     return acceptConnections = b;
   }
 
-  /** Helper that corrects for the current orientation of the Prism.
+  /** Helper that corrects for the current orientation of the Hex.
    * Corrects for accessing the given side. Should be called whenever accessing an aribtrary
    * side of the Prism. Also mods to always be in range, in case of negatives or OOB.
    **/
@@ -108,12 +108,26 @@ using common.IntExtender;
     return (orientation + side).mod(Util.HEX_SIDES);
   }
 
-  /** Helper that corrects for the current orientation of the Prism.
+  /** Helper that uncorrects for the current orientation of the Hex.
+   * Performs the reverse of correctForOrientation.
+   **/
+  public inline function uncorrectForOrientation(side : Int) : Int {
+    return (side - orientation).mod(Util.HEX_SIDES);
+  }
+
+  /** Helper that corrects for the current orientation of the Hex.
    * Corrects for accessing the given side. Should be called whenever accessing an aribtrary
    * side of the Prism. Also mods to always be in range, in case of negatives or OOB.
    **/
   public inline function correctPtForOrientation(point : Point) : Point {
     return Point.get(correctForOrientation(point.row), correctForOrientation(point.col));
+  }
+
+  /** Helper that uncorrects for the current orientation of the Hex.
+   * Performs the reverse of correctPtForOrientation
+   **/
+  public inline function uncorrectPtForOrientation(point : Point) : Point {
+    return Point.get(uncorrectForOrientation(point.row), uncorrectForOrientation(point.col));
   }
 
 /** Returns the light coming on the given side (corrected for orientation) */
