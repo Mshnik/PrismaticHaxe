@@ -1,12 +1,16 @@
 package view;
-import view.HexSprite;
-import common.Util;
+
+import model.ColorUtil;
+import model.Color;
 import flixel.math.FlxPoint;
-import flixel.util.FlxSpriteUtil.LineStyle;
-import model.Hex;
-import common.Point;
-import flixel.util.FlxColor;
 import flixel.FlxSprite;
+import flixel.util.FlxSpriteUtil.LineStyle;
+import flixel.util.FlxColor;
+
+import common.Util;
+import common.Point;
+import model.Hex;
+import view.HexSprite;
 
 using flixel.util.FlxSpriteUtil;
 
@@ -36,7 +40,7 @@ class PrismSprite extends HexSprite {
 
     CONNECTOR_FRAME_WIDTH = 2 * HexSprite.HEX_SIDE_LENGTH;
     CONNECTOR_FRAME_HEIGHT = Util.ROOT3 * HexSprite.HEX_SIDE_LENGTH;
-    CONNECTOR_LINE_STYLE = {color : FlxColor.GREEN, thickness : 2};
+    CONNECTOR_LINE_STYLE = {color : FlxColor.WHITE, thickness : 3};
     CONNECTOR_FRAME_CENTER_PT = FlxPoint.get(CONNECTOR_FRAME_WIDTH/2, CONNECTOR_FRAME_HEIGHT/2);
 
     var createConnector = function(r : Int, c : Int) : FlxSprite {
@@ -66,36 +70,42 @@ class PrismSprite extends HexSprite {
     }
   }
 
-  private var sample = new ConnectorSprite(0,0,FlxColor.YELLOW);
+  private var litArr : Array<Array<Bool>>;
+  private var colorArr : Array<Array<Color>>;
+  private var hasConnector : Array<Point>;
 
   public function new(x : Float = 0, y : Float = 0) {
     super(x,y);
+
+    litArr = Util.arrayOf(null, Hex.SIDES);
+    colorArr = Util.arrayOf(null, Hex.SIDES);
+    hasConnector = [];
+    for(i in 0...Hex.SIDES){
+      litArr[i] = Util.arrayOf(false, Hex.SIDES);
+      colorArr[i] = Util.arrayOf(Color.NONE, Hex.SIDES);
+    }
+
   }
 
-  public function addConnection(baseColor : FlxColor, from : Int, to : Int) : PrismSprite {
-    //connectorArr.set(Point.get(from,to),new ConnectorSprite(baseColor, from, to));
+  public function addConnection(color : Color, from : Int, to : Int) : PrismSprite {
+    colorArr[from][to] = color;
+    if (color != Color.NONE) {
+      hasConnector.push(Point.get(from, to));
+    } else {
+      hasConnector.remove(Point.get(from, to));
+    }
     return this;
   }
 
 
   public override function draw() : Void {
     super.draw();
-    stamp(connectorSprites[position.row][position.col], 0, 0);
+    for(p in hasConnector) {
+      connectorSprites[p.row][p.col].color = ColorUtil.toFlxColor(colorArr[p.row][p.col], litArr[p.row][p.col]);
+      stamp(connectorSprites[p.row][p.col],0,0);
+    }
   }
 }
 
-class ConnectorSprite extends FlxSprite {
-
-  private var connectionColor : FlxColor;
-  private var sides : Point;
-  public var isLit : Bool;
-
-  public function new(c : FlxColor, s1 : Int, s2 : Int) {
-    super();
-    this.connectionColor = c;
-    sides = Point.get(s1,s2);
-    this.isLit = false;
-  }
-
-
-}
+/** Can't delete this without crashing, not sure why... */
+class ASDF {}

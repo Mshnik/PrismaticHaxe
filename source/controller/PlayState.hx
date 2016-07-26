@@ -1,5 +1,6 @@
 package controller;
 
+import model.Color;
 import view.PrismSprite;
 import model.Hex;
 import model.Board;
@@ -58,7 +59,9 @@ class PlayState extends FlxState {
     for(r in 0...rows) {
       for(c in 0...cols) {
         var m = boardModel.set(r,c,new Hex());
-        var v = boardView.set(r,c,new PrismSprite());
+        var v = boardView.set(r,c,new PrismSprite()
+          .addConnection(r %2 == 0 ? Color.RED : Color.BLUE, r,c)
+          .addConnection(r % 2 == 0 ? Color.RED: Color.BLUE, r, (c+1)%Hex.SIDES));
         v.rotationStartListener = onStartRotate;
         v.rotationEndListener = onEndRotate;
       }
