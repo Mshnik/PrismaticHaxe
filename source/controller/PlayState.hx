@@ -21,6 +21,9 @@ class PlayState extends FlxState {
   private var boardModel : Board;
   private var boardView : BoardView;
 
+  /** True when the model has changed, next update loop should update the view */
+  private var viewNeedsSync : Bool;
+
   override public function create() : Void {
     super.create();
 
@@ -32,6 +35,7 @@ class PlayState extends FlxState {
 
     boardModel = new Board(rows,cols);
     boardView = new BoardView(rows,cols);
+    viewNeedsSync = false;
     add(boardView.spriteGroup);
 
     populate();
@@ -39,22 +43,48 @@ class PlayState extends FlxState {
     boardView.spriteGroup.setPosition(BOARD_MARGIN_HORIZ, BOARD_MARGIN_VERT);
   }
 
+  /** Helper function that adds a Source at the given location. For use during construction */
+  private inline function addSource(r : Int, c : Int) {
+    boardModel.set(r,c,new Source());
+    var sprite = boardView.set(r,c,new SourceSprite()).asSourceSprite();
+    sprite.colorSwitchListener = onSourceClick;
+  }
+
+  /** Helper function that adds an available color to the Source at the given location.
+   * For use during construction.
+   **/
+  private inline function addColorToSource(row : Int, col : Int, c : Color) {
+    if (boardModel.get(row,col).asSource().getCurrentColor() == Color.NONE) {
+      boardView.get(row,col).asSourceSprite().litColor = c;
+    }
+    boardModel.get(row,col).asSource().addColor(c);
+  }
+
+  /** Helper function that adds a Prism at the given location. For use during construction */
+  private inline function addPrism(r : Int, c : Int) {
+    boardModel.set(r,c,new Prism());
+    var sprite = boardView.set(r,c,new PrismSprite()).asPrismSprite();
+    sprite.rotationStartListener = onPrismStartRotate;
+    sprite.rotationEndListener = onPrismEndRotate;
+  }
+
+  /** Helper function that adds a connector to the Prism at the location.
+   * For use during construction
+   **/
+  private inline function addConnectorToPrism(row : Int, col : Int, from : Int, to : Int, c : Color) {
+    boardModel.get(row,col).asPrism().addConnector(from, to, c);
+    boardView.get(row,col).asPrismSprite().addConnection(c, from, to);
+  }
+
   public function populate() {
     for(r in 0...rows) {
-      boardModel.set(r,0,new Source().addColor(Color.RED).addColor(Color.BLUE).addColor(Color.GREEN));
-      var s = new SourceSprite();
-      s.litColor = Color.RED;
-      s.colorSwitchListener = onSourceClick;
-      boardView.set(r,0,s);
+      addSource(r,0);
+      addColorToSource(r,0,Color.RED);
 
       for(c in 1...cols) {
-        var m = boardModel.set(r,c,new Hex());
-        var v = boardView.set(r,c,new PrismSprite()
-          .addConnection(r %2 == 0 ? Color.RED : Color.BLUE, r,c)
-          .addConnection(r % 2 == 0 ? Color.RED: Color.BLUE, r, (c+1)%Util.HEX_SIDES))
-          .asPrismSprite();
-        v.rotationStartListener = onPrismStartRotate;
-        v.rotationEndListener = onPrismEndRotate;
+        addPrism(r,c);
+        addConnectorToPrism(r,c,r,c,Color.RED);
+        addConnectorToPrism(r,c,r,(c+1)%Util.HEX_SIDES,Color.BLUE);
       }
     }
   }
@@ -64,6 +94,8 @@ class PlayState extends FlxState {
     trace(h.position + " Started rotation");
     var m : Hex = boardModel.getAt(h.position);
     m.acceptConnections = false;
+    boardModel.relight();
+    viewNeedsSync = true;
   }
 
   /** Helper function for PrismSprite ending rotation callback */
@@ -72,6 +104,8 @@ class PlayState extends FlxState {
     var m : Hex = boardModel.getAt(h.position);
     m.orientation = h.getOrientation();
     m.acceptConnections = true;
+    boardModel.relight();
+    viewNeedsSync = true;
   }
 
   /** Helper function for when a Source is clicked. Cycles to next/previous color */
@@ -82,33 +116,25 @@ class PlayState extends FlxState {
     } else {
       s.useNextColor();
     }
+    boardModel.relight();
+    viewNeedsSync = true;
     sprite.litColor = s.getCurrentColor();
   }
 
   override public function update(elapsed : Float) : Void {
     super.update(elapsed);
+
+    if(viewNeedsSync) {
+      viewNeedsSync = false;
+      boardView.spriteGroup.forEachOfType(PrismSprite, updatePrismSpriteLightings);
+    }
   }
 
-  private function updateLighting() : Void {
-    for (r in 0...boardModel.getHeight()) {
-      for(c in 0...boardView.getWidth()) {
-        var h : Hex = boardModel.get(r,c);
-        if (h != null) {
-          if (h.isPrism()) {
-            var prism : Prism = h.asPrism();
-            for(p in prism.getConnectionLocations()) {
-              boardView.get(r,c).asPrismSprite().setLighting(p.row, p.col, prism.isConnectorLit(r,c));
-            }
-
-          } else if (h.isSink()) {
-
-          } else if (h.isSource()) {
-
-          } else {
-            throw "Illegal Hex created : " + h;
-          }
-        }
-      }
+  /** Updates the lighting of the given PrismSprite to match its prism model */
+  private function updatePrismSpriteLightings(sprite : PrismSprite) {
+    var model : Prism = boardModel.getAt(sprite.position).asPrism();
+    for(p in model.getConnectionLocations()) {
+      sprite.setLighting(p.row, p.col, model.isConnectorLit(p.row, p.col));
     }
   }
 }

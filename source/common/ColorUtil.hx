@@ -26,8 +26,8 @@ class ColorUtil {
   }
 
   public static function toFlxColor(c : Color, isLit : Bool = false) : FlxColor {
-    var lightnessFactor = 0.5;
-    if (! isLit) {
+    var darknessFactor = 0.4;
+    if (isLit) {
       switch(c) {
         case Color.RED: return FlxColor.RED;
         case Color.BLUE: return FlxColor.BLUE;
@@ -38,12 +38,12 @@ class ColorUtil {
       }
     } else {
       switch(c) {
-        case Color.RED: return FlxColor.RED.getLightened(lightnessFactor);
-        case Color.BLUE: return FlxColor.BLUE.getLightened(lightnessFactor);
-        case Color.YELLOW: return FlxColor.YELLOW.getLightened(lightnessFactor);
-        case Color.GREEN: return FlxColor.GREEN.getLightened(lightnessFactor);
+        case Color.RED: return FlxColor.RED.getDarkened(darknessFactor);
+        case Color.BLUE: return FlxColor.BLUE.getDarkened(darknessFactor);
+        case Color.YELLOW: return FlxColor.YELLOW.getDarkened(darknessFactor);
+        case Color.GREEN: return FlxColor.GREEN.getDarkened(darknessFactor);
         case Color.NONE: return FlxColor.GRAY;
-        case Color.ANY: return FlxColor.WHITE.getLightened(lightnessFactor);
+        case Color.ANY: return FlxColor.WHITE.getDarkened(darknessFactor);
       }
     }
   }
