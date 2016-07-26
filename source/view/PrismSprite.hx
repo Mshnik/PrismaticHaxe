@@ -35,7 +35,6 @@ class PrismSprite extends HexSprite {
   /** Rotation interaction constants */
   private static var ROTATION_INC : Float;
   private static var ROTATION_DISTANCE;
-  private static var REVERSE_KEY;
 
   public static function __init__() {
     HEX_MIDPOINTS = [
@@ -80,7 +79,6 @@ class PrismSprite extends HexSprite {
 
     ROTATION_DISTANCE = 60;
     ROTATION_INC = 3.0;
-    REVERSE_KEY = FlxKey.SHIFT;
   }
 
   /** 2D array of bools for connectors that are currently lit, listed as from,to */
@@ -189,7 +187,7 @@ class PrismSprite extends HexSprite {
     var p = FlxG.mouse.getPosition();
     //Extra check that the mouse is still there
     if (h.containsPoint(p)){
-      if (FlxG.keys.checkStatus(REVERSE_KEY, FlxInputState.PRESSED)) {
+     if (HexSprite.CHECK_FOR_REVERSE()) {
         angleDelta -= ROTATION_DISTANCE;
       } else {
         angleDelta += ROTATION_DISTANCE;
@@ -202,7 +200,6 @@ class PrismSprite extends HexSprite {
     h.put();
     p.put();
   }
-
 }
 
 /** Can't delete this without crashing, not sure why... */

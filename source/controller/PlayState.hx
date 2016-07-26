@@ -39,26 +39,12 @@ class PlayState extends FlxState {
     boardView.spriteGroup.setPosition(BOARD_MARGIN_HORIZ, BOARD_MARGIN_VERT);
   }
 
-  /** Helper function for HexSprite starting rotation callback */
-  private function onStartRotate(h : PrismSprite) {
-    trace(h.position + " Started rotation");
-    var m : Hex = boardModel.getAt(h.position);
-    m.acceptConnections = false;
-  }
-
-  /** Helper function for HexSprite ending rotation callback */
-  private function onEndRotate(h : PrismSprite) {
-    trace("Ended rotation on orientation " + h.getOrientation());
-    var m : Hex = boardModel.getAt(h.position);
-    m.orientation = h.getOrientation();
-    m.acceptConnections = true;
-  }
-
   public function populate() {
     for(r in 0...rows) {
-      boardModel.set(r,0,new Source());
+      boardModel.set(r,0,new Source().addColor(Color.RED).addColor(Color.BLUE).addColor(Color.GREEN));
       var s = new SourceSprite();
-      s.litColor = r % 2 == 0 ? Color.RED : Color.BLUE;
+      s.litColor = Color.RED;
+      s.colorSwitchListener = onSourceClick;
       boardView.set(r,0,s);
 
       for(c in 1...cols) {
@@ -67,10 +53,36 @@ class PlayState extends FlxState {
           .addConnection(r %2 == 0 ? Color.RED : Color.BLUE, r,c)
           .addConnection(r % 2 == 0 ? Color.RED: Color.BLUE, r, (c+1)%Util.HEX_SIDES))
           .asPrismSprite();
-        v.rotationStartListener = onStartRotate;
-        v.rotationEndListener = onEndRotate;
+        v.rotationStartListener = onPrismStartRotate;
+        v.rotationEndListener = onPrismEndRotate;
       }
     }
+  }
+
+  /** Helper function for PrismSprite starting rotation callback */
+  private function onPrismStartRotate(h : PrismSprite) {
+    trace(h.position + " Started rotation");
+    var m : Hex = boardModel.getAt(h.position);
+    m.acceptConnections = false;
+  }
+
+  /** Helper function for PrismSprite ending rotation callback */
+  private function onPrismEndRotate(h : PrismSprite) {
+    trace("Ended rotation on orientation " + h.getOrientation());
+    var m : Hex = boardModel.getAt(h.position);
+    m.orientation = h.getOrientation();
+    m.acceptConnections = true;
+  }
+
+  /** Helper function for when a Source is clicked. Cycles to next/previous color */
+  private function onSourceClick(sprite : SourceSprite) {
+    var s : Source = boardModel.getAt(sprite.position).asSource();
+    if (HexSprite.CHECK_FOR_REVERSE()) {
+      s.usePreviousColor();
+    } else {
+      s.useNextColor();
+    }
+    sprite.litColor = s.getCurrentColor();
   }
 
   override public function update(elapsed : Float) : Void {

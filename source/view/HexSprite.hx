@@ -1,5 +1,8 @@
 package view;
 
+import flixel.input.FlxInput.FlxInputState;
+import flixel.FlxG;
+import flixel.input.keyboard.FlxKey;
 import common.*;
 import flixel.math.FlxPoint;
 
@@ -8,6 +11,11 @@ class HexSprite extends BaseSprite implements Positionable {
   //Magic number corresponds to graphic size
   public inline static var HEX_SIDE_LENGTH : Float = SCALE * 55.5;
   public inline static var SCALE : Float = 1.0;
+
+  /** Checks if a mouse click should be treated in reverse */
+  public inline static function CHECK_FOR_REVERSE() : Bool {
+    return FlxG.keys.checkStatus(FlxKey.SHIFT, FlxInputState.PRESSED);
+  }
 
   /** The position of this HexSprite in the BoardView. (-1,-1) when unset.
    * Mutated if this HexSprite is repositioned in the BoardView.
