@@ -4,6 +4,10 @@ using common.ArrayExtender;
 
 class TestArrayExtention extends TestCase {
 
+  public function testContains() {
+    //TODO
+  }
+
   public function testFold() {
     assertEquals(10, [1,2,3,4].foldLeft(0,function(a,b){return a+b;}));
     assertEquals(6, ["A","BC","DEF"].foldLeft(0,function(a,b){return a.length + b;}));

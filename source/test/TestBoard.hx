@@ -35,6 +35,8 @@ class TestBoard extends TestCase {
   }
 
   public function testLighting() {
+    //TODO - test acceptLight works with algorithm correctly
+
     var b : Board = new Board(5,5);
 
     b.set(0,0,new Source().addColor(Color.RED));

@@ -1,8 +1,6 @@
 package view;
 
-import flixel.input.keyboard.FlxKey;
 import flixel.FlxG;
-import flixel.input.FlxInput.FlxInputState;
 import flixel.addons.display.FlxExtendedSprite;
 import common.ColorUtil;
 import common.Color;
@@ -17,6 +15,7 @@ import view.HexSprite;
 
 using common.IntExtender;
 using flixel.util.FlxSpriteUtil;
+using common.ArrayExtender;
 
 class PrismSprite extends HexSprite {
 
@@ -131,16 +130,18 @@ class PrismSprite extends HexSprite {
 
   public function setLighting(from : Int, to : Int, lit : Bool) : PrismSprite {
     litArr[from][to] = lit;
+    if (colorArr[from][to] == colorArr[to][from]) {
+      litArr[to][from] = lit;
+    }
     return this;
   }
 
-  public function addConnection(color : Color, from : Int, to : Int) : PrismSprite {
+  public function addConnection(color : Color, from : Int, to : Int, bidirectional : Bool = true) : PrismSprite {
     colorArr[from][to] = color;
-    if (color != Color.NONE) {
-      hasConnector.push(Point.get(from, to));
-    } else {
-      hasConnector.remove(Point.get(from, to));
+    if (bidirectional) {
+      colorArr[to][from] = color;
     }
+    hasConnector.push(Point.get(from, to));
     return this;
   }
 

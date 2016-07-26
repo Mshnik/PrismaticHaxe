@@ -53,7 +53,7 @@ using common.IntExtender;
   public function new() {
     position = Point.get(-1,-1);
     orientation = 0;
-    acceptConnections = false;
+    acceptConnections = true;
     id = nextID++;
     lightIn = Util.arrayOf(Color.NONE, Util.HEX_SIDES);
     lightOut = Util.arrayOf(Color.NONE, Util.HEX_SIDES);

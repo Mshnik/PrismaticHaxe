@@ -1,6 +1,13 @@
 package common;
 class ArrayExtender {
 
+  /** Returns true iff t is in arr, by the == operation */
+  @:generic public inline static function contains<T>(arr : Array<T>, t : T) : Bool {
+    for(t2 in arr) {
+      if (t == t2) return true;
+    }
+    return false;
+  }
 
   /** Fold Left operation, as usually defined functionally */
   @:generic public inline static function foldLeft<T,R>(arr : Array<T>, start : R, f : T->R->R) : R {

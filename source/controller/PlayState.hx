@@ -71,27 +71,27 @@ class PlayState extends FlxState {
   /** Helper function that adds a connector to the Prism at the location.
    * For use during construction
    **/
-  private inline function addConnectorToPrism(row : Int, col : Int, from : Int, to : Int, c : Color) {
+  private inline function addConnectorToPrism(row : Int, col : Int, from : Int, to : Int,
+                                              c : Color, biDirectional : Bool = true) {
     boardModel.get(row,col).asPrism().addConnector(from, to, c);
-    boardView.get(row,col).asPrismSprite().addConnection(c, from, to);
+    if (biDirectional) {
+      boardModel.get(row,col).asPrism().addConnector(to, from, c);
+    }
+    boardView.get(row,col).asPrismSprite().addConnection(c, from, to, biDirectional);
   }
 
   public function populate() {
-    for(r in 0...rows) {
-      addSource(r,0);
-      addColorToSource(r,0,Color.RED);
+    addSource(0,0);
+    addColorToSource(0,0,Color.RED);
+    addColorToSource(0,0,Color.BLUE);
 
-      for(c in 1...cols) {
-        addPrism(r,c);
-        addConnectorToPrism(r,c,r,c,Color.RED);
-        addConnectorToPrism(r,c,r,(c+1)%Util.HEX_SIDES,Color.BLUE);
-      }
-    }
+    addPrism(0,1);
+    addConnectorToPrism(0,1,5,0,Color.BLUE, true);
   }
 
   /** Helper function for PrismSprite starting rotation callback */
   private function onPrismStartRotate(h : PrismSprite) {
-    trace(h.position + " Started rotation");
+    //trace(h.position + " Started rotation");
     var m : Hex = boardModel.getAt(h.position);
     m.acceptConnections = false;
     boardModel.relight();
@@ -100,7 +100,7 @@ class PlayState extends FlxState {
 
   /** Helper function for PrismSprite ending rotation callback */
   private function onPrismEndRotate(h : PrismSprite) {
-    trace("Ended rotation on orientation " + h.getOrientation());
+    //trace("Ended rotation on orientation " + h.getOrientation());
     var m : Hex = boardModel.getAt(h.position);
     m.orientation = h.getOrientation();
     m.acceptConnections = true;
@@ -133,8 +133,13 @@ class PlayState extends FlxState {
   /** Updates the lighting of the given PrismSprite to match its prism model */
   private function updatePrismSpriteLightings(sprite : PrismSprite) {
     var model : Prism = boardModel.getAt(sprite.position).asPrism();
+    trace("");
     for(p in model.getConnectionLocations()) {
-      sprite.setLighting(p.row, p.col, model.isConnectorLit(p.row, p.col));
+      var lit = model.isConnectorLit(p.row, p.col);
+      trace(p + " - " + lit);
+      if (p.col >= p.row || model.getConnector(p.row,p.col).baseColor != model.getConnector(p.col,p.row).baseColor) {
+        sprite.setLighting(p.row, p.col, lit);
+      }
     }
   }
 }
