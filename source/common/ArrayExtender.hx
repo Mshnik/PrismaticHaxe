@@ -1,6 +1,16 @@
 package common;
 class ArrayExtender {
 
+  /** Pretty prints the given 2D array */
+  @:generic public inline static function prettyPrint<T>(arr : Array<Array<T>>) : Void {
+    if (arr.length == 0) trace("[]");
+    trace("[");
+    for(a in arr) {
+      trace(a);
+    }
+    trace("]");
+  }
+
   /** Returns true iff t is in arr, by the == operation */
   @:generic public inline static function contains<T>(arr : Array<T>, t : T) : Bool {
     for(t2 in arr) {

@@ -136,10 +136,11 @@ class PlayState extends FlxState {
     trace("");
     for(p in model.getConnectionLocations()) {
       var lit = model.isConnectorLit(p.row, p.col);
-      trace(p + " - " + lit);
-      if (p.col >= p.row || model.getConnector(p.row,p.col).baseColor != model.getConnector(p.col,p.row).baseColor) {
-        sprite.setLighting(p.row, p.col, lit);
+      if (!lit && model.getConnector(p.row,p.col).baseColor == model.getConnector(p.col,p.row).baseColor) {
+        lit = model.isConnectorLit(p.col, p.row);
       }
+      trace(p + " - " + lit);
+      sprite.setLighting(p.row, p.col, lit);
     }
   }
 }

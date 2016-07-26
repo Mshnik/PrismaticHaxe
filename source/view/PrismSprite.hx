@@ -141,6 +141,9 @@ class PrismSprite extends HexSprite {
     if (bidirectional) {
       colorArr[to][from] = color;
     }
+    if (bidirectional) {
+      hasConnector.remove(Point.get(to,from));
+    }
     hasConnector.push(Point.get(from, to));
     return this;
   }
@@ -150,7 +153,7 @@ class PrismSprite extends HexSprite {
     return Std.int(-angle/ROTATION_DISTANCE).mod(Util.HEX_SIDES);
   }
 
-  /** Helper that corrects for the current orientation of the Prism.
+  /** Helper that corrects for the current orientation of the Hex.
    * Corrects for accessing the given side. Should be called whenever accessing an aribtrary
    * side of the Prism. Also mods to always be in range, in case of negatives or OOB.
    **/
@@ -158,10 +161,33 @@ class PrismSprite extends HexSprite {
     return (getOrientation() + side).mod(Util.HEX_SIDES);
   }
 
+  /** Helper that uncorrects for the current orientation of the Hex.
+   * Performs the reverse of correctForOrientation.
+   **/
+  public inline function uncorrectForOrientation(side : Int) : Int {
+    return (side - getOrientation()).mod(Util.HEX_SIDES);
+  }
+
+  /** Helper that corrects for the current orientation of the Hex.
+   * Corrects for accessing the given side. Should be called whenever accessing an aribtrary
+   * side of the Prism. Also mods to always be in range, in case of negatives or OOB.
+   **/
+  public inline function correctPtForOrientation(point : Point) : Point {
+    return Point.get(correctForOrientation(point.row), correctForOrientation(point.col));
+  }
+
+  /** Helper that uncorrects for the current orientation of the Hex.
+   * Performs the reverse of correctPtForOrientation
+   **/
+  public inline function uncorrectPtForOrientation(point : Point) : Point {
+    return Point.get(uncorrectForOrientation(point.row), uncorrectForOrientation(point.col));
+  }
+
   public override function draw() : Void {
     super.draw();
     for(p in hasConnector) {
-      connectorSprites[p.row][p.col].color = ColorUtil.toFlxColor(colorArr[p.row][p.col], litArr[p.row][p.col]);
+      var lit = litArr[uncorrectForOrientation(p.row)][uncorrectForOrientation(p.col)];
+      connectorSprites[p.row][p.col].color = ColorUtil.toFlxColor(colorArr[p.row][p.col], lit);
       stamp(connectorSprites[p.row][p.col],0,0);
     }
   }

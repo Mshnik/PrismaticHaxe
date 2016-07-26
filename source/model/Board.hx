@@ -171,7 +171,7 @@ class Board extends Array2D<Hex> {
       var l = queue.shift();
       var h : Hex = getAt(l.destination, true);
       if (h != null && h.acceptConnections) {
-        var newOut = h.addLightIn(h.correctForOrientation(l.inDirection),l.color);
+        var newOut = h.addLightIn(l.inDirection,l.color);
         for (x in newOut) {
           if (h.getLightOut(x) != Color.NONE) {
             queue.push(LightPusher.get(h.position,h.getLightOut(x),x));
