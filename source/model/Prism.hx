@@ -1,8 +1,7 @@
 package model;
-import common.Util;
-import common.Point;
-import common.Positionable;
-import common.Array2D;
+
+import common.Positionable.Tile;
+import common.*;
 
 class Prism extends Hex {
 
@@ -11,7 +10,7 @@ class Prism extends Hex {
   public function new() {
     //Create fields first so overriden setters don't hit NPEs. Could add logic.. or just do this
     // "bad practice" lol... this is going to come back to bite me I'm sure
-    connections = new Array2D<ColorConnector>().ensureSize(Hex.SIDES, Hex.SIDES);
+    connections = new Array2D<ColorConnector>().ensureSize(Util.HEX_SIDES, Util.HEX_SIDES);
 
     super();
   }
@@ -23,9 +22,9 @@ class Prism extends Hex {
 
   /** Returns a Array2D of the lit colors in this prism. */
   public inline function getLightingMatrix() : Array2D<Tile<Color>> {
-    var arr2d = new Array2D<Tile<Color>>().ensureSize(Hex.SIDES, Hex.SIDES).fillWith(Tile.creator(Color.NONE));
-    for(r in 0...Hex.SIDES) {
-      for(c in 0...Hex.SIDES) {
+    var arr2d = new Array2D<Tile<Color>>().ensureSize(Util.HEX_SIDES, Util.HEX_SIDES).fillWith(Tile.creator(Color.NONE));
+    for(r in 0...Util.HEX_SIDES) {
+      for(c in 0...Util.HEX_SIDES) {
         var con = getConnector(r,c);
         if (con != null) {
           arr2d.set(r,c,Tile.wrap(con.litColor));
@@ -62,7 +61,7 @@ class Prism extends Hex {
     lightIn[correctedSide] = c;
 
     var newLightOut : Array<Int> = [];
-    for(to in 0...Hex.SIDES) {
+    for(to in 0...Util.HEX_SIDES) {
       var correctedTo = correctForOrientation(to);
       var connector : ColorConnector = connections.get(correctedSide, correctedTo);
       if (connector != null && connector.canAcceptColor(c)) {

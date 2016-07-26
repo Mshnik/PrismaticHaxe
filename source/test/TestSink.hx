@@ -1,6 +1,6 @@
 package test;
 import model.Sink;
-import model.Color;
+import common.Color;
 class TestSink extends TestCase {
 
   public function testConstructionAndLighting() {

@@ -1,7 +1,6 @@
 package model;
 
-import common.Point;
-import common.Array2D;
+import common.*;
 
 using common.IntExtender;
 
@@ -152,7 +151,7 @@ class Board extends Array2D<Hex> {
     //Setup - all sources push their color of light out in all directions
     for(s in sources) {
       s.updateLightOut();
-      for(i in 0...Hex.SIDES) {
+      for(i in 0...Util.HEX_SIDES) {
         queue.push(LightPusher.get(s.position, s.getCurrentColor(), i));
       }
     }
@@ -203,7 +202,7 @@ class LightPusher {
 
   public static inline function get(startLoc : Point, c : Color, exitSide : Int) : LightPusher {
     return new LightPusher(startLoc.add(Point.NEIGHBOR_DELTAS[startLoc.col%2][exitSide]),
-                           c, (exitSide + Std.int(Hex.SIDES/2)).mod(Hex.SIDES));
+                           c, (exitSide + Std.int(Util.HEX_SIDES/2)).mod(Util.HEX_SIDES));
   }
 
   public inline function toString() : String {

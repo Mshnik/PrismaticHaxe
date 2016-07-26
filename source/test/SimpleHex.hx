@@ -1,6 +1,6 @@
 package test;
 
-import model.Color;
+import common.Color;
 import model.Hex;
 
 /** A simple hex extension, for testing.

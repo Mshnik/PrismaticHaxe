@@ -3,6 +3,8 @@ import flixel.math.FlxPoint;
 class Util {
   private function new() {}
 
+  public static var HEX_SIDES(default, never) : Int = 6;
+
   public static var ROOT2 : Float;
   public static var ROOT3 : Float;
 

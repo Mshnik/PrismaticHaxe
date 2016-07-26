@@ -1,4 +1,7 @@
 package model;
+
+import common.Color;
+
 class Sink extends Hex {
 
   private var currentColor : Color;

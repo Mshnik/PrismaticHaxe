@@ -1,4 +1,4 @@
-package model;
+package common;
 enum Color {
   ANY;
   NONE;

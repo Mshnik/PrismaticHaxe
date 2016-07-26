@@ -1,8 +1,6 @@
 package view;
 
-import model.Hex;
-import common.Positionable;
-import common.Point;
+import common.*;
 import flixel.input.FlxInput.FlxInputState;
 import flixel.input.keyboard.FlxKey;
 import flixel.addons.display.FlxExtendedSprite;
@@ -115,7 +113,7 @@ class HexSprite extends BaseSprite implements Positionable {
 
   /** Returns the current orientation. Result is only dependable when this isn't currently rotating */
   public inline function getOrientation() : Int {
-    return Std.int(-angle/ROTATION_DISTANCE).mod(Hex.SIDES);
+    return Std.int(-angle/ROTATION_DISTANCE).mod(Util.HEX_SIDES);
   }
 
   /** Helper that corrects for the current orientation of the Prism.
@@ -123,6 +121,6 @@ class HexSprite extends BaseSprite implements Positionable {
    * side of the Prism. Also mods to always be in range, in case of negatives or OOB.
    **/
   public inline function correctForOrientation(side : Int) : Int {
-    return (getOrientation() + side).mod(Hex.SIDES);
+    return (getOrientation() + side).mod(Util.HEX_SIDES);
   }
 }

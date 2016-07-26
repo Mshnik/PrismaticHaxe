@@ -1,6 +1,5 @@
 package test;
-import common.Util;
-import common.Point;
+import common.*;
 import model.*;
 class TestBoard extends TestCase {
 
@@ -40,22 +39,22 @@ class TestBoard extends TestCase {
 
     b.set(0,0,new Source().addColor(Color.RED));
 
-    assertArrayEquals(Util.arrayOf(Color.RED, Hex.SIDES), b.get(0,0).getLightOutArray());
+    assertArrayEquals(Util.arrayOf(Color.RED, Util.HEX_SIDES), b.get(0,0).getLightOutArray());
 
     b.relight();
-    assertArrayEquals(Util.arrayOf(Color.RED, Hex.SIDES), b.get(0,0).getLightOutArray());
+    assertArrayEquals(Util.arrayOf(Color.RED, Util.HEX_SIDES), b.get(0,0).getLightOutArray());
 
     b.set(0,1,new Prism().addConnector(5,1,Color.RED));
     b.relight();
 
-    assertArrayEquals(Util.arrayOf(Color.RED, Hex.SIDES), b.get(0,0).getLightOutArray());
+    assertArrayEquals(Util.arrayOf(Color.RED, Util.HEX_SIDES), b.get(0,0).getLightOutArray());
     assertEquals(Color.RED, b.get(0,1).getLightIn(5));
     assertEquals(Color.RED, b.get(0,1).getLightOut(1));
 
     b.set(0,2,new Prism().addConnector(4,2,Color.RED).addConnector(4,3,Color.RED));
     b.relight();
 
-    assertArrayEquals(Util.arrayOf(Color.RED, Hex.SIDES), b.get(0,0).getLightOutArray());
+    assertArrayEquals(Util.arrayOf(Color.RED, Util.HEX_SIDES), b.get(0,0).getLightOutArray());
     assertEquals(Color.RED, b.get(0,1).getLightIn(5));
     assertEquals(Color.RED, b.get(0,1).getLightOut(1));
     assertEquals(Color.RED, b.get(0,2).getLightIn(4));
@@ -65,7 +64,7 @@ class TestBoard extends TestCase {
     b.get(0,1).rotateClockwise();
     b.relight();
 
-    assertArrayEquals(Util.arrayOf(Color.RED, Hex.SIDES), b.get(0,0).getLightOutArray());
+    assertArrayEquals(Util.arrayOf(Color.RED, Util.HEX_SIDES), b.get(0,0).getLightOutArray());
     assertEquals(Color.RED, b.get(0,1).getLightIn(4));
     assertEquals(Color.NONE, b.get(0,1).getLightOut(1));
     assertEquals(Color.NONE, b.get(0,2).getLightIn(4));
@@ -76,7 +75,7 @@ class TestBoard extends TestCase {
     b.get(0,1).rotateCounterClockwise();
     b.relight();
 
-    assertArrayEquals(Util.arrayOf(Color.RED, Hex.SIDES), b.get(0,0).getLightOutArray());
+    assertArrayEquals(Util.arrayOf(Color.RED, Util.HEX_SIDES), b.get(0,0).getLightOutArray());
     assertEquals(Color.RED, b.get(0,1).getLightIn(5));
     assertEquals(Color.RED, b.get(0,1).getLightOut(1));
     assertEquals(Color.RED, b.get(0,2).getLightIn(4));
@@ -88,8 +87,8 @@ class TestBoard extends TestCase {
     b.set(1,0,new Source().addColor(Color.BLUE));
     b.relight();
 
-    assertArrayEquals(Util.arrayOf(Color.RED, Hex.SIDES), b.get(0,0).getLightOutArray());
-    assertArrayEquals(Util.arrayOf(Color.BLUE, Hex.SIDES), b.get(1,0).getLightOutArray());
+    assertArrayEquals(Util.arrayOf(Color.RED, Util.HEX_SIDES), b.get(0,0).getLightOutArray());
+    assertArrayEquals(Util.arrayOf(Color.BLUE, Util.HEX_SIDES), b.get(1,0).getLightOutArray());
     assertEquals(Color.RED, b.get(0,1).getLightIn(5));
     assertEquals(Color.RED, b.get(0,1).getLightOut(1));
     assertEquals(Color.RED, b.get(0,2).getLightIn(4));
@@ -102,8 +101,8 @@ class TestBoard extends TestCase {
 
     b.relight();
 
-    assertArrayEquals(Util.arrayOf(Color.RED, Hex.SIDES), b.get(0,0).getLightOutArray());
-    assertArrayEquals(Util.arrayOf(Color.BLUE, Hex.SIDES), b.get(1,0).getLightOutArray());
+    assertArrayEquals(Util.arrayOf(Color.RED, Util.HEX_SIDES), b.get(0,0).getLightOutArray());
+    assertArrayEquals(Util.arrayOf(Color.BLUE, Util.HEX_SIDES), b.get(1,0).getLightOutArray());
     assertEquals(Color.RED, b.get(0,1).getLightIn(5));
     assertEquals(Color.RED, b.get(0,1).getLightOut(1));
     assertEquals(Color.RED, b.get(0,2).getLightIn(4));

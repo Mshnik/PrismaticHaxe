@@ -3,7 +3,7 @@ import common.Positionable.Tile;
 import common.Util;
 import model.Hex;
 import common.Point;
-import model.Color;
+import common.Color;
 import model.Prism;
 import model.Prism.ColorConnector;
 
@@ -64,10 +64,10 @@ class TestPrism extends TestCase {
 
   public function testConstruction() {
     var p = new Prism();
-    for(i in 0...Hex.SIDES) {
+    for(i in 0...Util.HEX_SIDES) {
       assertEquals(Color.NONE, p.getLightIn(i));
       assertEquals(Color.NONE, p.getLightOut(i));
-      for (i2 in 0...Hex.SIDES) {
+      for (i2 in 0...Util.HEX_SIDES) {
         assertEquals(null, p.getConnector(i,i2));
       }
     }
@@ -156,10 +156,10 @@ class TestPrism extends TestCase {
   private inline function resetAndCheck(p : Prism, expectedLightIn : Array<Color>,
                                         expectedLightOut : Array<Color>, expectedLit : Array<Array<Color>>) {
     p.acceptConnections = false;
-    for(i in 0...Hex.SIDES) {
+    for(i in 0...Util.HEX_SIDES) {
       expectedLightIn[i] = Color.NONE;
       expectedLightOut[i] = Color.NONE;
-      for(k in 0...Hex.SIDES) {
+      for(k in 0...Util.HEX_SIDES) {
         expectedLit[i][k] = Color.NONE;
       }
     }
@@ -170,12 +170,12 @@ class TestPrism extends TestCase {
   public function testLighting() {
     var p : Prism = new Prism().addConnector(0,1,Color.RED);
 
-    var expectedLightIn : Array<Color> = Util.arrayOf(Color.NONE, Hex.SIDES);
-    var expectedLightOut : Array<Color> = Util.arrayOf(Color.NONE, Hex.SIDES);
+    var expectedLightIn : Array<Color> = Util.arrayOf(Color.NONE, Util.HEX_SIDES);
+    var expectedLightOut : Array<Color> = Util.arrayOf(Color.NONE, Util.HEX_SIDES);
 
-    var noneArray : Array<Color> = Util.arrayOf(Color.NONE, Hex.SIDES);
+    var noneArray : Array<Color> = Util.arrayOf(Color.NONE, Util.HEX_SIDES);
     var expectedLit : Array<Array<Color>> = [];
-    for(i in 0...Hex.SIDES) {
+    for(i in 0...Util.HEX_SIDES) {
       expectedLit.push(noneArray.copy());
     }
 

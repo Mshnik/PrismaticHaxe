@@ -1,7 +1,7 @@
 package test;
 
-import model.Color;
-import model.ColorUtil;
+import common.Color;
+import common.ColorUtil;
 class TestColors extends TestCase {
 
   public function testCompatability() {

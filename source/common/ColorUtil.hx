@@ -1,4 +1,4 @@
-package model;
+package common;
 import flixel.util.FlxColor;
 class ColorUtil {
   private function new() {

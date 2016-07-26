@@ -5,10 +5,7 @@ package model;
  * Each Hex is only ment to belong to a single Board instance at a time,
  * behavior is undefined when a single hext instance is added to multiple boards.
  */
-import common.Positionable;
-import common.Util;
-import common.Point;
-
+import common.*;
 using common.IntExtender;
 
 @:abstract class Hex implements Positionable {
@@ -19,8 +16,6 @@ using common.IntExtender;
   public static function resetIDs() {
     nextID = 1;
   }
-
-  public inline static var SIDES : Int = 6;
 
   /** The unique id assigned to this Hex upon instantiation. */
   @final public var id(default, set) : Int;
@@ -42,13 +37,13 @@ using common.IntExtender;
   public var position(default, set) : Point;
 
   /** An array of light going into the this hex.
-   * Has length Hex.SIDES, correct indexing is handled by correctForOrientation(..)
+   * Has length Util.HEX_SIDES, correct indexing is handled by correctForOrientation(..)
    **/
   private var lightIn : Array<Color>;
 
   /**
    * An array of light coming out of this hex
-   * Has length Hex.SIDES, correct indexing is handled by correctForOrientation(..)
+   * Has length Util.HEX_SIDES, correct indexing is handled by correctForOrientation(..)
    * */
   private var lightOut : Array<Color>;
 
@@ -60,8 +55,8 @@ using common.IntExtender;
     orientation = 0;
     acceptConnections = false;
     id = nextID++;
-    lightIn = Util.arrayOf(Color.NONE, Hex.SIDES);
-    lightOut = Util.arrayOf(Color.NONE, Hex.SIDES);
+    lightIn = Util.arrayOf(Color.NONE, Util.HEX_SIDES);
+    lightOut = Util.arrayOf(Color.NONE, Util.HEX_SIDES);
   }
 
   public function toString() {
@@ -86,7 +81,7 @@ using common.IntExtender;
 
   public function set_orientation(newOrientation : Int) : Int {
     var x = orientation;
-    var x2 = orientation = newOrientation.mod(SIDES);
+    var x2 = orientation = newOrientation.mod(Util.HEX_SIDES);
     if (rotationListener != null && x != x2) {
       rotationListener(this,x);
     }
@@ -110,7 +105,7 @@ using common.IntExtender;
    * side of the Prism. Also mods to always be in range, in case of negatives or OOB.
    **/
   public inline function correctForOrientation(side : Int) : Int {
-    return (orientation + side).mod(Hex.SIDES);
+    return (orientation + side).mod(Util.HEX_SIDES);
   }
 
 /** Returns the light coming on the given side (corrected for orientation) */
@@ -121,7 +116,7 @@ using common.IntExtender;
   /** Returns a write-safe copy of the light entering this Hex */
   public inline function getLightInArray() : Array<Color> {
     var arr : Array<Color> = [];
-    for(i in 0...Hex.SIDES) {
+    for(i in 0...Util.HEX_SIDES) {
       arr[i] = getLightIn(i);
     }
     return arr;
@@ -135,7 +130,7 @@ using common.IntExtender;
   /** Returns a write-safe copy of the light leaving this Hex */
   public inline function getLightOutArray() : Array<Color> {
     var arr : Array<Color> = [];
-    for(i in 0...Hex.SIDES) {
+    for(i in 0...Util.HEX_SIDES) {
       arr[i] = getLightOut(i);
     }
     return arr;
@@ -147,7 +142,7 @@ using common.IntExtender;
    **/
   public function resetLight() : Array<Int> {
     var arr : Array<Int> = [];
-    for(i in 0...Hex.SIDES) {
+    for(i in 0...Util.HEX_SIDES) {
       if(lightIn != null) lightIn[i] = Color.NONE;
       if(lightOut != null) {
         if (lightOut[i] != Color.NONE) {

@@ -1,5 +1,7 @@
 package model;
 
+import common.*;
+
 using common.IntExtender;
 
 class Source extends Hex {
@@ -15,7 +17,7 @@ class Source extends Hex {
 
   /** Helper to make sure light out is consistent with current active color */
   public function updateLightOut() {
-    for(i in 0...Hex.SIDES) {
+    for(i in 0...Util.HEX_SIDES) {
       lightOut[i] = getCurrentColor();
     }
   }

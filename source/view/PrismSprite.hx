@@ -1,7 +1,7 @@
 package view;
 
-import model.ColorUtil;
-import model.Color;
+import common.ColorUtil;
+import common.Color;
 import flixel.math.FlxPoint;
 import flixel.FlxSprite;
 import flixel.util.FlxSpriteUtil.LineStyle;
@@ -62,9 +62,9 @@ class PrismSprite extends HexSprite {
     }
 
     connectorSprites = [];
-    for(r in 0...Hex.SIDES) {
+    for(r in 0...Util.HEX_SIDES) {
       connectorSprites[r] = [];
-      for(c in 0...Hex.SIDES) {
+      for(c in 0...Util.HEX_SIDES) {
         connectorSprites[r][c] = createConnector(r,c);
       }
     }
@@ -77,12 +77,12 @@ class PrismSprite extends HexSprite {
   public function new(x : Float = 0, y : Float = 0) {
     super(x,y);
 
-    litArr = Util.arrayOf(null, Hex.SIDES);
-    colorArr = Util.arrayOf(null, Hex.SIDES);
+    litArr = Util.arrayOf(null, Util.HEX_SIDES);
+    colorArr = Util.arrayOf(null, Util.HEX_SIDES);
     hasConnector = [];
-    for(i in 0...Hex.SIDES){
-      litArr[i] = Util.arrayOf(false, Hex.SIDES);
-      colorArr[i] = Util.arrayOf(Color.NONE, Hex.SIDES);
+    for(i in 0...Util.HEX_SIDES){
+      litArr[i] = Util.arrayOf(false, Util.HEX_SIDES);
+      colorArr[i] = Util.arrayOf(Color.NONE, Util.HEX_SIDES);
     }
 
   }
