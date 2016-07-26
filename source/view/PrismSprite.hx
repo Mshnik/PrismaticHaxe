@@ -1,5 +1,9 @@
 package view;
 
+import flixel.input.keyboard.FlxKey;
+import flixel.FlxG;
+import flixel.input.FlxInput.FlxInputState;
+import flixel.addons.display.FlxExtendedSprite;
 import common.ColorUtil;
 import common.Color;
 import flixel.math.FlxPoint;
@@ -9,9 +13,9 @@ import flixel.util.FlxColor;
 
 import common.Util;
 import common.Point;
-import model.Hex;
 import view.HexSprite;
 
+using common.IntExtender;
 using flixel.util.FlxSpriteUtil;
 
 class PrismSprite extends HexSprite {
@@ -21,14 +25,19 @@ class PrismSprite extends HexSprite {
    */
   private static var HEX_MIDPOINTS : Array<FlxPoint>;
 
+  /** Drawing styles for the connectors */
   private static var CONNECTOR_FRAME_WIDTH : Float;
   private static var CONNECTOR_FRAME_HEIGHT : Float;
   private static var CONNECTOR_FRAME_CENTER_PT : FlxPoint;
   private static var CONNECTOR_LINE_STYLE : LineStyle;
   private static var connectorSprites : Array<Array<FlxSprite>>;
 
-  private static function __init__() {
+  /** Rotation interaction constants */
+  private static var ROTATION_INC : Float;
+  private static var ROTATION_DISTANCE;
+  private static var REVERSE_KEY;
 
+  public static function __init__() {
     HEX_MIDPOINTS = [
       FlxPoint.get(HexSprite.HEX_SIDE_LENGTH, 0),
       FlxPoint.get(HexSprite.HEX_SIDE_LENGTH * 7/4, (HexSprite.HEX_SIDE_LENGTH * (Util.ROOT3-1)/2)),
@@ -68,11 +77,32 @@ class PrismSprite extends HexSprite {
         connectorSprites[r][c] = createConnector(r,c);
       }
     }
+
+    ROTATION_DISTANCE = 60;
+    ROTATION_INC = 3.0;
+    REVERSE_KEY = FlxKey.SHIFT;
   }
 
+  /** 2D array of bools for connectors that are currently lit, listed as from,to */
   private var litArr : Array<Array<Bool>>;
+
+  /** Colors that connectors are currently set to. Listed as from,to */
   private var colorArr : Array<Array<Color>>;
+
+  /** Array of locations where this has a connector, as (from,to) */
   private var hasConnector : Array<Point>;
+
+  /** The target angle to rotate to, in degrees */
+  private var angleDelta : Float;
+
+  /** True if this is currently rotating, false otherwise */
+  public var isRotating(default, null) : Bool;
+
+  /** Listener to call when this starts rotating. Arg is this PrismSprite */
+  public var rotationStartListener(default, default) : PrismSprite -> Void;
+
+  /** Listener to call when this stops rotating. Arg is this PrismSprite */
+  public var rotationEndListener(default, default) : PrismSprite -> Void;
 
   public function new(x : Float = 0, y : Float = 0) {
     super(x,y);
@@ -83,14 +113,22 @@ class PrismSprite extends HexSprite {
     //TODO - use rotateGraphic and animations to increase speed
     //    loadRotatedGraphic(AssetPaths.hex_back__png, Std.int(360.0/ROTATION_INC));
 
+    //Fields
     litArr = Util.arrayOf(null, Util.HEX_SIDES);
     colorArr = Util.arrayOf(null, Util.HEX_SIDES);
-    hasConnector = [];
     for(i in 0...Util.HEX_SIDES){
       litArr[i] = Util.arrayOf(false, Util.HEX_SIDES);
       colorArr[i] = Util.arrayOf(Color.NONE, Util.HEX_SIDES);
     }
+    hasConnector = [];
 
+    angleDelta = 0;
+    isRotating = false;
+    rotationStartListener = null;
+    rotationEndListener = null;
+
+    //Interaction
+    mouseReleasedCallback = onMouseRelease;
   }
 
   public function setLighting(from : Int, to : Int, lit : Bool) : PrismSprite {
@@ -108,6 +146,19 @@ class PrismSprite extends HexSprite {
     return this;
   }
 
+  /** Returns the current orientation. Result is only dependable when this isn't currently rotating */
+  public inline function getOrientation() : Int {
+    return Std.int(-angle/ROTATION_DISTANCE).mod(Util.HEX_SIDES);
+  }
+
+  /** Helper that corrects for the current orientation of the Prism.
+   * Corrects for accessing the given side. Should be called whenever accessing an aribtrary
+   * side of the Prism. Also mods to always be in range, in case of negatives or OOB.
+   **/
+  public inline function correctForOrientation(side : Int) : Int {
+    return (getOrientation() + side).mod(Util.HEX_SIDES);
+  }
+
   public override function draw() : Void {
     super.draw();
     for(p in hasConnector) {
@@ -115,6 +166,43 @@ class PrismSprite extends HexSprite {
       stamp(connectorSprites[p.row][p.col],0,0);
     }
   }
+
+  public override function update(dt : Float) {
+    super.update(dt);
+
+    //Check resulting rotation state
+    if (angleDelta > 0) {
+      angleDelta -= ROTATION_INC;
+      angle += ROTATION_INC;
+    } else if (angleDelta < 0) {
+      angleDelta += ROTATION_INC;
+      angle -= ROTATION_INC;
+    }
+    if (angleDelta == 0 && isRotating) {
+      isRotating = false;
+      if (rotationEndListener != null) rotationEndListener(this);
+    }
+  }
+
+  private function onMouseRelease(f : FlxExtendedSprite, x : Int, y : Int) : Void {
+    var h = getHitbox();
+    var p = FlxG.mouse.getPosition();
+    //Extra check that the mouse is still there
+    if (h.containsPoint(p)){
+      if (FlxG.keys.checkStatus(REVERSE_KEY, FlxInputState.PRESSED)) {
+        angleDelta -= ROTATION_DISTANCE;
+      } else {
+        angleDelta += ROTATION_DISTANCE;
+      }
+      if (! isRotating) {
+        isRotating = true;
+        if (rotationStartListener != null) rotationStartListener(this);
+      }
+    }
+    h.put();
+    p.put();
+  }
+
 }
 
 /** Can't delete this without crashing, not sure why... */

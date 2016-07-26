@@ -40,14 +40,14 @@ class PlayState extends FlxState {
   }
 
   /** Helper function for HexSprite starting rotation callback */
-  private function onStartRotate(h : HexSprite) {
+  private function onStartRotate(h : PrismSprite) {
     trace(h.position + " Started rotation");
     var m : Hex = boardModel.getAt(h.position);
     m.acceptConnections = false;
   }
 
   /** Helper function for HexSprite ending rotation callback */
-  private function onEndRotate(h : HexSprite) {
+  private function onEndRotate(h : PrismSprite) {
     trace("Ended rotation on orientation " + h.getOrientation());
     var m : Hex = boardModel.getAt(h.position);
     m.orientation = h.getOrientation();
@@ -59,15 +59,14 @@ class PlayState extends FlxState {
       boardModel.set(r,0,new Source());
       var s = new SourceSprite();
       s.litColor = r % 2 == 0 ? Color.RED : Color.BLUE;
-      s.rotationStartListener = onStartRotate;
-      s.rotationEndListener = onEndRotate;
       boardView.set(r,0,s);
 
       for(c in 1...cols) {
         var m = boardModel.set(r,c,new Hex());
         var v = boardView.set(r,c,new PrismSprite()
           .addConnection(r %2 == 0 ? Color.RED : Color.BLUE, r,c)
-          .addConnection(r % 2 == 0 ? Color.RED: Color.BLUE, r, (c+1)%Util.HEX_SIDES));
+          .addConnection(r % 2 == 0 ? Color.RED: Color.BLUE, r, (c+1)%Util.HEX_SIDES))
+          .asPrismSprite();
         v.rotationStartListener = onStartRotate;
         v.rotationEndListener = onEndRotate;
       }
