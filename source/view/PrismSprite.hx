@@ -49,11 +49,8 @@ class PrismSprite extends HexSprite {
       var start = HEX_MIDPOINTS[r];
       var end = HEX_MIDPOINTS[c];
       var middle = Util.linearInterpolate([start, end, CONNECTOR_FRAME_CENTER_PT]);
-
-      s.drawLine(start.x, start.y, middle.x ,middle.y, CONNECTOR_LINE_STYLE);
-      s.drawLine(middle.x, middle.y, end.x ,end.y, CONNECTOR_LINE_STYLE);
-
-      //s.drawCurve(start.x, start.y, middle.x, middle.y, end.x, end.y, FlxColor.RED, CONNECTOR_LINE_STYLE);
+      
+      s.drawCurve(start.x, start.y, middle.x, middle.y, end.x, end.y, FlxColor.TRANSPARENT, CONNECTOR_LINE_STYLE);
 
       middle.put();
 
