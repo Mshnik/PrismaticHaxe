@@ -4,6 +4,13 @@ import common.Util;
 import model.Hex;
 class TestUtil extends TestCase {
 
+  public function testNullAndNonNullFuncs() {
+    assertTrue(Util.isNull(null));
+    assertFalse(Util.isNull("asdf"));
+    assertFalse(Util.isNonNull(null));
+    assertTrue(Util.isNonNull("asdf"));
+  }
+
   public function testEmptyArray() {
     for (i in 0...5) {
       var arr = Util.emptyArray(Hex, i);

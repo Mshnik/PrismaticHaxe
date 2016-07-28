@@ -229,11 +229,12 @@ using common.IntExtender;
   }
 
   /** Swaps the Ts at the given locations. Moves each to the previous location in the list.
-   * Thus if given [p1,p2,p3,p4] which have [h1,h2,h3,h4], ending locations are [h2,h3,h4,h1]
+   * Thus if given [p1,p2,p3,p4] which have [h1,h2,h3,h4], ending locations are [h2,h3,h4,h1].
+   * Filters OOB locations before swapping any.
    * Returns this.
    **/
-
   public function swapManyBackward(locations : Array<Point>) : Array2D<T> {
+    locations = locations.filter(isPointInBounds);
     if (locations.length > 1) {
       var iter1 : Iterator<Point> = locations.iterator();
       var iter2 : Iterator<Point> = locations.iterator();

@@ -1,6 +1,10 @@
 package test;
+
 import common.*;
 import model.*;
+
+using common.ArrayExtender;
+
 class TestBoard extends TestCase {
 
   public function testSinkAndSourceRetention() {
@@ -162,4 +166,84 @@ class TestBoard extends TestCase {
     assertEquals(Color.BLUE, b.get(0,1).getLightIn(5));
     assertEquals(Color.BLUE, b.get(0,1).getLightOut(0));
   }
+
+  /** Returns the orientation of h. For use in mapping */
+  private function getOrientation(h : Hex) {
+    return h.orientation;
+  }
+
+  public function testRotator() {
+    var b = new Board(3,3).fillWith(SimpleHex.create);
+
+    //Check listeners are added correctly when put into board
+
+    var r = new Rotator();
+    assertEquals(null, r.rotationListener);
+
+    b.set(1,1,r);
+    assertTrue(r.rotationListener != null);
+
+    b.set(1,1,null);
+    assertEquals(null, r.rotationListener);
+
+    b.set(1,1,r);
+    assertTrue(r.rotationListener != null);
+
+    b.swap(Point.get(0,0), Point.get(1,1));
+    assertTrue(r.rotationListener != null);
+
+    b.swap(Point.get(0,0), Point.get(1,1));
+    assertTrue(r.rotationListener != null);
+
+    // Check rotation of rotator and that orientations change with it
+
+    var arr : Array<Hex> = Point.get(1,1).getNeighbors().map(b.getAtUnsafe);
+    assertArrayEquals(Util.arrayOf(0,Util.HEX_SIDES), arr.map(getOrientation));
+
+    b.get(1,1).rotateClockwise();
+    arr.rotateForward();
+
+    assertArrayEquals(Point.get(1,1).getNeighbors().map(b.getAtUnsafe), arr);
+    assertArrayEquals(Util.arrayOf(5,Util.HEX_SIDES), arr.map(getOrientation));
+
+    b.get(1,1).rotateClockwise();
+    arr.rotateForward();
+
+    assertArrayEquals(Point.get(1,1).getNeighbors().map(b.getAtUnsafe), arr);
+    assertArrayEquals(Util.arrayOf(4,Util.HEX_SIDES), arr.map(getOrientation));
+
+    b.get(1,1).rotateCounterClockwise();
+    arr.rotateBackward();
+
+    assertArrayEquals(Point.get(1,1).getNeighbors().map(b.getAtUnsafe), arr);
+    assertArrayEquals(Util.arrayOf(5,Util.HEX_SIDES), arr.map(getOrientation));
+
+    //Check rotator on edge of board.
+
+    b = new Board(2,2).fillWith(SimpleHex.create);
+    b.set(0,0,new Rotator());
+
+    var len = 2;
+    arr = [b.getAt(Point.get(0,1)), b.getAt(Point.get(1,0))];
+    assertArrayEquals(Util.arrayOf(0,len), arr.map(getOrientation));
+
+    b.get(0,0).rotateClockwise();
+    arr.rotateForward();
+
+    assertArrayEquals(Point.get(0,0).getNeighbors().map(b.getAtSafe).filter(Util.isNonNull), arr);
+    assertArrayEquals(Util.arrayOf(5,len), arr.map(getOrientation));
+
+    b.get(0,0).rotateClockwise();
+    arr.rotateForward();
+
+    assertArrayEquals(Point.get(0,0).getNeighbors().map(b.getAtSafe).filter(Util.isNonNull), arr);
+    assertArrayEquals(Util.arrayOf(4,len), arr.map(getOrientation));
+
+    b.get(0,0).rotateCounterClockwise();
+    arr.rotateBackward();
+
+    assertArrayEquals(Point.get(0,0).getNeighbors().map(b.getAtSafe).filter(Util.isNonNull), arr);
+    assertArrayEquals(Util.arrayOf(5,len), arr.map(getOrientation));
+  }
+
 }

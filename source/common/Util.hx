@@ -13,6 +13,16 @@ class Util {
     ROOT3 = Math.sqrt(3);
   }
 
+  /** Returns true iff o is null. For use in filtering */
+  public static function isNull(a : Dynamic) : Bool {
+    return a == null;
+  }
+
+  /** Returns true iff o is nonnull. For use in filtering */
+  public static function isNonNull(a : Dynamic) : Bool {
+    return a != null;
+  }
+
   /** Returns true iff the two arrays contain equal elements */
 
   public static function arrayEquals(expected : Array<Dynamic>, actual : Array<Dynamic>) : Bool {

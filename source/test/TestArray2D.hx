@@ -115,6 +115,7 @@ class TestArray2D extends TestCase {
     var p2 = Point.get(1, 0);
     var p3 = Point.get(1, 1);
     var p4 = Point.get(0, 1);
+    var px = Point.get(-1,-1);
 
     var b = new Array2D<SimplePositionable>();
     b.ensureSize(2, 2);
@@ -130,10 +131,8 @@ class TestArray2D extends TestCase {
 
     assertEquals(h, b.getAt(p2));
     assertEquals(h2, b.getAt(p));
-    //checkSimplePositionablePositions(b);
 
     b.swap(p, p2);
-    //checkSimplePositionablePositions(b);
     b.setAt(p3, h3);
 
     //At this point, all hexes at their correct locations
@@ -146,7 +145,6 @@ class TestArray2D extends TestCase {
     assertEquals(h2, b.getAt(p3));
     assertEquals(h3, b.getAt(p4));
     assertEquals(null, b.getAt(p));
-    //checkSimplePositionablePositions(b);
 
     b.swapManyBackward(arr);
     assertArrayEquals([p, p2, p3, p4], arr);
@@ -154,7 +152,26 @@ class TestArray2D extends TestCase {
     assertEquals(h2, b.getAt(p2));
     assertEquals(h3, b.getAt(p3));
     assertEquals(null, b.getAt(p4));
-    //checkSimplePositionablePositions(b);
+
+    //At this point, all hexes at their correct locations
+
+    //Test OOB points
+    arr.push(px);
+    assertArrayEquals([p,p2,p3,p4,px], arr);
+
+    b.swapManyForward(arr);
+    assertArrayEquals([p,p2,p3,p4, px], arr); //Check that original array isn't altered
+    assertEquals(h, b.getAt(p2));
+    assertEquals(h2, b.getAt(p3));
+    assertEquals(h3, b.getAt(p4));
+    assertEquals(null, b.getAt(p));
+
+    b.swapManyBackward(arr);
+    assertArrayEquals([p, p2, p3, p4, px], arr);
+    assertEquals(h, b.getAt(p));
+    assertEquals(h2, b.getAt(p2));
+    assertEquals(h3, b.getAt(p3));
+    assertEquals(null, b.getAt(p4));
 
     //At this point, all hexes at their correct locations
   }

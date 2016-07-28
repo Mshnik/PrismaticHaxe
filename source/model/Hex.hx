@@ -60,7 +60,7 @@ using common.IntExtender;
   }
 
   public function toString() {
-    return "id= " + id + ", orientation=" + orientation;
+    return "id= " + id;
   }
 
   public function set_id(i : Int) : Int {
@@ -201,6 +201,10 @@ using common.IntExtender;
     return Std.is(this, Source);
   }
 
+  public inline function isRotator() : Bool {
+    return Std.is(this, Rotator);
+  }
+
   public inline function asPrism() : Prism {
     if(Std.is(this, Prism)) return Std.instance(this, Prism);
     throw this + " isn't Prism";
@@ -213,6 +217,11 @@ using common.IntExtender;
 
   public function asSink() : Sink {
     if(Std.is(this, Sink)) return Std.instance(this, Sink);
-    throw this + " isn't SINK";
+    throw this + " isn't Sink";
+  }
+
+  public function asRotator() : Rotator {
+    if(Std.is(this, Rotator)) return Std.instance(this, Rotator);
+    throw this + " isn't Rotator";
   }
 }

@@ -79,31 +79,55 @@ class Board extends Array2D<Hex> {
     return this;
   }
 
-  /** Returns the T at the given row,col. If safe, returns null if OOB */
+  /** Returns the Hex at the given row,col. If safe, returns null if OOB */
   public override function get(row : Int, col : Int, safe : Bool = false) : Hex {
     return super.get(row, col, safe);
   }
 
-  /** Returns the T at the given point */
+  /** Returns the Hex at the given point */
   public override function getAt(p : Point, safe : Bool = false) : Hex {
     return super.getAt(p, safe);
+  }
+
+  /** One arg version of above for mapping */
+  public inline function getAtUnsafe(p : Point) : Hex {
+    return getAt(p, false);
+  }
+
+  /** One arg safe version of above for mapping */
+  public inline function getAtSafe(p : Point) : Hex {
+    return getAt(p, true);
   }
 
   /** In addition to calling super.set, updates sources/sinks as necessary */
   public override function set(row : Int, col : Int, h : Hex) : Hex {
     var oldH : Hex = get(row, col);
+
     super.set(row, col, h);
 
-    if (oldH != h) {
-      if (Std.is(oldH, Source)) {
-        sources.remove(Std.instance(oldH,Source));
-      } else if (Std.is(oldH, Sink)) {
-        sinks.remove(Std.instance(oldH,Sink));
+    //If h is a Rotator, make sure there are no adjacent Rotators to prevent infinite recursion
+    if (h.isRotator()) {
+      for (p in h.position.getNeighbors()) {
+        if (getAt(p,true) != null && getAt(p,true).isRotator()) {
+          throw "Can't have adjacent Rotators at " + h.position + " and " + p;
+        }
       }
-      if (Std.is(h, Source)) {
+    }
+
+    if (oldH != h) {
+      if (oldH.isSource()) {
+        sources.remove(Std.instance(oldH,Source));
+      } else if (oldH.isSink()) {
+        sinks.remove(Std.instance(oldH,Sink));
+      } else if (oldH.isRotator()) {
+        oldH.rotationListener = null;
+      }
+      if (h.isSource()) {
         addSource(Std.instance(h,Source));
-      } else if (Std.is(h, Sink)) {
+      } else if (h.isSink()) {
         addSink(Std.instance(h,Sink));
+      } else if (h.isRotator()) {
+        h.rotationListener = onRotatorRotate;
       }
     }
     return h;
@@ -116,16 +140,20 @@ class Board extends Array2D<Hex> {
     var h1 = getAt(p1);
     var h2 = getAt(p2);
 
-    if (Std.is(h1, Source)) {
+    if (h1.isSource()) {
       addSource(Std.instance(h1,Source), true);
-    } else if (Std.is(h1, Sink)) {
+    } else if (h1.isSink()) {
       addSink(Std.instance(h1,Sink), true);
+    } else if (h1.isRotator()) {
+      h1.rotationListener = onRotatorRotate;
     }
 
-    if (Std.is(h2, Source)) {
+    if (h2.isSource()) {
       addSource(Std.instance(h2,Source), true);
-    } else if (Std.is(h2, Sink)) {
+    } else if (h2.isSink()) {
       addSink(Std.instance(h2,Sink), true);
+    } else if (h2.isRotator()) {
+      h2.rotationListener = onRotatorRotate;
     }
 
     return this;
@@ -141,6 +169,33 @@ class Board extends Array2D<Hex> {
   public override function swapManyBackward(locations : Array<Point>) : Board {
     super.swapManyBackward(locations);
     return this;
+  }
+
+  /** Listener set when a rotator is added to this board
+   *  Swaps hexes around this by the same amount that this was rotated.
+   *  Also rotates hexes by that amount so that their orientation stays
+   *  constant with respect to h as the rotational center.
+   **/
+  private function onRotatorRotate(h : Hex, i : Int) : Void {
+    if(! h.isRotator()) throw "expected Rotator, have " + h;
+
+    //Update orientations of hexes to be moved this way
+    for(p in h.position.getNeighbors()) {
+      var n = getAt(p, true);
+      if (n != null) {
+        n.orientation += (h.orientation - i);
+      }
+    }
+
+    //Move hexes
+    while(i < h.orientation) {
+      swapManyBackward(h.position.getNeighbors());
+      i++;
+    }
+    while(i > h.orientation) {
+      swapManyForward(h.position.getNeighbors());
+      i--;
+    }
   }
 
   /** Overridden to narrow return type */
