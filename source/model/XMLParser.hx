@@ -64,6 +64,11 @@ class XMLParser {
         }
         board.setAt(getLocation(prism), prismModel);
       }
+
+      //Read Rotators
+      for(rotator in content.nodes.rotator) {
+        board.setAt(getLocation(rotator), new Rotator());
+      }
     }
     return board;
   }
