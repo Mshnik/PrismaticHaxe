@@ -71,8 +71,8 @@ class PlayState extends FlxState {
             for (p in prismModel.getConnectionLocations()) {
               prismSprite.addConnection(prismModel.getConnector(p.row, p.col).baseColor, p.row, p.col);
             }
-            prismSprite.rotationStartListener = onPrismStartRotate;
-            prismSprite.rotationEndListener = onPrismEndRotate;
+            prismSprite.rotationStartListener = onStartRotation;
+            prismSprite.rotationEndListener = onEndRotation;
             boardView.set(r,c,prismSprite);
           }
           else if (h.isSource()) {
@@ -85,23 +85,23 @@ class PlayState extends FlxState {
             boardView.set(r,c,new SinkSprite());
           }
           else {
-            throw "Illegal Hex created " + h;
+            trace("Illegal Hex created " + h);
           }
         }
       }
     }
   }
 
-  /** Helper function for PrismSprite starting rotation callback */
-  private function onPrismStartRotate(h : PrismSprite) {
+  /** Helper function for RotatableHexSprite starting rotation callback */
+  private function onStartRotation(h : RotatableHexSprite) {
     //trace(h.position + " Started rotation");
     var m : Hex = boardModel.getAt(h.position);
     m.acceptConnections = false;
     viewNeedsSync = true;
   }
 
-  /** Helper function for PrismSprite ending rotation callback */
-  private function onPrismEndRotate(h : PrismSprite) {
+  /** Helper function for RotatableHexSprite ending rotation callback */
+  private function onEndRotation(h : RotatableHexSprite) {
     //trace("Ended rotation on orientation " + h.getOrientation());
     var m : Hex = boardModel.getAt(h.position);
     m.orientation = h.getOrientation();
