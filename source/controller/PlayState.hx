@@ -80,13 +80,21 @@ class PlayState extends FlxState {
     boardView.get(row,col).asPrismSprite().addConnection(c, from, to, biDirectional);
   }
 
+  /** Helper function that adds a Sink at the given location. For use during construction */
+  private inline function addSink(r : Int, c : Int) {
+    boardModel.set(r,c, new Sink());
+    boardView.set(r,c,new SinkSprite());
+  }
+
   public function populate() {
     addSource(0,0);
     addColorToSource(0,0,Color.RED);
     addColorToSource(0,0,Color.BLUE);
 
     addPrism(0,1);
-    addConnectorToPrism(0,1,5,0,Color.BLUE, true);
+    addConnectorToPrism(0,1,5,1,Color.BLUE, true);
+
+    addSink(0,2);
   }
 
   /** Helper function for PrismSprite starting rotation callback */
@@ -127,20 +135,25 @@ class PlayState extends FlxState {
     if(viewNeedsSync) {
       viewNeedsSync = false;
       boardView.spriteGroup.forEachOfType(PrismSprite, updatePrismSpriteLightings);
+      boardView.spriteGroup.forEachOfType(SinkSprite, updateSinkSpriteLighting);
     }
   }
 
   /** Updates the lighting of the given PrismSprite to match its prism model */
   private function updatePrismSpriteLightings(sprite : PrismSprite) {
     var model : Prism = boardModel.getAt(sprite.position).asPrism();
-    trace("");
     for(p in model.getConnectionLocations()) {
       var lit = model.isConnectorLit(p.row, p.col);
       if (!lit && model.getConnector(p.row,p.col).baseColor == model.getConnector(p.col,p.row).baseColor) {
         lit = model.isConnectorLit(p.col, p.row);
       }
-      trace(p + " - " + lit);
       sprite.setLighting(p.row, p.col, lit);
     }
+  }
+
+  /** Updates the lighting of the given SinkSprite to match its Sink model */
+  private function updateSinkSpriteLighting(sprite : SinkSprite) {
+    var model : Sink = boardModel.getAt(sprite.position).asSink();
+    sprite.asSinkSprite().litColor = model.getCurrentColor();
   }
 }

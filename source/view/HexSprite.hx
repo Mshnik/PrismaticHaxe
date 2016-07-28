@@ -51,10 +51,10 @@ class HexSprite extends BaseSprite implements Positionable {
     return Std.is(this, PrismSprite);
   }
 
-//  public inline function isSink() : Bool {
-//    return Std.is(this, Sink);
-//  }
-//
+  public inline function isSinkSprite() : Bool {
+    return Std.is(this, SinkSprite);
+  }
+
   public inline function isSourceSprite() : Bool {
     return Std.is(this, SourceSprite);
   }
@@ -68,9 +68,9 @@ class HexSprite extends BaseSprite implements Positionable {
     if(Std.is(this, SourceSprite)) return Std.instance(this, SourceSprite);
     throw this + " isn't SourceSprite";
   }
-//
-//  public function asSink() : Sink {
-//    if(Std.is(this, Sink)) return Std.instance(this, Sink);
-//    throw this + " isn't SINK";
-//  }
+
+  public function asSinkSprite() : SinkSprite {
+    if(Std.is(this, SinkSprite)) return Std.instance(this, SinkSprite);
+    throw this + " isn't SinkSprite";
+  }
 }
