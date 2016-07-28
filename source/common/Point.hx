@@ -29,6 +29,11 @@ class Point {
     return new Point(row, col);
   }
 
+  public static inline function fromString(s : String) : Point {
+    var i = s.indexOf(",");
+    return get(Std.parseInt(s.substring(1,i)), Std.parseInt(s.substring(i+1)));
+  }
+
   public static inline function clearPool() : Void {
     allocatedPoints = new StringMap<Point>();
 

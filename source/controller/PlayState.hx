@@ -1,6 +1,6 @@
 package controller;
 
-
+import openfl.Assets;
 import model.*;
 import view.*;
 import common.*;
@@ -12,19 +12,32 @@ import flixel.FlxState;
 
 class PlayState extends FlxState {
 
+  /** The file this PlayState is loaded from. This should be set before create() is called. */
+  public var sourceFile(default, set) : Dynamic;
+
+  /** The parser for the source file. Set whenever sourceFile is set */
+  private var xmlParser : XMLParser;
+
   private static inline var BOARD_MARGIN_VERT = 20;
   private static inline var BOARD_MARGIN_HORIZ = 50;
-
-  private var rows : Int = 6;
-  private var cols : Int = 6;
 
   private var boardModel : Board;
   private var boardView : BoardView;
 
+  private var rows : Int;
+  private var cols : Int;
+
   /** True when the model has changed, next update loop should update the view */
   private var viewNeedsSync : Bool;
 
-  override public function create() : Void {
+  /** Sets the sourceFile to the given path, also creates an XMLParser around it. */
+  public function set_sourceFile(path : Dynamic) : Dynamic {
+    xmlParser = new XMLParser(path);
+    return sourceFile = path;
+  }
+
+  /** Create function called when this state is created by inner Flixel logic */
+  public override function create() : Void {
     super.create();
 
     var bg = new FlxSprite();
@@ -33,68 +46,50 @@ class PlayState extends FlxState {
     bg.scrollFactor.y=0;
     add(bg);
 
-    boardModel = new Board(rows,cols);
-    boardView = new BoardView(rows,cols);
-    viewNeedsSync = false;
-    add(boardView.spriteGroup);
-
-    populate();
+    sourceFile = AssetPaths.TEST__xml;
+    loadFromFile();
+    viewNeedsSync = true;
 
     boardView.spriteGroup.setPosition(BOARD_MARGIN_HORIZ, BOARD_MARGIN_VERT);
+    add(boardView.spriteGroup);
   }
 
-  /** Helper function that adds a Source at the given location. For use during construction */
-  private inline function addSource(r : Int, c : Int) {
-    boardModel.set(r,c,new Source());
-    var sprite = boardView.set(r,c,new SourceSprite()).asSourceSprite();
-    sprite.colorSwitchListener = onSourceClick;
-  }
+  /** Reads this.sourceFile into memory. Also creates a boardView that matches the read model */
+  private function loadFromFile() {
+    boardModel = xmlParser.getBoard();
 
-  /** Helper function that adds an available color to the Source at the given location.
-   * For use during construction.
-   **/
-  private inline function addColorToSource(row : Int, col : Int, c : Color) {
-    if (boardModel.get(row,col).asSource().getCurrentColor() == Color.NONE) {
-      boardView.get(row,col).asSourceSprite().litColor = c;
+    //Create a view that matches the model
+    boardView = new BoardView().ensureSize(boardModel.getHeight(), boardModel.getWidth());
+
+    for(r in 0...boardModel.getHeight()) {
+      for(c in 0...boardModel.getWidth()) {
+        var h = boardModel.get(r,c);
+        if (h != null) {
+          if (h.isPrism()) {
+            var prismSprite = new PrismSprite();
+            var prismModel = h.asPrism();
+            for (p in prismModel.getConnectionLocations()) {
+              prismSprite.addConnection(prismModel.getConnector(p.row, p.col).baseColor, p.row, p.col);
+            }
+            prismSprite.rotationStartListener = onPrismStartRotate;
+            prismSprite.rotationEndListener = onPrismEndRotate;
+            boardView.set(r,c,prismSprite);
+          }
+          else if (h.isSource()) {
+            var sourceSprite = new SourceSprite();
+            sourceSprite.litColor = h.asSource().getCurrentColor();
+            sourceSprite.colorSwitchListener = onSourceClick;
+            boardView.set(r,c,sourceSprite);
+          }
+          else if (h.isSink()) {
+            boardView.set(r,c,new SinkSprite());
+          }
+          else {
+            throw "Illegal Hex created " + h;
+          }
+        }
+      }
     }
-    boardModel.get(row,col).asSource().addColor(c);
-  }
-
-  /** Helper function that adds a Prism at the given location. For use during construction */
-  private inline function addPrism(r : Int, c : Int) {
-    boardModel.set(r,c,new Prism());
-    var sprite = boardView.set(r,c,new PrismSprite()).asPrismSprite();
-    sprite.rotationStartListener = onPrismStartRotate;
-    sprite.rotationEndListener = onPrismEndRotate;
-  }
-
-  /** Helper function that adds a connector to the Prism at the location.
-   * For use during construction
-   **/
-  private inline function addConnectorToPrism(row : Int, col : Int, from : Int, to : Int,
-                                              c : Color, biDirectional : Bool = true) {
-    boardModel.get(row,col).asPrism().addConnector(from, to, c);
-    if (biDirectional) {
-      boardModel.get(row,col).asPrism().addConnector(to, from, c);
-    }
-    boardView.get(row,col).asPrismSprite().addConnection(c, from, to, biDirectional);
-  }
-
-  /** Helper function that adds a Sink at the given location. For use during construction */
-  private inline function addSink(r : Int, c : Int) {
-    boardModel.set(r,c, new Sink());
-    boardView.set(r,c,new SinkSprite());
-  }
-
-  public function populate() {
-    addSource(0,0);
-    addColorToSource(0,0,Color.RED);
-    addColorToSource(0,0,Color.BLUE);
-
-    addPrism(0,1);
-    addConnectorToPrism(0,1,5,1,Color.BLUE, true);
-
-    addSink(0,2);
   }
 
   /** Helper function for PrismSprite starting rotation callback */
@@ -102,7 +97,6 @@ class PlayState extends FlxState {
     //trace(h.position + " Started rotation");
     var m : Hex = boardModel.getAt(h.position);
     m.acceptConnections = false;
-    boardModel.relight();
     viewNeedsSync = true;
   }
 
@@ -112,7 +106,6 @@ class PlayState extends FlxState {
     var m : Hex = boardModel.getAt(h.position);
     m.orientation = h.getOrientation();
     m.acceptConnections = true;
-    boardModel.relight();
     viewNeedsSync = true;
   }
 
@@ -124,7 +117,6 @@ class PlayState extends FlxState {
     } else {
       s.useNextColor();
     }
-    boardModel.relight();
     viewNeedsSync = true;
     sprite.litColor = s.getCurrentColor();
   }
@@ -134,6 +126,7 @@ class PlayState extends FlxState {
 
     if(viewNeedsSync) {
       viewNeedsSync = false;
+      boardModel.relight();
       boardView.spriteGroup.forEachOfType(PrismSprite, updatePrismSpriteLightings);
       boardView.spriteGroup.forEachOfType(SinkSprite, updateSinkSpriteLighting);
     }
@@ -144,7 +137,8 @@ class PlayState extends FlxState {
     var model : Prism = boardModel.getAt(sprite.position).asPrism();
     for(p in model.getConnectionLocations()) {
       var lit = model.isConnectorLit(p.row, p.col);
-      if (!lit && model.getConnector(p.row,p.col).baseColor == model.getConnector(p.col,p.row).baseColor) {
+      if (!lit && model.getConnector(p.col, p.row) != null &&
+            model.getConnector(p.row,p.col).baseColor == model.getConnector(p.col,p.row).baseColor) {
         lit = model.isConnectorLit(p.col, p.row);
       }
       sprite.setLighting(p.row, p.col, lit);
@@ -155,5 +149,19 @@ class PlayState extends FlxState {
   private function updateSinkSpriteLighting(sprite : SinkSprite) {
     var model : Sink = boardModel.getAt(sprite.position).asSink();
     sprite.asSinkSprite().litColor = model.getCurrentColor();
+  }
+
+  /**
+   * Destroy function called when this state is swapped away.
+   * SourceFile and XML parser left so it can be reloaded
+   **/
+  public override function destroy() {
+    super.destroy();
+
+    boardModel = null;
+    boardView = null;
+    rows = -1;
+    cols = -1;
+    viewNeedsSync = false;
   }
 }

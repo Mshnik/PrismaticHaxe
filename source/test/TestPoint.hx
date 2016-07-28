@@ -7,11 +7,23 @@ class TestPoint extends TestCase {
     return Point.get(row, col);
   }
 
+  private static inline function fromString(s : String) : Point {
+    return Point.fromString(s);
+  }
+
   private function checkPoint(row : Int, col : Int, actual : Point) {
     assertEquals(row, actual.row);
     assertEquals(col, actual.col);
     assertEquals("(" + row + "," + col + ")", actual.toString());
     assertEquals(get(row, col), actual);
+  }
+
+  public function testFromString() {
+    checkPoint(0,0,fromString("(0,0)"));
+    checkPoint(0,1,fromString("(0,1)"));
+    checkPoint(0,-1,fromString("(0,-1)"));
+    checkPoint(-3,-2,fromString("(-3,-2)"));
+    checkPoint(3,-2,fromString("(3,-2)"));
   }
 
   public function testCreation() {

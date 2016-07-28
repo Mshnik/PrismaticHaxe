@@ -37,7 +37,7 @@ class BoardView extends Array2D<HexSprite> {
   }
 
   /** Overridden to narrow return type */
-  public inline override function ensureSize(rows : Int, cols : Int) : BoardView {
+  public override function ensureSize(rows : Int, cols : Int) : BoardView {
     super.ensureSize(rows, cols);
     return this;
   }
