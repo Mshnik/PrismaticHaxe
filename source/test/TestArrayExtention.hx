@@ -5,7 +5,9 @@ using common.ArrayExtender;
 class TestArrayExtention extends TestCase {
 
   public function testContains() {
-    //TODO
+    assertTrue([1,2,3,4].contains(4));
+    assertTrue([1,1,1].contains(1));
+    assertFalse([1,2,3].contains(4));
   }
 
   public function testFold() {
@@ -23,6 +25,12 @@ class TestArrayExtention extends TestCase {
     assertArrayEquals([3, 4, 1, 2], arr.rotateForward());
     assertArrayEquals([4, 1, 2, 3], arr.rotateBackward());
     assertArrayEquals([1, 2, 3, 4], arr.rotateBackward());
+  }
+
+  public function testMap2D() {
+    var arr = [["Hello","Hi"],["Sup","Blah"]];
+    var arr2 = [[5,2],[3,4]];
+    assertArrayEquals(arr2, arr.map2D(function(s : String){return s.length;}));
   }
 
 

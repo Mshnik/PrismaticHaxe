@@ -97,6 +97,9 @@ using common.IntExtender;
   }
 
   public function set_acceptConnections(b : Bool) : Bool {
+    if (! b) {
+      resetLight();
+    }
     return acceptConnections = b;
   }
 

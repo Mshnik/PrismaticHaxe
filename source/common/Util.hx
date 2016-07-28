@@ -57,16 +57,6 @@ class Util {
     return arr;
   }
 
-  /** Convienence function that maps each element in an Array<Array<T>>.
-   * Can't fully map within Array2D because of the positionable requirement.
-   **/
-  @:generic public inline static function map<T,S>(arr : Array<Array<T>>, f : T -> S) : Array<Array<S>> {
-    var m = function(a : Array<T>) : Array<S> {
-      return a.map(f);
-    }
-    return arr.map(m);
-  }
-
   /** Linearly interpolates the given points.
    * If dispose, calls put() on points in array before returning. Do this if points are not
    * needed after this call

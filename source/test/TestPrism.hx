@@ -1,11 +1,12 @@
 package test;
 import common.Positionable.Tile;
 import common.Util;
-import model.Hex;
 import common.Point;
 import common.Color;
 import model.Prism;
 import model.Prism.ColorConnector;
+
+using common.ArrayExtender;
 
 class TestPrism extends TestCase {
 
@@ -146,7 +147,7 @@ class TestPrism extends TestCase {
                                      expectedLightOut : Array<Color>, expectedLit : Array<Array<Color>>) {
     assertArrayEquals(expectedLightIn, p.getLightInArray());
     assertArrayEquals(expectedLightOut, p.getLightOutArray());
-    assertArrayEquals(expectedLit, Util.map(p.getLightingMatrix().asNestedArrays(),Tile.unWrap));
+    assertArrayEquals(expectedLit, p.getLightingMatrix().asNestedArrays().map2D(Tile.unWrap));
     for(from in 0...Util.HEX_SIDES) {
       for(to in 0...Util.HEX_SIDES) {
         assertEquals(expectedLit[from][to] != Color.NONE, p.isConnectorLit(from,to));

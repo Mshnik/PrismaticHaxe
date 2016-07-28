@@ -101,14 +101,6 @@ class Prism extends Hex {
     }
     return super.resetLight();
   }
-
-  public override function set_acceptConnections(accept : Bool) : Bool {
-    if (! accept) {
-      resetLight();
-    }
-    return super.set_acceptConnections(accept);
-  }
-
 }
 
 /** Represents a connection from one side of a hex to another.

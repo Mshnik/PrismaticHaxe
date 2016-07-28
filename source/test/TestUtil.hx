@@ -36,12 +36,6 @@ class TestUtil extends TestCase {
     assertTrue(Util.arrayEquals([[1, 2], [3, 4]], [[1, 2], [3, 4]]));
   }
 
-  public function testMap2D() {
-    var arr = [["Hello","Hi"],["Sup","Blah"]];
-    var arr2 = [[5,2],[3,4]];
-    assertArrayEquals(arr2, Util.map(arr, function(s : String){return s.length;}));
-  }
-
   public function testLinearInterpolate() {
     assertFlxPointEquals(FlxPoint.get(0,0), Util.linearInterpolate([], true));
     assertFlxPointEquals(FlxPoint.get(1,1), Util.linearInterpolate([FlxPoint.get(1,1)], true));

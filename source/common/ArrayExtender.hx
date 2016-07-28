@@ -1,18 +1,8 @@
 package common;
 class ArrayExtender {
 
-  /** Pretty prints the given 2D array */
-  @:generic public inline static function prettyPrint<T>(arr : Array<Array<T>>) : Void {
-    if (arr.length == 0) trace("[]");
-    trace("[");
-    for(a in arr) {
-      trace(a);
-    }
-    trace("]");
-  }
-
   /** Returns true iff t is in arr, by the == operation */
-  @:generic public inline static function contains<T>(arr : Array<T>, t : T) : Bool {
+  @:generic public static function contains<T>(arr : Array<T>, t : T) : Bool {
     for(t2 in arr) {
       if (t == t2) return true;
     }
@@ -60,6 +50,26 @@ class ArrayExtender {
   @:generic public static inline function rotateBackward<T>(arr : Array<T>) : Array<T> {
     arr.push(arr.shift());
     return arr;
+  }
+
+  /** Pretty prints the given 2D array */
+  @:generic public inline static function prettyPrint<T>(arr : Array<Array<T>>) : Void {
+    if (arr.length == 0) trace("[]");
+    trace("[");
+    for(a in arr) {
+      trace(a);
+    }
+    trace("]");
+  }
+
+  /** Convienence function that maps each element in an Array<Array<T>>.
+   * Can't fully map within Array2D because of the positionable requirement.
+   **/
+  @:generic public inline static function map2D<T,S>(arr : Array<Array<T>>, f : T -> S) : Array<Array<S>> {
+    var m = function(a : Array<T>) : Array<S> {
+      return a.map(f);
+    }
+    return arr.map(m);
   }
 
 }

@@ -35,8 +35,6 @@ class TestBoard extends TestCase {
   }
 
   public function testLighting() {
-    //TODO - test acceptLight works with algorithm correctly
-
     var b : Board = new Board(5,5);
 
     b.set(0,0,new Source().addColor(Color.RED));
@@ -67,7 +65,7 @@ class TestBoard extends TestCase {
     b.relight();
 
     assertArrayEquals(Util.arrayOf(Color.RED, Util.HEX_SIDES), b.get(0,0).getLightOutArray());
-    assertEquals(Color.RED, b.get(0,1).getLightIn(4));
+    assertEquals(Color.RED, b.get(0,1).getLightIn(5));
     assertEquals(Color.NONE, b.get(0,1).getLightOut(1));
     assertEquals(Color.NONE, b.get(0,2).getLightIn(4));
     assertEquals(Color.NONE, b.get(0,2).getLightOut(2));
@@ -115,5 +113,53 @@ class TestBoard extends TestCase {
     assertEquals(Color.BLUE, b.get(1,1).getLightOut(0));
     assertEquals(Color.BLUE, b.get(0,1).getLightIn(3));
     assertEquals(Color.BLUE, b.get(0,1).getLightOut(2));
+
+    var b2 = new Board().ensureSize(1,2);
+    b2.set(0,0,new Source().addColor(Color.BLUE));
+    b2.set(0,1,new Prism().addConnector(5,1,Color.BLUE).addConnector(1,5,Color.BLUE));
+    b2.relight();
+
+    assertEquals(Color.BLUE, b2.get(0,1).getLightIn(5));
+    assertEquals(Color.BLUE, b2.get(0,1).getLightOut(1));
+
+    b2.get(0,1).rotateCounterClockwise();
+    b2.relight();
+
+    assertEquals(Color.NONE, b2.get(0,1).getLightOut(0));
+    assertEquals(Color.NONE, b2.get(0,1).getLightOut(4));
+
+    b2.get(0,1).rotateCounterClockwise();
+    b2.relight();
+
+    assertEquals(Color.BLUE, b2.get(0,1).getLightIn(5));
+    assertEquals(Color.BLUE, b2.get(0,1).getLightOut(3));
+  }
+
+  public function testLightingWithAcceptConnections() {
+    var b = new Board().ensureSize(3,3);
+
+    b.set(0,0,new Source().addColor(Color.BLUE));
+    b.set(0,1,new Prism().addConnector(5,0,Color.BLUE));
+
+    b.relight();
+
+    assertEquals(Color.BLUE, b.get(0,1).getLightIn(5));
+    assertEquals(Color.BLUE, b.get(0,1).getLightOut(0));
+
+    b.get(0,1).acceptConnections = false;
+    assertEquals(Color.NONE, b.get(0,1).getLightIn(5));
+    assertEquals(Color.NONE, b.get(0,1).getLightOut(0));
+
+    b.relight();
+    assertEquals(Color.NONE, b.get(0,1).getLightIn(5));
+    assertEquals(Color.NONE, b.get(0,1).getLightOut(0));
+
+    b.get(0,1).acceptConnections = true;
+    assertEquals(Color.NONE, b.get(0,1).getLightIn(5));
+    assertEquals(Color.NONE, b.get(0,1).getLightOut(0));
+
+    b.relight();
+    assertEquals(Color.BLUE, b.get(0,1).getLightIn(5));
+    assertEquals(Color.BLUE, b.get(0,1).getLightOut(0));
   }
 }
