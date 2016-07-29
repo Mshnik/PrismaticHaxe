@@ -50,7 +50,7 @@ class PlayState extends FlxState {
     loadFromFile();
     viewNeedsSync = true;
 
-    boardView.spriteGroup.setPosition(BOARD_MARGIN_HORIZ, BOARD_MARGIN_VERT);
+//    boardView.spriteGroup.setPosition(BOARD_MARGIN_HORIZ, BOARD_MARGIN_VERT);
     add(boardView.spriteGroup);
   }
 
@@ -71,8 +71,8 @@ class PlayState extends FlxState {
             for (p in prismModel.getConnectionLocations()) {
               prismSprite.addConnection(prismModel.getConnector(p.row, p.col).baseColor, p.row, p.col);
             }
-            prismSprite.rotationStartListener = onStartRotation;
-            prismSprite.rotationEndListener = onEndRotation;
+            prismSprite.rotationStartListener = onPrismStartRotation;
+            prismSprite.rotationEndListener = onPrismEndRotation;
             boardView.set(r,c,prismSprite);
           }
           else if (h.isSource()) {
@@ -84,6 +84,12 @@ class PlayState extends FlxState {
           else if (h.isSink()) {
             boardView.set(r,c,new SinkSprite());
           }
+          else if (h.isRotator()){
+            var rotatorSprite = new RotatorSprite();
+            rotatorSprite.rotationStartListener = onRotatorStartRotation;
+            rotatorSprite.rotationEndListener = onRotatorEndRotation;
+            boardView.set(r,c,rotatorSprite);
+          }
           else {
             trace("Illegal Hex created " + h);
           }
@@ -92,16 +98,16 @@ class PlayState extends FlxState {
     }
   }
 
-  /** Helper function for RotatableHexSprite starting rotation callback */
-  private function onStartRotation(h : RotatableHexSprite) {
+  /** Helper function for PrismSprite starting rotation callback */
+  private function onPrismStartRotation(h : RotatableHexSprite) {
     //trace(h.position + " Started rotation");
     var m : Hex = boardModel.getAt(h.position);
     m.acceptConnections = false;
     viewNeedsSync = true;
   }
 
-  /** Helper function for RotatableHexSprite ending rotation callback */
-  private function onEndRotation(h : RotatableHexSprite) {
+  /** Helper function for PrismSprite ending rotation callback */
+  private function onPrismEndRotation(h : RotatableHexSprite) {
     //trace("Ended rotation on orientation " + h.getOrientation());
     var m : Hex = boardModel.getAt(h.position);
     m.orientation = h.getOrientation();
@@ -119,6 +125,46 @@ class PlayState extends FlxState {
     }
     viewNeedsSync = true;
     sprite.litColor = s.getCurrentColor();
+  }
+
+  /** Helper function for RotatorSprite starting rotation callback */
+  private function onRotatorStartRotation(h : RotatableHexSprite) {
+    h.asRotatorSprite().orientationAtRotationStart = h.getOrientation();
+
+    for(sprite in h.asRotatorSprite().position.getNeighbors().map(boardView.getAtSafe).filter(Util.isNonNull)) {
+      h.asRotatorSprite().rotationGroup.add(sprite);
+      boardModel.getAt(sprite.position).acceptConnections = false;
+    }
+    viewNeedsSync = true;
+  }
+
+  /** Helper function for RotatorSprite ending rotation callback */
+  private function onRotatorEndRotation(h : RotatableHexSprite) {
+    var r = h.asRotatorSprite();
+
+    //Move sprites in board
+    var i : Int = r.orientationAtRotationStart;
+    while(i < h.getOrientation()) {
+      boardView.swapManyBackward(h.position.getNeighbors());
+      i++;
+    }
+    while(i > h.getOrientation()) {
+      boardView.swapManyForward(h.position.getNeighbors());
+      i--;
+    }
+
+    //Update model
+    var m : Hex = boardModel.getAt(h.position);
+    m.orientation = h.getOrientation();
+
+    for(sprite in r.position.getNeighbors().map(boardView.getAtSafe).filter(Util.isNonNull)) {
+      if (sprite.isPrismSprite()) {
+        boardModel.getAt(sprite.position).orientation = sprite.asPrismSprite().getOrientation();
+        boardModel.getAt(sprite.position).acceptConnections = true;
+      }
+    }
+
+    viewNeedsSync = true;
   }
 
   override public function update(elapsed : Float) : Void {

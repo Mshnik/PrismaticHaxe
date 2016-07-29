@@ -11,7 +11,7 @@ class TestXMLParser extends TestCase {
 
   public function testBoardAttributes() {
     var b = getTestBoard();
-    assertEquals(4, b.getHeight());
+    assertEquals(5, b.getHeight());
     assertEquals(5, b.getWidth());
   }
 
@@ -45,6 +45,6 @@ class TestXMLParser extends TestCase {
 
   public function testRotators() {
     var b = getTestBoard();
-    assertTrue(b.get(3,1).isRotator());
+    assertTrue(b.get(3,2).isRotator());
   }
 }

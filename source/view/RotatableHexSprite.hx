@@ -109,4 +109,8 @@ using common.IntExtender;
     p.put();
   }
 
+  public override function isRotatable() : Bool {
+    return true;
+  }
+
 }

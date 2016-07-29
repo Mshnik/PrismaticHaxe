@@ -47,6 +47,10 @@ class HexSprite extends BaseSprite implements Positionable {
     return position = p;
   }
 
+  public function isRotatable() : Bool {
+    return false;
+  }
+
   public inline function isPrismSprite() : Bool {
     return Std.is(this, PrismSprite);
   }
@@ -57,6 +61,10 @@ class HexSprite extends BaseSprite implements Positionable {
 
   public inline function isSourceSprite() : Bool {
     return Std.is(this, SourceSprite);
+  }
+
+  public inline function isRotatorSprite() : Bool {
+    return Std.is(this, RotatorSprite);
   }
 
   public inline function asPrismSprite() : PrismSprite {
@@ -72,5 +80,10 @@ class HexSprite extends BaseSprite implements Positionable {
   public function asSinkSprite() : SinkSprite {
     if(Std.is(this, SinkSprite)) return Std.instance(this, SinkSprite);
     throw this + " isn't SinkSprite";
+  }
+
+  public function asRotatorSprite() : RotatorSprite {
+    if(Std.is(this, RotatorSprite)) return Std.instance(this, RotatorSprite);
+    throw this + " isn't RotatorSprite";
   }
 }

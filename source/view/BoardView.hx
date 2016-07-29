@@ -78,6 +78,16 @@ class BoardView extends Array2D<HexSprite> {
     return super.getAt(p, safe);
   }
 
+  /** One arg version of above for mapping */
+  public inline function getAtUnsafe(p : Point) : HexSprite {
+    return getAt(p, false);
+  }
+
+  /** One arg safe version of above for mapping */
+  public inline function getAtSafe(p : Point) : HexSprite {
+    return getAt(p, true);
+  }
+
   /** In addition to setting element, removes old element from group,
    *   adds and sets position of Source element
    **/
@@ -87,8 +97,10 @@ class BoardView extends Array2D<HexSprite> {
       spriteGroup.remove(oldH);
     }
     super.set(row,col,h);
-    spriteGroup.add(h);
-    setGraphicPosition(h);
+    if (h != null) {
+      spriteGroup.add(h);
+      setGraphicPosition(h);
+    }
     return h;
   }
 
@@ -107,20 +119,42 @@ class BoardView extends Array2D<HexSprite> {
    **/
   public override function swap(p1 : Point, p2 : Point) : BoardView {
     super.swap(p1,p2);
-    setGraphicPosition(spriteGroup.add(getAt(p1)));
-    setGraphicPosition(spriteGroup.add(getAt(p2)));
+
+    var h1 = getAt(p1);
+    if (h1 != null) {
+      setGraphicPosition(spriteGroup.add(h1));
+    }
+    var h2 = getAt(p2);
+    if (h2 != null) {
+      setGraphicPosition(spriteGroup.add(h2));
+    }
+
     return this;
   }
 
   /** Overridden to narrow return type */
   public override function swapManyForward(locations : Array<Point>) : BoardView {
     super.swapManyForward(locations);
+
+    for(p in locations) {
+      if (getAt(p) != null) {
+        setGraphicPosition(getAt(p));
+      }
+    }
+
     return this;
   }
 
   /** Overridden to narrow return type */
   public override function swapManyBackward(locations : Array<Point>) : BoardView {
     super.swapManyBackward(locations);
+
+    for(p in locations) {
+      if (getAt(p) != null) {
+        setGraphicPosition(getAt(p));
+      }
+    }
+
     return this;
   }
 
@@ -136,4 +170,5 @@ class BoardView extends Array2D<HexSprite> {
     super.fillWith(elmCreator);
     return this;
   }
+
 }
