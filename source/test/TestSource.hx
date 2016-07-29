@@ -1,4 +1,7 @@
 package test;
+import model.Rotator;
+import model.Sink;
+import model.Prism;
 import model.Hex;
 import common.Color;
 import common.Util;
@@ -95,5 +98,36 @@ class TestSource extends TestCase {
     for(i in 0...Util.HEX_SIDES) {
       assertEquals(Color.RED, s.getLightOut(i));
     }
+  }
+
+  public function testEquals() {
+    assertTrue(new Source().equals(new Source()));
+    assertFalse(new Source().equals(new Prism()));
+    assertFalse(new Source().equals(new Sink()));
+    assertFalse(new Source().equals(new Rotator()));
+
+    var s = new Source();
+    var s2 = new Source();
+
+    s.addColor(Color.RED);
+    s2.addColor(Color.RED);
+    assertTrue(s.equals(s2));
+    assertTrue(s2.equals(s));
+
+    s.addColor(Color.BLUE);
+    assertFalse(s.equals(s2));
+    assertFalse(s2.equals(s));
+
+    s2.addColor(Color.BLUE);
+    assertTrue(s.equals(s2));
+    assertTrue(s2.equals(s));
+
+    s.useNextColor();
+    assertFalse(s.equals(s2));
+    assertFalse(s2.equals(s));
+
+    s2.useNextColor();
+    assertTrue(s.equals(s2));
+    assertTrue(s2.equals(s));
   }
 }

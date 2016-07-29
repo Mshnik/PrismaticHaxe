@@ -12,10 +12,12 @@ interface Equitable<T> {
 
 class EquitableUtils {
 
-  /** Returns an equality function for the given type. Nulls are treated as equal */
+  /** Returns an equality function for the given type. Nulls are treated as equal
+   * Non-nulls can't be equal to a null.
+   **/
   public static function equalsFunc<X : Equitable<X>>(type : Class<X>) : X -> X -> Bool {
     return function(x1 : X, x2 : X) : Bool {
-      return (x1 == null && x2 == null) || x1.equals(x2);
+      return (x1 == null && x2 == null) || (x1 != null && x2 != null && x1.equals(x2));
     }
   }
 

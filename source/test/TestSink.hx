@@ -1,4 +1,7 @@
 package test;
+import model.Rotator;
+import model.Source;
+import model.Prism;
 import model.Sink;
 import common.Color;
 class TestSink extends TestCase {
@@ -18,6 +21,13 @@ class TestSink extends TestCase {
 
     s.resetLight();
     assertEquals(Color.NONE, s.getCurrentColor());
+  }
+
+  public function testEquals() {
+    assertTrue(new Sink().equals(new Sink()));
+    assertFalse(new Sink().equals(new Prism()));
+    assertFalse(new Sink().equals(new Source()));
+    assertFalse(new Sink().equals(new Rotator()));
   }
 
 }

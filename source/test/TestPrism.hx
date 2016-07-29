@@ -1,4 +1,7 @@
 package test;
+import model.Rotator;
+import model.Sink;
+import model.Source;
 import common.Positionable.Tile;
 import common.Util;
 import common.Point;
@@ -288,5 +291,33 @@ class TestPrism extends TestCase {
 
     p.addConnector(0,2,Color.GREEN);
     assertArrayEquals([Point.get(0,1), Point.get(0,2)], p.getConnectionLocations());
+  }
+
+  public function testEquals() {
+    assertTrue(new Prism().equals(new Prism()));
+    assertFalse(new Prism().equals(new Source()));
+    assertFalse(new Prism().equals(new Sink()));
+    assertFalse(new Prism().equals(new Rotator()));
+
+    var p = new Prism();
+    var p2 = new Prism();
+
+    p.addConnector(0,1,Color.RED);
+    p2.addConnector(0,1,Color.RED);
+    assertTrue(p.equals(p2));
+    assertTrue(p2.equals(p));
+
+    p.addConnector(1,2,Color.BLUE);
+    assertFalse(p.equals(p2));
+    assertFalse(p2.equals(p));
+
+    p2.addConnector(1,2,Color.BLUE);
+    assertTrue(p.equals(p2));
+    assertTrue(p2.equals(p));
+
+    p.rotateCounterClockwise();
+    p2.rotateCounterClockwise();
+    assertTrue(p.equals(p2));
+    assertTrue(p2.equals(p));
   }
 }

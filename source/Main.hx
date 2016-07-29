@@ -53,6 +53,7 @@ class Main extends Sprite {
     r.add(new TestPrism());
     r.add(new TestSource());
     r.add(new TestSink());
+    r.add(new TestRotator());
     r.add(new TestBoard());
     r.add(new TestXMLParser());
 

@@ -12,7 +12,7 @@ interface Positionable {
  * result in thrown error. To change this behavior, override set_data(..)
  * Position is initally (-1,-1) until set
  **/
-class Tile<T> implements Positionable {
+class Tile<T> implements Positionable implements Equitable<Tile<T>> {
 
   public var data(default, set) : T;
   private var dataSet : Bool;
@@ -54,6 +54,10 @@ class Tile<T> implements Positionable {
 
   public function set_position(p : Point) : Point {
     return position = p;
+  }
+
+  public function equals(t : Tile<T>) : Bool {
+    return t != null && data == t.data;
   }
 
 }

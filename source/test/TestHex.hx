@@ -190,4 +190,28 @@ class TestHex extends TestCase {
     assertTrue(new Rotator().isRotator());
   }
 
+  public function testEquals() {
+    var h1 = SimpleHex.create();
+    var h2 = SimpleHex.create();
+
+    assertFalse(h1.equals(null));
+
+    for(i in 0...Util.HEX_SIDES) {
+      assertTrue(h1.equals(h2));
+      assertTrue(h2.equals(h1));
+
+      h1.rotateCounterClockwise();
+      h2.rotateCounterClockwise();
+    }
+
+    h1.rotateClockwise();
+    for(i in 0...Util.HEX_SIDES) {
+      assertFalse(h1.equals(h2));
+      assertFalse(h2.equals(h1));
+
+      h1.rotateCounterClockwise();
+      h2.rotateCounterClockwise();
+    }
+  }
+
 }
