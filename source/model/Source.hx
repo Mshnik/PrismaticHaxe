@@ -3,8 +3,9 @@ package model;
 import common.*;
 
 using common.IntExtender;
+using common.ArrayExtender;
 
-class Source extends Hex {
+class Source extends Hex implements Equitable<Source> {
 
   private var availableColors(null, null) : Array<Color>;
   private var currentIndex(default, set) : Int;
@@ -80,6 +81,14 @@ class Source extends Hex {
     }
 
     return [];
+  }
+
+  /** Two Sources are equal if they are equal as Hexes and have equal arrays of available colors
+   * This requires the same currently available color for both Sources.
+   **/
+  public override function equals(h : Hex) : Bool {
+    return super.equals(h) && h.isSource() && currentIndex == h.asSource().currentIndex
+      && availableColors.equals(h.asSource().getAvailableColors());
   }
 
 }

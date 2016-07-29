@@ -2,8 +2,9 @@ package test;
 import flixel.math.FlxPoint;
 import model.Hex;
 import common.Point;
-import common.Util;
 import haxe.PosInfos;
+
+using common.ArrayExtender;
 
 class TestCase extends haxe.unit.TestCase {
 
@@ -29,7 +30,7 @@ class TestCase extends haxe.unit.TestCase {
 
   public function assertArrayEquals<T>(expected : Array<T>, actual : Array<T>, ?c : PosInfos) {
     currentTest.done = true;
-    if (!Util.arrayEquals(expected, actual)) {
+    if (!expected.equals(actual)) {
       currentTest.success = false;
       currentTest.error = "expected '" + expected + "' but was '" + actual + "'";
       currentTest.posInfos = c;

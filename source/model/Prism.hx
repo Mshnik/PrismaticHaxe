@@ -1,9 +1,10 @@
 package model;
 
+import common.Equitable.EquitableUtils;
 import common.Positionable.Tile;
 import common.*;
 
-class Prism extends Hex {
+class Prism extends Hex implements Equitable<Prism> {
 
   private var connectionArr : Array<Point>;
   private var connections : Array2D<ColorConnector>;
@@ -101,6 +102,11 @@ class Prism extends Hex {
     }
     return super.resetLight();
   }
+
+  public override function equals(h : Hex) : Bool {
+    return super.equals(h) && h.isPrism()
+      && connections.equals(h.asPrism().connections, EquitableUtils.equalsFunc(ColorConnector));
+  }
 }
 
 /** Represents a connection from one side of a hex to another.
@@ -109,7 +115,7 @@ class Prism extends Hex {
   * Position being reflexive (i.e. (x,x)) means it is a dead end.
   * Base color is the color of the connector, and litColor is the collor it is currently lit
   **/
-class ColorConnector implements Positionable {
+class ColorConnector implements Positionable implements Equitable<ColorConnector> {
 
   public var position(default, set) : Point;
   public var baseColor(default, null) : Color;
@@ -155,5 +161,10 @@ class ColorConnector implements Positionable {
       throw "Incompatable colors " + baseColor + " and " + c;
     }
     return litColor = c;
+  }
+
+  /** Two connectors are equal if they have the same position and the same base color */
+  public function equals(c : ColorConnector) : Bool {
+    return c != null && position.equals(c.position) && baseColor == c.baseColor;
   }
 }

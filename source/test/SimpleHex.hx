@@ -1,12 +1,13 @@
 package test;
 
+import common.Equitable;
 import common.Color;
 import model.Hex;
 
 /** A simple hex extension, for testing.
  *  Functions as a prism that just reflects all light sent in back out.
 **/
-class SimpleHex extends Hex {
+class SimpleHex extends Hex implements Equitable<SimpleHex> {
 
   public static function create() : Hex {
     return new SimpleHex();
@@ -27,5 +28,10 @@ class SimpleHex extends Hex {
     lightIn[correctForOrientation(side)] = c;
     lightOut[correctForOrientation(side)] = c;
     return [correctForOrientation(side)];
+  }
+
+  /** Two SimpleHexes are equal if they are equal as Hexes. */
+  public override function equals(h : Hex) : Bool {
+    return super.equals(h) && Std.is(h, SimpleHex);
   }
 }

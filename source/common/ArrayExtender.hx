@@ -9,6 +9,27 @@ class ArrayExtender {
     return false;
   }
 
+  /** Returns true iff the two arrays contain equal elements.
+   * Recurses on array elements until a non-array element is hit.
+   **/
+  public static function equals(arr : Array<Dynamic>, other : Array<Dynamic>) : Bool {
+    if (arr.length != other.length) return false;
+
+    var iter1 = arr.iterator();
+    var iter2 = other.iterator();
+    while (iter1.hasNext() && iter2.hasNext()) {
+      var v1 : Dynamic = iter1.next();
+      var v2 : Dynamic = iter2.next();
+
+      if (Std.is(v1, Array) && Std.is(v2, Array)) {
+        if (!equals(Std.instance(v1, Array),(Std.instance(v2, Array)))) return false;
+      } else {
+        if (v1 != v2) return false;
+      }
+    }
+    return true;
+  }
+
   /** Fold Left operation, as usually defined functionally */
   @:generic public inline static function foldLeft<T,R>(arr : Array<T>, start : R, f : T->R->R) : R {
     for (t in arr) {

@@ -320,6 +320,29 @@ using common.IntExtender;
     }
     return arr;
   }
+
+  /** Two Array2Ds are equal if they have the same size and contain the same elements.
+   * If equalsOp is non-null, uses that to check for equality on T, otherwise uses ==.
+   * equalsOp should return true on (null,null).
+   *
+   * modCount is not checked for equality purposes.
+   **/
+  public function equals(arr : Array2D<T>, equalsOp : T -> T -> Bool = null) : Bool {
+    if (arr == null || getWidth() != arr.getWidth() || getHeight() != arr.getHeight()) {
+      return false;
+    }
+
+    for(r in 0...getHeight()) {
+      for(c in 0...getWidth()) {
+        var t1 = get(r,c);
+        var t2 = arr.get(r,c);
+
+        if(equalsOp != null && !equalsOp(t1,t2)) return false;
+        else if (equalsOp == null && t1 != t2) return false;
+      }
+    }
+    return true;
+  }
 }
 
 @:generic class Array2DIterator<T : Positionable> {

@@ -8,7 +8,7 @@ package model;
 import common.*;
 using common.IntExtender;
 
-@:abstract class Hex implements Positionable {
+@:abstract class Hex implements Positionable implements Equitable<Hex> {
 
   /** 0 Used to denote uninitialized ID, thus 1 is the first valid ID */
   private static var nextID : Int = 1;
@@ -223,5 +223,25 @@ using common.IntExtender;
   public function asRotator() : Rotator {
     if(Std.is(this, Rotator)) return Std.instance(this, Rotator);
     throw this + " isn't Rotator";
+  }
+
+  /** Determines if the this and h are functionally equivalent.
+   *  This compares their attributes, not their current state.
+   *
+   *  Used:
+   *   - orientation
+   *
+   *  Not Used:
+   *   - id
+   *   - acceptConnections
+   *   - position
+   *   - lightIn
+   *   - lightOut
+   *   - rotationListener
+   *
+   * Additionally, subclasses should override and check their properties as well
+   **/
+  public function equals(h : Hex) : Bool {
+    return h != null && orientation == h.orientation;
   }
 }

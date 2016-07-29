@@ -10,6 +10,18 @@ class TestArrayExtention extends TestCase {
     assertFalse([1,2,3].contains(4));
   }
 
+  public function testArrayEquals() {
+    assertTrue([1].equals([1]));
+    assertTrue([1, 2, 3].equals([1, 2, 3]));
+    assertTrue(["Hello", "Hi"].equals(["Hello", "Hi"]));
+    assertFalse([].equals([1]));
+    assertFalse([1].equals([2]));
+
+    //Check multi-dimension support
+    assertTrue([[1]].equals([[1]]));
+    assertTrue([[1, 2], [3, 4]].equals([[1, 2], [3, 4]]));
+  }
+
   public function testFold() {
     assertEquals(10, [1,2,3,4].foldLeft(0,function(a,b){return a+b;}));
     assertEquals(6, ["A","BC","DEF"].foldLeft(0,function(a,b){return a.length + b;}));

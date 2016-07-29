@@ -31,18 +31,6 @@ class TestUtil extends TestCase {
     }
   }
 
-  public function testArrayEquals() {
-    assertTrue(Util.arrayEquals([1], [1]));
-    assertTrue(Util.arrayEquals([1, 2, 3], [1, 2, 3]));
-    assertTrue(Util.arrayEquals(["Hello", "Hi"], ["Hello", "Hi"]));
-    assertFalse(Util.arrayEquals([], [1]));
-    assertFalse(Util.arrayEquals([1], [2]));
-
-    //Check multi-dimension support
-    assertTrue(Util.arrayEquals([[1]], [[1]]));
-    assertTrue(Util.arrayEquals([[1, 2], [3, 4]], [[1, 2], [3, 4]]));
-  }
-
   public function testLinearInterpolate() {
     assertFlxPointEquals(FlxPoint.get(0,0), Util.linearInterpolate([], true));
     assertFlxPointEquals(FlxPoint.get(1,1), Util.linearInterpolate([FlxPoint.get(1,1)], true));

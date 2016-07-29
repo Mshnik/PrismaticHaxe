@@ -23,26 +23,6 @@ class Util {
     return a != null;
   }
 
-  /** Returns true iff the two arrays contain equal elements */
-
-  public static function arrayEquals(expected : Array<Dynamic>, actual : Array<Dynamic>) : Bool {
-    if (expected.length != actual.length) return false;
-
-    var iter1 = expected.iterator();
-    var iter2 = actual.iterator();
-    while (iter1.hasNext() && iter2.hasNext()) {
-      var v1 : Dynamic = iter1.next();
-      var v2 : Dynamic = iter2.next();
-
-      if (Std.is(v1, Array) && Std.is(v2, Array)) {
-        if (!arrayEquals(Std.instance(v1, Array), Std.instance(v2, Array))) return false;
-      } else {
-        if (v1 != v2) return false;
-      }
-    }
-    return true;
-  }
-
   /** Creates an empty (all null) array of length, for the given type */
 
   @:generic public inline static function emptyArray<T>(ArrayType : Class<T>, length : Int) : Array<T> {

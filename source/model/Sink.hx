@@ -1,8 +1,9 @@
 package model;
 
+import common.Equitable;
 import common.Color;
 
-class Sink extends Hex {
+class Sink extends Hex implements Equitable<Sink> {
 
   private var currentColor : Color;
 
@@ -33,5 +34,10 @@ class Sink extends Hex {
     }
 
     return [];
+  }
+
+  /** Two sinks are equal if they are equal as Hexes and both sinks. */
+  public override function equals(h : Hex) : Bool {
+    return super.equals(h) && h.isSink();
   }
 }
