@@ -7,6 +7,7 @@ import model.Prism;
 import model.Prism.ColorConnector;
 
 using common.ArrayExtender;
+using common.FunctionExtender;
 
 class TestPrism extends TestCase {
 
@@ -23,6 +24,9 @@ class TestPrism extends TestCase {
 
     for(color in COLORS) {
       assertFalse(c.canAcceptColor(color));
+      if (color != Color.NONE) {
+        shouldFail(c.set_litColor.apply1B(color));
+      }
     }
 
     assertEquals(Point.get(-1,-1), c.position);
@@ -58,8 +62,11 @@ class TestPrism extends TestCase {
     assertTrue(c3.canAcceptColor(Color.RED));
     assertTrue(c3.canAcceptColor(Color.ANY));
     assertFalse(c3.canAcceptColor(Color.BLUE));
+    shouldFail(c3.set_litColor.apply1B(Color.BLUE));
     assertFalse(c3.canAcceptColor(Color.GREEN));
+    shouldFail(c3.set_litColor.apply1B(Color.GREEN));
     assertFalse(c3.canAcceptColor(Color.YELLOW));
+    shouldFail(c3.set_litColor.apply1B(Color.YELLOW));
     assertFalse(c3.canAcceptColor(Color.NONE));
   }
 

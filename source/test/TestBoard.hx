@@ -4,6 +4,7 @@ import common.*;
 import model.*;
 
 using common.ArrayExtender;
+using common.FunctionExtender;
 
 class TestBoard extends TestCase {
 
@@ -194,6 +195,8 @@ class TestBoard extends TestCase {
 
     b.swap(Point.get(0,0), Point.get(1,1));
     assertTrue(r.rotationListener != null);
+
+    shouldFail(b.set.apply3B(0).apply2B(1).apply1B(new Rotator()));
 
     // Check rotation of rotator and that orientations change with it
 

@@ -1,11 +1,12 @@
 package test;
 
+import model.*;
 import common.Color;
 import common.Util;
 import common.Point;
-import model.Hex;
 
 using common.IntExtender;
+using common.FunctionExtender;
 
 class TestHex extends TestCase {
 
@@ -37,6 +38,9 @@ class TestHex extends TestCase {
     var arr = [h2,h3,h];
     arr.sort(function(a,b){return a.id - b.id;});
     assertArrayEquals([h,h2,h3], arr);
+
+    shouldFail(h.set_id.apply1B(3));
+    shouldFail(h.set_id.apply1B(-3));
   }
 
   public function testRotation() {
@@ -119,6 +123,8 @@ class TestHex extends TestCase {
   }
 
   public function testLightInLightOut() {
+    shouldFail(new Hex().addLightIn.apply2B(0).apply1B(Color.RED));
+
     var h = SimpleHex.create();
 
     var expectedLight : Array<Color> = Util.arrayOf(Color.NONE, Util.HEX_SIDES);
@@ -147,6 +153,41 @@ class TestHex extends TestCase {
     assertArrayEquals([0, 1], arr);
     assertArrayEquals(expectedLight, h.getLightInArray());
     assertArrayEquals(expectedLight, h.getLightOutArray());
+  }
+
+  public function testConversion() {
+
+    assertTrue(new Prism().isPrism());
+    assertFalse(new Source().isPrism());
+    shouldFail(new Source().asPrism.discardReturn());
+    assertFalse(new Sink().isPrism());
+    shouldFail(new Sink().asPrism.discardReturn());
+    assertFalse(new Rotator().isPrism());
+    shouldFail(new Rotator().asPrism.discardReturn());
+
+    assertFalse(new Prism().isSource());
+    shouldFail(new Prism().asSource.discardReturn());
+    assertTrue(new Source().isSource());
+    assertFalse(new Sink().isSource());
+    shouldFail(new Sink().asSource.discardReturn());
+    assertFalse(new Rotator().isSource());
+    shouldFail(new Rotator().asSource.discardReturn());
+
+    assertFalse(new Prism().isSink());
+    shouldFail(new Prism().asSink.discardReturn());
+    assertFalse(new Source().isSink());
+    shouldFail(new Source().asSink.discardReturn());
+    assertTrue(new Sink().isSink());
+    assertFalse(new Rotator().isSink());
+    shouldFail(new Rotator().asSink.discardReturn());
+
+    assertFalse(new Prism().isRotator());
+    shouldFail(new Prism().asRotator.discardReturn());
+    assertFalse(new Source().isRotator());
+    shouldFail(new Source().asRotator.discardReturn());
+    assertFalse(new Sink().isRotator());
+    shouldFail(new Sink().asRotator.discardReturn());
+    assertTrue(new Rotator().isRotator());
   }
 
 }

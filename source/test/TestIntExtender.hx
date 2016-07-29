@@ -1,6 +1,7 @@
 package test;
 
 using common.IntExtender;
+using common.FunctionExtender;
 
 class TestIntExtender extends TestCase{
 
@@ -20,6 +21,9 @@ class TestIntExtender extends TestCase{
     assertEquals(2, (2).mod(3));
     assertEquals(2, (5).mod(3));
     assertEquals(2, (-1).mod(3));
+
+    shouldFail((2).mod.apply1B(-1));
+    shouldFail((-2).mod.apply1B(-1));
   }
 
 }

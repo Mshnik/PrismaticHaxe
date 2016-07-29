@@ -109,6 +109,7 @@ class Board extends Array2D<Hex> {
     if (h.isRotator()) {
       for (p in h.position.getNeighbors()) {
         if (getAt(p,true) != null && getAt(p,true).isRotator()) {
+          super.set(row,col,oldH); //Undo setting before throwing
           throw "Can't have adjacent Rotators at " + h.position + " and " + p;
         }
       }

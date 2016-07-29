@@ -4,6 +4,8 @@ import common.Positionable;
 import common.Point;
 import common.Array2D;
 
+using common.FunctionExtender;
+
 class TestArray2D extends TestCase {
 
   /** Helper that asserts that each hex's position is correct */
@@ -26,6 +28,8 @@ class TestArray2D extends TestCase {
     assertEquals(Point.get(-1,-1), t.position);
     t.position = Point.get(1,2);
     assertEquals(Point.get(1,2), t.position);
+
+    shouldFail(t.set_data.apply1B(3));
   }
 
   public function testCreation() {
@@ -40,6 +44,10 @@ class TestArray2D extends TestCase {
     assertEquals(3, b.getWidth());
     assertArrayEquals([[null, null, null],[null, null, null],[null, null, null]], b.asNestedArrays());
     assertEquals("[\n\t[null,null,null]\n\t[null,null,null]\n\t[null,null,null]\n]", b.toString());
+
+    shouldFail(b.ensureSize.apply2B(-1).apply1B(1));
+    shouldFail(b.ensureSize.apply2B(1).apply1B(-1));
+    shouldFail(b.ensureSize.apply2B(-1).apply1B(-1));
   }
 
   public function testAddRowAndCol() {
@@ -289,6 +297,42 @@ class TestArray2D extends TestCase {
       expectedSize--;
       assertEquals(expectedSize, b.size);
     }
+
+    //Test concurrent modification
+    iter1 = b.iterator();
+    assertTrue(iter1.hasNext());
+    b.addRowTop();
+    shouldFail(iter1.hasNext.discardReturn());
+
+    iter1 = b.iterator();
+    assertTrue(iter1.hasNext());
+    b.addRowBottom();
+    shouldFail(iter1.hasNext.discardReturn());
+
+    iter1 = b.iterator();
+    assertTrue(iter1.hasNext());
+    b.addColLeft();
+    shouldFail(iter1.hasNext.discardReturn());
+
+    iter1 = b.iterator();
+    assertTrue(iter1.hasNext());
+    b.addColRight();
+    shouldFail(iter1.hasNext.discardReturn());
+
+    iter1 = b.iterator();
+    assertTrue(iter1.hasNext());
+    b.addColRight();
+    shouldFail(iter1.hasNext.discardReturn());
+
+    iter1 = b.iterator();
+    assertTrue(iter1.hasNext());
+    b.shift(1,1);
+    shouldFail(iter1.hasNext.discardReturn());
+
+    iter1 = b.iterator();
+    assertTrue(iter1.hasNext());
+    b.swap(Point.get(0,0),Point.get(1,1));
+    shouldFail(iter1.hasNext.discardReturn());
   }
 
   public function testFill() {

@@ -4,6 +4,7 @@ import model.Hex;
 import common.Point;
 import common.Util;
 import haxe.PosInfos;
+
 class TestCase extends haxe.unit.TestCase {
 
   public override function setup() {
@@ -46,4 +47,20 @@ class TestCase extends haxe.unit.TestCase {
     }
   }
 
+  public function shouldFail(func : Void -> Void, ?c : PosInfos) {
+    currentTest.done = true;
+    var errCaught = false;
+    try{
+      func();
+    } catch(err : Dynamic) {
+      errCaught = true;
+    }
+
+    if (! errCaught) {
+      currentTest.success = false;
+      currentTest.error = "Exception not thrown";
+      currentTest.posInfos = c;
+      throw currentTest;
+    }
+  }
 }
