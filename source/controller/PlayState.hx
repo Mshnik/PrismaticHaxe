@@ -154,8 +154,9 @@ class PlayState extends FlxState {
       i--;
     }
 
+    var sprites = r.position.getNeighbors().map(boardView.getAtSafe).filter(Util.isNonNull);
+
 //    //Rotate views to match new rotation
-//    var sprites = r.position.getNeighbors().map(boardView.getAtSafe).filter(Util.isNonNull);
 //    for(sprite in sprites) {
 //      if (sprite.isRotatable()) {
 //        sprite.asRotatableSprite().addRotation(r.orientationAtRotationStart - h.getOrientation());

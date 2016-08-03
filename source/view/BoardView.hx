@@ -1,4 +1,5 @@
 package view;
+import view.HexSprite;
 import common.Util;
 import common.Point;
 import view.HexSprite;
@@ -10,10 +11,10 @@ using common.IntExtender;
 class BoardView extends Array2D<HexSprite> {
 
   /** Graphic height of a row of hexes. Amount to shift when a row moves. */
-  private static inline var ROW_HEIGHT = 103 * HexSprite.SCALE;
+  private static var ROW_HEIGHT = 2 * HexSprite.HEX_SIDE_LENGTH;
 
   /** Graphic width of a col of hexes. Amount to shift when a col moves. */
-  private static inline var COL_WIDTH = 91 * HexSprite.SCALE;
+  private static var COL_WIDTH = Util.ROOT3 * HexSprite.HEX_SIDE_LENGTH;
 
   @final public var spriteGroup(default, null) : FlxTypedSpriteGroup<HexSprite>;
 
