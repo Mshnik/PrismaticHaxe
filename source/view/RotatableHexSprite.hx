@@ -20,10 +20,16 @@ using common.IntExtender;
   /** True if this is currently rotating, false otherwise */
   public var isRotating(default, null) : Bool;
 
-  /** Listener to call when this starts rotating. Arg is this PrismSprite */
+  /**
+   * Validator to call when this is supposed to start rotating. If null, unused.
+   * Only acknowledges click if this returns true. Arg is this RotatableHexSprite.
+   **/
+  public var rotationValidator(default, default) : RotatableHexSprite -> Bool;
+
+  /** Listener to call when this starts rotating. Arg is this RotatableHexSprite. */
   public var rotationStartListener(default, default) : RotatableHexSprite -> Void;
 
-  /** Listener to call when this stops rotating. Arg is this PrismSprite */
+  /** Listener to call when this stops rotating. Arg is this RotatableHexSprite. */
   public var rotationEndListener(default, default) : RotatableHexSprite -> Void;
 
   public function new(x : Float = 0, y : Float = 0) {
@@ -33,6 +39,7 @@ using common.IntExtender;
     isRotating = false;
     rotationStartListener = null;
     rotationEndListener = null;
+    rotationValidator = null;
 
     //Interaction
     mouseReleasedCallback = onMouseRelease;
@@ -97,22 +104,24 @@ using common.IntExtender;
   }
 
   private function onMouseRelease(f : FlxExtendedSprite, x : Int, y : Int) : Void {
-    var h = getHitbox();
-    var p = FlxG.mouse.getPosition();
-    //Extra check that the mouse is still there
-    if (h.containsPoint(p)){
-      if (HexSprite.CHECK_FOR_REVERSE()) {
-        angleDelta -= ROTATION_DISTANCE;
-      } else {
-        angleDelta += ROTATION_DISTANCE;
+    if (rotationValidator == null || rotationValidator(this)) {
+      var h = getHitbox();
+      var p = FlxG.mouse.getPosition();
+      //Extra check that the mouse is still there
+      if (h.containsPoint(p)){
+        if (HexSprite.CHECK_FOR_REVERSE()) {
+          angleDelta -= ROTATION_DISTANCE;
+        } else {
+          angleDelta += ROTATION_DISTANCE;
+        }
+        if (! isRotating) {
+          isRotating = true;
+          if (rotationStartListener != null) rotationStartListener(this);
+        }
       }
-      if (! isRotating) {
-        isRotating = true;
-        if (rotationStartListener != null) rotationStartListener(this);
-      }
+      h.put();
+      p.put();
     }
-    h.put();
-    p.put();
   }
 
   public override function isRotatable() : Bool {

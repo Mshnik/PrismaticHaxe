@@ -5,7 +5,7 @@ import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 /** A RotatorSprite is treated like a PrismSprite with no connections */
 class RotatorSprite extends RotatableHexSprite {
 
-  public var rotationGroup(default, null) : FlxTypedSpriteGroup<HexSprite>;
+  private var rotationGroup(default, null) : FlxTypedSpriteGroup<HexSprite>;
 
   /** The orientation of this RotatorSprite when it started rotating */
   public var orientationAtRotationStart(default, default) : Int;
@@ -20,6 +20,24 @@ class RotatorSprite extends RotatableHexSprite {
     //    loadRotatedGraphic(AssetPaths.hex_back__png, Std.int(360.0/ROTATION_INC));
 
     rotationGroup = new FlxTypedSpriteGroup<HexSprite>();
+  }
+
+  public inline function getSprites() : Array<HexSprite> {
+    return rotationGroup.members;
+  }
+
+  public inline function addSpriteToGroup(h : HexSprite) : RotatorSprite {
+    rotationGroup.add(h);
+    h.rotator = this;
+    return this;
+  }
+
+  public inline function clearSpriteGroup() : RotatorSprite {
+    for(sprite in rotationGroup.members) {
+      sprite.rotator = null;
+    }
+    rotationGroup.clear();
+    return this;
   }
 
   public override function update(dt : Float) {

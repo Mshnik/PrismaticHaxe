@@ -23,6 +23,14 @@ class Util {
     return a != null;
   }
 
+  public static inline function degToRad(d : Float) : Float {
+    return d * Math.PI / 180.0;
+  }
+
+  public static inline function radToDeg(r : Float) : Float {
+    return r / Math.PI * 180.0;
+  }
+
   /** Creates an empty (all null) array of length, for the given type */
 
   @:generic public inline static function emptyArray<T>(ArrayType : Class<T>, length : Int) : Array<T> {

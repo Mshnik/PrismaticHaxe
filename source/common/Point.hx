@@ -1,5 +1,7 @@
 package common;
+
 import haxe.ds.StringMap;
+
 class Point {
 
   private static var allocatedPoints : StringMap<Point> = new StringMap<Point>();
@@ -20,6 +22,8 @@ class Point {
     [Point.UP, Point.UPRIGHT, Point.RIGHT, Point.DOWN, Point.LEFT, Point.UPLEFT],
     [Point.UP, Point.RIGHT, Point.DOWNRIGHT, Point.DOWN, Point.DOWNLEFT, Point.LEFT]
   ];
+
+  public static var NEIGHBOR_ANGLES : Array<Int> = [0,60,120,180,240,300];
 
   public static inline function get(row : Int, col : Int) : Point {
     var s = createString(row, col);
@@ -70,6 +74,10 @@ class Point {
 
   public inline function dot(p : Point) : Int {
     return row * p.row + col * p.col;
+  }
+
+  public inline function angleTo(p : Point) : Int {
+    return NEIGHBOR_ANGLES[getNeighbors().indexOf(p)];
   }
 
   private static inline function createStringOf(p : Point) : String {

@@ -1,4 +1,5 @@
 package view;
+import flixel.math.FlxMath;
 import view.HexSprite;
 import common.Util;
 import common.Point;
@@ -25,10 +26,22 @@ class BoardView extends Array2D<HexSprite> {
   }
 
   /** Helper function for setting position of a HexSprite based on its row,col position */
-  private static inline function setGraphicPosition(h : HexSprite) {
+  public static inline function setGraphicPosition(h : HexSprite) {
     if (h != null) {
-      h.y = (h.position.row + h.position.col.mod(2)/2) * ROW_HEIGHT;
-      h.x = h.position.col * COL_WIDTH;
+      if (h.rotator == null) {
+        h.y = (h.position.row + h.position.col.mod(2)/2) * ROW_HEIGHT;
+        h.x = h.position.col * COL_WIDTH;
+      } else {
+        var startAngle = Util.degToRad(h.rotator.position.angleTo(h.position));
+        var rotatorAngleDelta = Util.degToRad((h.rotator.angle % 360)
+        + ( (h.rotator.orientationAtRotationStart-1) * RotatableHexSprite.ROTATION_DISTANCE));
+
+        var angle = startAngle + rotatorAngleDelta;
+        trace(angle);
+
+        h.y = h.rotator.y + (Math.sin(angle) * COL_WIDTH);
+        h.x = h.rotator.x + (Math.cos(angle) * COL_WIDTH);
+      }
     }
   }
 

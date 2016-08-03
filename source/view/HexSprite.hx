@@ -22,6 +22,9 @@ class HexSprite extends BaseSprite implements Positionable {
    **/
   public var position(default, set) : Point;
 
+  /** The rotator currently rotating this to a new position. Null if none */
+  public var rotator(default, default) : RotatorSprite;
+
   /** Constructor for HexSprite
    *
    *  @param x - x position, graphically. 0 if unset
@@ -35,6 +38,7 @@ class HexSprite extends BaseSprite implements Positionable {
     angle = 0;
     position = Point.get(-1,-1);
     scale = FlxPoint.get(SCALE,SCALE);
+    rotator = null;
 
     //Input handling
     enableMouseClicks(true, true);

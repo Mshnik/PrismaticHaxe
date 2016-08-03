@@ -30,6 +30,9 @@ class PlayState extends FlxState {
   /** True when the model has changed, next update loop should update the view */
   private var viewNeedsSync : Bool;
 
+  /** Rotator currently rotating hexes */
+  private var currentRotator : RotatorSprite;
+
   /** Sets the sourceFile to the given path, also creates an XMLParser around it. */
   public function set_sourceFile(path : Dynamic) : Dynamic {
     xmlParser = new XMLParser(path);
@@ -49,6 +52,7 @@ class PlayState extends FlxState {
     sourceFile = AssetPaths.TEST__xml;
     loadFromFile();
     viewNeedsSync = true;
+    currentRotator = null;
 
 //    boardView.spriteGroup.setPosition(BOARD_MARGIN_HORIZ, BOARD_MARGIN_VERT);
     add(boardView.spriteGroup);
@@ -88,6 +92,7 @@ class PlayState extends FlxState {
             var rotatorSprite = new RotatorSprite();
             rotatorSprite.rotationStartListener = onRotatorStartRotation;
             rotatorSprite.rotationEndListener = onRotatorEndRotation;
+            rotatorSprite.rotationValidator = allowRotatorRotation;
             boardView.set(r,c,rotatorSprite);
           }
           else {
@@ -127,21 +132,27 @@ class PlayState extends FlxState {
     sprite.litColor = s.getCurrentColor();
   }
 
+  /** Helper function for determining if a RotatorSprite is allowed to acknowledge a click */
+  private function allowRotatorRotation(h : RotatableHexSprite) : Bool {
+    return currentRotator == null;
+  }
+
   /** Helper function for RotatorSprite starting rotation callback */
   private function onRotatorStartRotation(h : RotatableHexSprite) {
     h.asRotatorSprite().orientationAtRotationStart = h.getOrientation();
 
     for(sprite in h.asRotatorSprite().position.getNeighbors().map(boardView.getAtSafe).filter(Util.isNonNull)) {
-      h.asRotatorSprite().rotationGroup.add(sprite);
+      h.asRotatorSprite().addSpriteToGroup(sprite);
       boardModel.getAt(sprite.position).acceptConnections = false;
     }
     viewNeedsSync = true;
+    currentRotator = h.asRotatorSprite();
   }
 
   /** Helper function for RotatorSprite ending rotation callback */
   private function onRotatorEndRotation(h : RotatableHexSprite) {
     var r = h.asRotatorSprite();
-    r.rotationGroup.clear();
+    r.clearSpriteGroup();
 
     //Move sprites in board
     var i : Int = r.orientationAtRotationStart;
@@ -175,10 +186,19 @@ class PlayState extends FlxState {
     }
 
     viewNeedsSync = true;
+    currentRotator = null;
+
+    trace("\n\n\n");
   }
 
   override public function update(elapsed : Float) : Void {
     super.update(elapsed);
+
+    if(currentRotator != null) {
+      for(sprite in currentRotator.getSprites()) {
+        BoardView.setGraphicPosition(sprite);
+      }
+    }
 
     if(viewNeedsSync) {
       viewNeedsSync = false;

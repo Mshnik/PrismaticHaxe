@@ -102,7 +102,20 @@ class TestPoint extends TestCase {
 
     var p2 = get(4,5);
     assertArrayEquals([get(3,5), get(4,6),get(5,6), get(5,5), get(5,4), get(4,4)], p2.getNeighbors());
+  }
 
+  public function testNeighborAngle() {
+    var i = 0;
+    for(p in Point.ZERO.getNeighbors()) {
+      assertEquals(i, Point.ZERO.angleTo(p));
+      i += 60;
+    }
+
+    i = 0;
+    for(p in Point.RIGHT.getNeighbors()) {
+      assertEquals(i, Point.RIGHT.angleTo(p));
+      i += 60;
+    }
   }
 
 }
