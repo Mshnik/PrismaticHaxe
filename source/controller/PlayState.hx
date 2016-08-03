@@ -173,9 +173,9 @@ class PlayState extends FlxState {
     m.orientation = h.getOrientation();
 
     for(sprite in sprites) {
+      boardModel.getAt(sprite.position).acceptConnections = true;
       if (sprite.isPrismSprite()) {
         boardModel.getAt(sprite.position).orientation = sprite.asPrismSprite().getOrientation();
-        boardModel.getAt(sprite.position).acceptConnections = true;
       }
     }
 

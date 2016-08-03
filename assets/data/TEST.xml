@@ -26,5 +26,6 @@
     </prism>
 
     <rotator row="3" col="2"/>
+    <rotator row="1" col="2"/>
 
 </board>

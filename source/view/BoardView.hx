@@ -34,12 +34,12 @@ class BoardView extends Array2D<HexSprite> {
       } else {
         var startAngle = Util.degToRad(h.rotator.position.angleTo(h.position));
         var rotatorAngleDelta = Util.degToRad((h.rotator.angle % 360)
-        + ( (h.rotator.orientationAtRotationStart-1) * RotatableHexSprite.ROTATION_DISTANCE));
+        + ( (h.rotator.orientationAtRotationStart-1.5) * RotatableHexSprite.ROTATION_DISTANCE));
 
         var angle = startAngle + rotatorAngleDelta;
 
-        h.y = h.rotator.y + (Math.sin(angle) * COL_WIDTH);
-        h.x = h.rotator.x + (Math.cos(angle) * COL_WIDTH);
+        h.y = h.rotator.y + (Math.sin(angle) * ROW_HEIGHT);
+        h.x = h.rotator.x + (Math.cos(angle) * ROW_HEIGHT);
       }
     }
   }
