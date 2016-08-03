@@ -134,7 +134,7 @@ class PlayState extends FlxState {
 
   /** Helper function for determining if a RotatorSprite is allowed to acknowledge a click */
   private function allowRotatorRotation(h : RotatableHexSprite) : Bool {
-    return currentRotator == null;
+    return currentRotator == null || currentRotator == h;
   }
 
   /** Helper function for RotatorSprite starting rotation callback */
@@ -152,7 +152,8 @@ class PlayState extends FlxState {
   /** Helper function for RotatorSprite ending rotation callback */
   private function onRotatorEndRotation(h : RotatableHexSprite) {
     var r = h.asRotatorSprite();
-    r.clearSpriteGroup();
+    h.asRotatorSprite().updateAngle();
+    h.asRotatorSprite().clearSpriteGroup();
 
     //Move sprites in board
     var i : Int = r.orientationAtRotationStart;
@@ -167,13 +168,6 @@ class PlayState extends FlxState {
 
     var sprites = r.position.getNeighbors().map(boardView.getAtSafe).filter(Util.isNonNull);
 
-//    //Rotate views to match new rotation
-//    for(sprite in sprites) {
-//      if (sprite.isRotatable()) {
-//        sprite.asRotatableSprite().addRotation(r.orientationAtRotationStart - h.getOrientation());
-//      }
-//    }
-
     //Update model
     var m : Hex = boardModel.getAt(h.position);
     m.orientation = h.getOrientation();
@@ -187,8 +181,6 @@ class PlayState extends FlxState {
 
     viewNeedsSync = true;
     currentRotator = null;
-
-    trace("\n\n\n");
   }
 
   override public function update(elapsed : Float) : Void {

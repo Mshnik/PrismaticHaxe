@@ -18,12 +18,12 @@
         <connector from="1" to="0" color="BLUE"/>
         <connector from="2" to="1" color="RED"/>
     </prism>
-    <!--<prism row="2" col="2">-->
-        <!--<connector from="0" to="1" color="BLUE"/>-->
-        <!--<connector from="1" to="2" color="RED"/>-->
-        <!--<connector from="1" to="0" color="BLUE"/>-->
-        <!--<connector from="2" to="1" color="RED"/>-->
-    <!--</prism>-->
+    <prism row="2" col="2">
+        <connector from="0" to="1" color="BLUE"/>
+        <connector from="1" to="2" color="RED"/>
+        <connector from="1" to="0" color="BLUE"/>
+        <connector from="2" to="1" color="RED"/>
+    </prism>
 
     <rotator row="3" col="2"/>
 

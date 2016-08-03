@@ -37,7 +37,6 @@ class BoardView extends Array2D<HexSprite> {
         + ( (h.rotator.orientationAtRotationStart-1) * RotatableHexSprite.ROTATION_DISTANCE));
 
         var angle = startAngle + rotatorAngleDelta;
-        trace(angle);
 
         h.y = h.rotator.y + (Math.sin(angle) * COL_WIDTH);
         h.x = h.rotator.x + (Math.cos(angle) * COL_WIDTH);

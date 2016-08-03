@@ -40,10 +40,13 @@ class RotatorSprite extends RotatableHexSprite {
     return this;
   }
 
+  public inline function updateAngle() {
+    rotationGroup.angle = angle;
+  }
+
   public override function update(dt : Float) {
     super.update(dt);
-
-    //rotationGroup.angle = angle;
+    updateAngle();
   }
 
 }
