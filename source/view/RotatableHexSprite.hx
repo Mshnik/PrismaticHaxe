@@ -43,6 +43,12 @@ using common.IntExtender;
     return Std.int(-angle/ROTATION_DISTANCE).mod(Util.HEX_SIDES);
   }
 
+  /** Alters the current angle by adding the given number of rotations */
+  public inline function addRotation(i : Int) : RotatableHexSprite {
+    angle += (i * ROTATION_DISTANCE);
+    return this;
+  }
+
   /** Helper that corrects for the current orientation of the Hex.
    * Corrects for accessing the given side. Should be called whenever accessing an aribtrary
    * side of the Prism. Also mods to always be in range, in case of negatives or OOB.

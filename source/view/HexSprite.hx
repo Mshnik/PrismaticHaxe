@@ -67,6 +67,11 @@ class HexSprite extends BaseSprite implements Positionable {
     return Std.is(this, RotatorSprite);
   }
 
+  public inline function asRotatableSprite() : RotatableHexSprite {
+    if(Std.is(this, RotatableHexSprite)) return Std.instance(this, RotatableHexSprite);
+    throw this + "RotatableHexSprite";
+  }
+
   public inline function asPrismSprite() : PrismSprite {
     if(Std.is(this, PrismSprite)) return Std.instance(this, PrismSprite);
     throw this + " isn't PrismSprite";

@@ -141,6 +141,7 @@ class PlayState extends FlxState {
   /** Helper function for RotatorSprite ending rotation callback */
   private function onRotatorEndRotation(h : RotatableHexSprite) {
     var r = h.asRotatorSprite();
+    r.rotationGroup.clear();
 
     //Move sprites in board
     var i : Int = r.orientationAtRotationStart;
@@ -153,11 +154,19 @@ class PlayState extends FlxState {
       i--;
     }
 
+//    //Rotate views to match new rotation
+//    var sprites = r.position.getNeighbors().map(boardView.getAtSafe).filter(Util.isNonNull);
+//    for(sprite in sprites) {
+//      if (sprite.isRotatable()) {
+//        sprite.asRotatableSprite().addRotation(r.orientationAtRotationStart - h.getOrientation());
+//      }
+//    }
+
     //Update model
     var m : Hex = boardModel.getAt(h.position);
     m.orientation = h.getOrientation();
 
-    for(sprite in r.position.getNeighbors().map(boardView.getAtSafe).filter(Util.isNonNull)) {
+    for(sprite in sprites) {
       if (sprite.isPrismSprite()) {
         boardModel.getAt(sprite.position).orientation = sprite.asPrismSprite().getOrientation();
         boardModel.getAt(sprite.position).acceptConnections = true;
