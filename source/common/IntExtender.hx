@@ -7,4 +7,9 @@ class IntExtender {
     return ((a % b) + b) % b;
   }
 
+  /** A simple toStringer */
+  public static inline function toString(x : Int) : String {
+    return Std.string(x);
+  }
+
 }

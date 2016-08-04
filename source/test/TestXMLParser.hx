@@ -6,7 +6,7 @@ import model.*;
 class TestXMLParser extends TestCase {
 
   private function getTestBoard() : Board {
-    return new XMLParser(AssetPaths.TEST__xml).getBoard();
+    return XMLParser.read(AssetPaths.TEST__xml);
   }
 
   public function testBoardAttributes() {

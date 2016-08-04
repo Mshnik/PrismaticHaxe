@@ -1,20 +1,79 @@
 package model;
 
+import model.Prism.ColorConnector;
+import common.Util;
+import flash.xml.XML;
 import common.Color;
 import common.Point;
 import haxe.xml.Fast;
 import openfl.Assets;
 
+using model.XMLParser;
+using common.IntExtender;
+using common.ColorUtil;
+
 class XMLParser {
 
-  /** The file this XML Parser is responsible for reading. */
-  private var content : Fast;
+  private function new (){}
 
-  /** The board under construction by this XML Parser */
-  private var board : Board;
+  /** Attributes **/
+  public static inline var WIDTH = "width";
+  public static inline var HEIGHT = "height";
+  public static inline var ROW = "row";
+  public static inline var COL = "col";
+  public static inline var CONNECTOR_FROM = "from";
+  public static inline var CONNECTOR_TO = "to";
+  public static inline var COLOR_ATTRIUBTE = "color";
 
-  public function new(file : Dynamic) {
-      content = new Fast(Xml.parse(Assets.getText(file)).firstElement());
+  /** Elements */
+  public static inline var BOARD = "board";
+  public static inline var SINKS = "sink";
+  public static inline var SOURCES = "source";
+  public static inline var PRISMS = "prism";
+  public static inline var ROTATORS = "rotator";
+  public static inline var CONNECTORS = "connector";
+  public static inline var COLOR_ELEMENTS = "color";
+
+  /** Reading **/
+
+  public inline static function read(path : Dynamic) : Board {
+    var content = new Fast(Xml.parse(Assets.getText(path)).firstElement());
+    var board = new Board();
+
+    var width : Int = Std.parseInt(content.att.resolve(WIDTH));
+    var height : Int = Std.parseInt(content.att.resolve(HEIGHT));
+    board.ensureSize(height, width);
+
+    //Read Sinks
+    for (sink in content.nodes.resolve(SINKS)) {
+      board.setAt(getLocation(sink), new Sink());
+    }
+
+    //Read Sources
+    for (source in content.nodes.resolve(SOURCES)) {
+      var sourceModel = new Source();
+      for (color in source.nodes.resolve(COLOR_ELEMENTS)) {
+        sourceModel.addColor(parseColor(color.innerData));
+      }
+      board.setAt(getLocation(source), sourceModel);
+    }
+
+    //Read Prisms
+    for(prism in content.nodes.resolve(PRISMS)) {
+      var prismModel = new Prism();
+      for (connector in prism.nodes.resolve(CONNECTORS)) {
+        prismModel.addConnector(Std.parseInt(connector.att.resolve(CONNECTOR_FROM)),
+        Std.parseInt(connector.att.resolve(CONNECTOR_TO)),
+        parseColor(connector.att.resolve(COLOR_ATTRIUBTE)));
+      }
+      board.setAt(getLocation(prism), prismModel);
+    }
+
+    //Read Rotators
+    for(rotator in content.nodes.resolve(ROTATORS)) {
+      board.setAt(getLocation(rotator), new Rotator());
+    }
+    return board;
   }
 
   /** Parses a color from the given string */
@@ -26,52 +85,114 @@ class XMLParser {
    * Expects row and col attributes within the open tag.
    **/
   private inline static function getLocation(elm : Fast) : Point {
-    return Point.get(Std.parseInt(elm.att.row), Std.parseInt(elm.att.col));
+    return Point.get(Std.parseInt(elm.att.resolve(ROW)), Std.parseInt(elm.att.resolve(COL)));
   }
 
-  /** Returns the Board represented by this XMLParser.
-   *  If this board has already been parsed, simply returns it.
-   **/
-  public function getBoard() : Board {
-    if (board == null) {
-      board = new Board();
+  /** Writing **/
 
-      var width : Int = Std.parseInt(content.att.width);
-      var height : Int = Std.parseInt(content.att.height);
-      board.ensureSize(height, width);
+  public inline static function write(p : Dynamic, b : Board) : Void {
+    var xml = Xml.createElement(BOARD);
 
-      //Read Sinks
-      for (sink in content.nodes.sink) {
-        board.setAt(getLocation(sink), new Sink());
-      }
+    xml.set(HEIGHT, b.getHeight().toString());
+    xml.set(WIDTH, b.getWidth().toString());
 
-      //Read Sources
-      for (source in content.nodes.source) {
-        var sourceModel = new Source();
-        for (color in source.nodes.color) {
-          sourceModel.addColor(parseColor(color.innerData));
+    for(r in 0...b.getHeight()) {
+      for(c in 0...b.getWidth()) {
+        if (b.get(r,c) != null) {
+          var h : Hex = b.get(r,c);
+
+          if (h.isPrism()) {
+            xml.addPrismXML(h.asPrism(),r,c);
+          } else if (h.isSource()) {
+            xml.addSourceXML(h.asSource(),r,c);
+          } else if (h.isSink()) {
+            xml.addSinkXML(h.asSink(),r,c);
+          } else if (h.isRotator()) {
+            xml.addRotatorXML(h.asRotator(),r,c);
+          } else {
+            throw "Illegal Hex " + h;
+          }
         }
-        board.setAt(getLocation(source), sourceModel);
-      }
-
-      //Read Prisms
-      for(prism in content.nodes.prism) {
-        var prismModel = new Prism();
-        for (connector in prism.nodes.connector) {
-          prismModel.addConnector(Std.parseInt(connector.att.from),
-                                  Std.parseInt(connector.att.to),
-                                  parseColor(connector.att.color));
-        }
-        board.setAt(getLocation(prism), prismModel);
-      }
-
-      //Read Rotators
-      for(rotator in content.nodes.rotator) {
-        board.setAt(getLocation(rotator), new Rotator());
       }
     }
-    return board;
+
+    trace(xml.toString());
   }
 
+  /** Helper that adds the color attribute.
+   * Returns the data passed in with the newly added attribute.
+   **/
+  private static inline function addColorAttribute(data : Xml, c : Color) : Xml {
+    data.set(COLOR_ATTRIUBTE, c.toString());
+    return data;
+  }
 
+  /** Helper that adds the row and col attribute data.
+   * Returns the data passed in with the newly added attributes.
+   **/
+  private static inline function addLocationAttributes(data : Xml , r : Int, c : Int) : Xml {
+    data.set(ROW, r.toString());
+    data.set(COL, c.toString());
+    return data;
+  }
+
+  /** Helper that creates an xml of the given color as an element */
+  private static inline function createColorElementXML(c : Color) : Xml {
+    var x = Xml.createElement(COLOR_ELEMENTS);
+    x.addChild(Xml.createCData(c.toString()));
+    return x;
+  }
+
+  /** Helper that creates the Xml for a sink
+   * Returns the data passed in with the newly added sink.
+   **/
+  public static inline function addSinkXML(data : Xml, sink : Sink, r : Int, c : Int) : Xml {
+    data.addChild(Xml.createElement(SINKS).addLocationAttributes(r,c));
+    return data;
+  }
+
+  /** Helper that creates the Xml for a rotator.
+   * Returns the data passed in with the newly added rotator.
+   **/
+  public static inline function addRotatorXML(data : Xml, rotator : Rotator, r : Int, c : Int) : Xml {
+    data.addChild(Xml.createElement(ROTATORS).addLocationAttributes(r,c));
+    return data;
+  }
+
+  /** Helper that creates the Xml for a source.
+   * Returns the data passed in with the newly added source.
+   **/
+  public static inline function addSourceXML(data : Xml, source : Source, r : Int, c : Int) : Xml {
+    var s : Xml = Xml.createElement(SOURCES).addLocationAttributes(r,c);
+    for(color in source.getAvailableColors()) {
+      s.addChild(createColorElementXML(color));
+    }
+    data.addChild(s);
+    return data;
+  }
+
+  /** Helper that creates the XML for a connector
+   * Returns the data passed in with the newly added connector
+   **/
+  public static inline function addConnectorXML(data : Xml, from : Int, to : Int, color : Color) : Xml {
+    var connector : Xml = Xml.createElement(CONNECTORS);
+    connector.set(CONNECTOR_FROM, from.toString());
+    connector.set(CONNECTOR_TO, to.toString());
+    connector.set(COLOR_ATTRIUBTE, color.toString());
+    data.addChild(connector);
+    return data;
+  }
+
+  /** Helper that creates the Xml for a prism
+   * Returns the data passed in with the newly added prism.
+   **/
+  public static inline function addPrismXML(data : Xml, prism : Prism, r : Int, c : Int) : Xml {
+    var p : Xml = Xml.createElement(PRISMS).addLocationAttributes(r,c);
+
+    for(pt in prism.getConnectionLocations()) {
+      p.addConnectorXML(pt.row, pt.col, prism.getConnector(pt.row, pt.col).baseColor);
+    }
+    data.addChild(p);
+    return data;
+  }
 }

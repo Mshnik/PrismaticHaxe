@@ -47,4 +47,8 @@ class ColorUtil {
       }
     }
   }
+
+  public static function toString(c : Color) {
+    return Std.string(c);
+  }
 }

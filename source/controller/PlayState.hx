@@ -15,9 +15,6 @@ class PlayState extends FlxState {
   /** The file this PlayState is loaded from. This should be set before create() is called. */
   public var sourceFile(default, set) : Dynamic;
 
-  /** The parser for the source file. Set whenever sourceFile is set */
-  private var xmlParser : XMLParser;
-
   private static inline var BOARD_MARGIN_VERT = 20;
   private static inline var BOARD_MARGIN_HORIZ = 50;
 
@@ -35,7 +32,6 @@ class PlayState extends FlxState {
 
   /** Sets the sourceFile to the given path, also creates an XMLParser around it. */
   public function set_sourceFile(path : Dynamic) : Dynamic {
-    xmlParser = new XMLParser(path);
     return sourceFile = path;
   }
 
@@ -60,7 +56,7 @@ class PlayState extends FlxState {
 
   /** Reads this.sourceFile into memory. Also creates a boardView that matches the read model */
   private function loadFromFile() {
-    boardModel = xmlParser.getBoard();
+    boardModel = XMLParser.read(sourceFile);
 
     //Create a view that matches the model
     boardView = new BoardView().ensureSize(boardModel.getHeight(), boardModel.getWidth());
