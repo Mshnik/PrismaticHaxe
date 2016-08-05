@@ -1,8 +1,6 @@
 package model;
 
 import model.Prism.ColorConnector;
-import common.Util;
-import flash.xml.XML;
 import common.Color;
 import common.Point;
 import haxe.xml.Fast;
@@ -116,7 +114,6 @@ class XMLParser {
       }
     }
 
-    trace(xml.toString());
   }
 
   /** Helper that adds the color attribute.
@@ -139,7 +136,7 @@ class XMLParser {
   /** Helper that creates an xml of the given color as an element */
   private static inline function createColorElementXML(c : Color) : Xml {
     var x = Xml.createElement(COLOR_ELEMENTS);
-    x.addChild(Xml.createCData(c.toString()));
+    x.addChild(Xml.createPCData(c.toString()));
     return x;
   }
 

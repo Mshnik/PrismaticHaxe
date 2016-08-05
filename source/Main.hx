@@ -2,8 +2,11 @@ package;
 
 import model.Hex;
 import flash.utils.Timer;
-import openfl.Lib;
 import openfl.display.Sprite;
+
+#if flash
+import openfl.Lib;
+#end
 
 import flixel.addons.plugin.FlxMouseControl;
 import flixel.FlxG;
@@ -62,6 +65,9 @@ class Main extends Sprite {
   }
 
   function quit() {
-    Lib.fscommand("quit");
+    #if flash
+      Lib.fscommand("quit");
+    #else
+    #end
   }
 }

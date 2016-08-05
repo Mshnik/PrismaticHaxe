@@ -1,6 +1,5 @@
 package controller;
 
-import openfl.Assets;
 import model.*;
 import view.*;
 import common.*;
@@ -97,6 +96,8 @@ class PlayState extends FlxState {
         }
       }
     }
+
+    XMLParser.write("asdf", boardModel);
   }
 
   /** Helper function for PrismSprite starting rotation callback */

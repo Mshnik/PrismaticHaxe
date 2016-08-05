@@ -48,6 +48,7 @@
 
 	<!-- When true, runs tests. When false, runs game -->
 	<haxedef name="TEST_MODE" />
+	<!--<haxedef name="debug"/>-->
 
 	<!--Enable the Flixel core recording system-->
 	<!--<haxedef name="FLX_RECORD" />-->
@@ -74,10 +75,13 @@
 	<!--<haxedef name="FLX_NO_FOCUS_LOST_SCREEN" />-->
 
 	<!--Disable the Flixel core debugger. Automatically gets set whenever you compile in release mode!-->
-	<!--<haxedef name="FLX_NO_DEBUG" unless="debug" />-->
+	<haxedef name="FLX_NO_DEBUG" unless="debug" />
 
 	<!--Enable this for Nape release builds for a serious peformance improvement-->
 	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
+	<haxedef name="NAPE_NO_INLINE" if="neko"/>
+	<haxedef name="no-inline" if="neko"/>
+	<haxedef name="dce=full" if="neko"/>
 
 	<!-- _________________________________ Custom _______________________________ -->
 
