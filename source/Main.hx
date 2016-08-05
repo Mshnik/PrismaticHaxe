@@ -33,7 +33,6 @@ class Main extends Sprite {
   function prepForGame() {
     Point.clearPool();
     Hex.resetIDs();
-    PrismSprite.initGeometry();
   }
 
   function runGame() {

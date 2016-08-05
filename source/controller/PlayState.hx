@@ -34,6 +34,11 @@ class PlayState extends FlxState {
     return sourceFile = path;
   }
 
+  /** Helper function to make sure visuals are ready to go */
+  public function prepForVisuals() {
+    PrismSprite.initGeometry();
+  }
+
   /** Create function called when this state is created by inner Flixel logic */
   public override function create() : Void {
     super.create();
@@ -51,6 +56,8 @@ class PlayState extends FlxState {
 
 //    boardView.spriteGroup.setPosition(BOARD_MARGIN_HORIZ, BOARD_MARGIN_VERT);
     add(boardView.spriteGroup);
+
+    prepForVisuals();
   }
 
   /** Reads this.sourceFile into memory. Also creates a boardView that matches the read model */
@@ -67,6 +74,7 @@ class PlayState extends FlxState {
           if (h.isPrism()) {
             var prismSprite = new PrismSprite();
             var prismModel = h.asPrism();
+            prismSprite.addRotation(prismModel.orientation);
             for (p in prismModel.getConnectionLocations()) {
               prismSprite.addConnection(prismModel.getConnector(p.row, p.col).baseColor, p.row, p.col);
             }
@@ -85,6 +93,7 @@ class PlayState extends FlxState {
           }
           else if (h.isRotator()){
             var rotatorSprite = new RotatorSprite();
+            rotatorSprite.addRotation(h.orientation);
             rotatorSprite.rotationStartListener = onRotatorStartRotation;
             rotatorSprite.rotationEndListener = onRotatorEndRotation;
             rotatorSprite.rotationValidator = allowRotatorRotation;
