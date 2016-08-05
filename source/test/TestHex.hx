@@ -194,11 +194,11 @@ class TestHex extends TestCase {
     var h1 = SimpleHex.create();
     var h2 = SimpleHex.create();
 
-    assertFalse(h1.equals(null));
+    assertNotEquitable(h1, null);
 
     for(i in 0...Util.HEX_SIDES) {
-      assertTrue(h1.equals(h2));
-      assertTrue(h2.equals(h1));
+      assertEquitable(h1, h2);
+      assertEquitable(h2, h1);
 
       h1.rotateCounterClockwise();
       h2.rotateCounterClockwise();
@@ -206,8 +206,8 @@ class TestHex extends TestCase {
 
     h1.rotateClockwise();
     for(i in 0...Util.HEX_SIDES) {
-      assertFalse(h1.equals(h2));
-      assertFalse(h2.equals(h1));
+      assertNotEquitable(h1, h2);
+      assertNotEquitable(h2, h1);
 
       h1.rotateCounterClockwise();
       h2.rotateCounterClockwise();

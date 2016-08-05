@@ -6,10 +6,10 @@ import model.Rotator;
 class TestRotator extends TestCase {
 
   public function testEquals() {
-    assertTrue(new Rotator().equals(new Rotator()));
-    assertFalse(new Rotator().equals(new Prism()));
-    assertFalse(new Rotator().equals(new Source()));
-    assertFalse(new Rotator().equals(new Sink()));
+    assertEquitable(new Rotator().asHex(), new Rotator().asHex());
+    assertNotEquitable(new Rotator().asHex(), new Prism().asHex());
+    assertNotEquitable(new Rotator().asHex(), new Source().asHex());
+    assertNotEquitable(new Rotator().asHex(), new Sink().asHex());
   }
 
 }

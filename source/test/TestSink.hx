@@ -24,10 +24,10 @@ class TestSink extends TestCase {
   }
 
   public function testEquals() {
-    assertTrue(new Sink().equals(new Sink()));
-    assertFalse(new Sink().equals(new Prism()));
-    assertFalse(new Sink().equals(new Source()));
-    assertFalse(new Sink().equals(new Rotator()));
+    assertEquitable(new Sink().asHex(), new Sink().asHex());
+    assertNotEquitable(new Sink().asHex(), new Prism().asHex());
+    assertNotEquitable(new Sink().asHex(), new Source().asHex());
+    assertNotEquitable(new Sink().asHex(), new Rotator().asHex());
   }
 
 }

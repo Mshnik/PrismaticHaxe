@@ -5,7 +5,6 @@
     <option name="excludeFromCompilation" value="true" />
     <option name="flexSdkName" value="flex_4.6" />
     <option name="openFLPath" value="$MODULE_DIR$/Project.xml" />
-    <option name="openFLTarget" value="Neko" />
     <option name="outputFolder" value="$MODULE_DIR$/export" />
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">

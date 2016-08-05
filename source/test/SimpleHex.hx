@@ -1,13 +1,12 @@
 package test;
 
-import common.Equitable;
 import common.Color;
 import model.Hex;
 
 /** A simple hex extension, for testing.
  *  Functions as a prism that just reflects all light sent in back out.
 **/
-class SimpleHex extends Hex implements Equitable<SimpleHex> {
+class SimpleHex extends Hex {
 
   public static function create() : Hex {
     return new SimpleHex();

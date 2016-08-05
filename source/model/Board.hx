@@ -5,7 +5,7 @@ import common.*;
 
 using common.IntExtender;
 
-class Board extends Array2D<Hex> implements Equitable<Board>{
+class Board extends Array2D<Hex> {
 
   private var sources : Array<Source>;
   private var sinks : Array<Sink>;

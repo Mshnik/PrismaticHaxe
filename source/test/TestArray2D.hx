@@ -1,5 +1,7 @@
 package test;
 
+import model.Hex;
+import model.Source;
 import common.Equitable.EquitableUtils;
 import common.Positionable;
 import common.Point;
@@ -32,9 +34,14 @@ class TestArray2D extends TestCase {
 
     shouldFail(t.set_data.apply1B(3));
 
-    assertTrue(Tile.wrap(5).equals(Tile.wrap(5)));
-    assertFalse(Tile.wrap(5).equals(null));
-    assertFalse(Tile.wrap(5).equals(Tile.wrap(4)));
+    assertEquitable(Tile.wrap(5), Tile.wrap(5));
+    assertNotEquitable(Tile.wrap(5), null);
+    assertNotEquitable(Tile.wrap(5), Tile.wrap(4));
+
+    assertEquitable(Tile.wrap(SimpleHex.create()), Tile.wrap(SimpleHex.create()));
+
+    var h : Hex = new Source();
+    assertNotEquitable(Tile.wrap(SimpleHex.create()), Tile.wrap(h));
   }
 
   public function testCreation() {

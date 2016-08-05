@@ -294,30 +294,30 @@ class TestPrism extends TestCase {
   }
 
   public function testEquals() {
-    assertTrue(new Prism().equals(new Prism()));
-    assertFalse(new Prism().equals(new Source()));
-    assertFalse(new Prism().equals(new Sink()));
-    assertFalse(new Prism().equals(new Rotator()));
+    assertEquitable(new Prism(), new Prism());
+    assertNotEquitable(new Prism().asHex(), new Source().asHex());
+    assertNotEquitable(new Prism().asHex(), new Sink().asHex());
+    assertNotEquitable(new Prism().asHex(), new Rotator().asHex());
 
     var p = new Prism();
     var p2 = new Prism();
 
     p.addConnector(0,1,Color.RED);
     p2.addConnector(0,1,Color.RED);
-    assertTrue(p.equals(p2));
-    assertTrue(p2.equals(p));
+    assertEquitable(p, p2);
+    assertEquitable(p2, p);
 
     p.addConnector(1,2,Color.BLUE);
-    assertFalse(p.equals(p2));
-    assertFalse(p2.equals(p));
+    assertNotEquitable(p, p2);
+    assertNotEquitable(p2, p);
 
     p2.addConnector(1,2,Color.BLUE);
-    assertTrue(p.equals(p2));
-    assertTrue(p2.equals(p));
+    assertEquitable(p, p2);
+    assertEquitable(p2, p);
 
     p.rotateCounterClockwise();
     p2.rotateCounterClockwise();
-    assertTrue(p.equals(p2));
-    assertTrue(p2.equals(p));
+    assertEquitable(p, p2);
+    assertEquitable(p2, p);
   }
 }

@@ -101,33 +101,33 @@ class TestSource extends TestCase {
   }
 
   public function testEquals() {
-    assertTrue(new Source().equals(new Source()));
-    assertFalse(new Source().equals(new Prism()));
-    assertFalse(new Source().equals(new Sink()));
-    assertFalse(new Source().equals(new Rotator()));
+    assertEquitable(new Source().asHex(), new Source().asHex());
+    assertNotEquitable(new Source().asHex(), new Prism().asHex());
+    assertNotEquitable(new Source().asHex(), new Sink().asHex());
+    assertNotEquitable(new Source().asHex(), new Rotator().asHex());
 
     var s = new Source();
     var s2 = new Source();
 
     s.addColor(Color.RED);
     s2.addColor(Color.RED);
-    assertTrue(s.equals(s2));
-    assertTrue(s2.equals(s));
+    assertEquitable(s, s2);
+    assertEquitable(s2, s);
 
     s.addColor(Color.BLUE);
-    assertFalse(s.equals(s2));
-    assertFalse(s2.equals(s));
+    assertNotEquitable(s, s2);
+    assertNotEquitable(s2, s);
 
     s2.addColor(Color.BLUE);
-    assertTrue(s.equals(s2));
-    assertTrue(s2.equals(s));
+    assertEquitable(s, s2);
+    assertEquitable(s2, s);
 
     s.useNextColor();
-    assertFalse(s.equals(s2));
-    assertFalse(s2.equals(s));
+    assertNotEquitable(s, s2);
+    assertNotEquitable(s2, s);
 
     s2.useNextColor();
-    assertTrue(s.equals(s2));
-    assertTrue(s2.equals(s));
+    assertEquitable(s, s2);
+    assertEquitable(s2, s);
   }
 }

@@ -4,7 +4,7 @@ import common.Equitable.EquitableUtils;
 import common.Positionable.Tile;
 import common.*;
 
-class Prism extends Hex implements Equitable<Prism> {
+class Prism extends Hex {
 
   private var connectionArr : Array<Point>;
   private var connections : Array2D<ColorConnector>;
@@ -115,7 +115,7 @@ class Prism extends Hex implements Equitable<Prism> {
   * Position being reflexive (i.e. (x,x)) means it is a dead end.
   * Base color is the color of the connector, and litColor is the collor it is currently lit
   **/
-class ColorConnector implements Positionable implements Equitable<ColorConnector> {
+class ColorConnector implements Positionable {
 
   public var position(default, set) : Point;
   public var baseColor(default, null) : Color;

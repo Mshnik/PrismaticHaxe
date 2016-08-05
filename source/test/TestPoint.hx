@@ -34,16 +34,15 @@ class TestPoint extends TestCase {
   }
 
   public function testEquality() {
-    assertTrue(get(0,0).equals(get(0,0)));
-    assertTrue(get(1,0).equals(get(1,0)));
-    assertTrue(get(0,2).equals(get(0,2)));
-    assertTrue(get(0,0).equals(get(0,0)));
-    assertTrue(get(-1,0).equals(get(-1,0)));
-    assertTrue(get(0,-2).equals(get(0,-2)));
-    assertFalse(get(0,1).equals(get(0,0)));
-    assertFalse(get(1,0).equals(get(0,0)));
-    assertFalse(get(1,1).equals(get(0,0)));
-
+    assertEquitable(get(0,0), get(0,0));
+    assertEquitable(get(1,0), get(1,0));
+    assertEquitable(get(0,2), get(0,2));
+    assertEquitable(get(0,0), get(0,0));
+    assertEquitable(get(-1,0), get(-1,0));
+    assertEquitable(get(0,-2), get(0,-2));
+    assertNotEquitable(get(0,1), get(0,0));
+    assertNotEquitable(get(1,0), get(0,0));
+    assertNotEquitable(get(1,1), get(0,0));
   }
 
   public function testMath() {

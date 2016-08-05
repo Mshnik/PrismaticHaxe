@@ -271,5 +271,15 @@ class TestBoard extends TestCase {
 
   public function testEquals() {
     var b = new Board(3,3).fillWith(SimpleHex.create);
+    assertEquitable(b, b);
+    assertNotEquitable(b, null);
+    assertNotEquitable(null, b);
+
+    var b2 = new Board(3,3).fillWith(SimpleHex.create);
+    assertEquitable(b, b2);
+
+    b.set(0,0, new Source());
+
+    assertNotEquitable(b2, b);
   }
 }

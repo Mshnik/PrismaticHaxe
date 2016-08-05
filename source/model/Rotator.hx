@@ -3,7 +3,7 @@ package model;
 import common.Equitable;
 import common.Color;
 
-class Rotator extends Hex implements Equitable<Rotator> {
+class Rotator extends Hex {
 
   public function new() {
     super();

@@ -1,4 +1,5 @@
 package test;
+import common.Equitable;
 import flixel.math.FlxPoint;
 import model.Hex;
 import common.Point;
@@ -18,33 +19,49 @@ class TestCase extends haxe.unit.TestCase {
     Hex.resetIDs();
   }
 
+  public inline function fail(?c : PosInfos) : Void {
+    currentTest.success = false;
+    currentTest.posInfos = c;
+    throw currentTest;
+  }
+
+  public function assertEquitable<T : Equitable<T>>(expected : T, actual : T, ?c : PosInfos) : Void {
+    currentTest.done = true;
+    if (! EquitableUtils.equalsSafe(expected, actual)) {
+      currentTest.error = "expected '" + expected + "' but got '" + actual + "'";
+      fail(c);
+    }
+  }
+
+  public function assertNotEquitable<T : Equitable<T>>(expected : T, actual : T, ?c : PosInfos) : Void {
+    currentTest.done = true;
+    if (EquitableUtils.equalsSafe(expected, actual)) {
+      currentTest.error = "expected inequitable, but got " + expected + "' and '" + actual + "'";
+      fail(c);
+    }
+  }
+
   public function assertNotEqual<T>(expected : T, actual : T, ?c : PosInfos) : Void {
     currentTest.done = true;
     if (actual == expected) {
-      currentTest.success = false;
       currentTest.error = "expected inequality but got '" + expected + "'";
-      currentTest.posInfos = c;
-      throw currentTest;
+      fail(c);
     }
   }
 
   public function assertArrayEquals<T>(expected : Array<T>, actual : Array<T>, ?c : PosInfos) {
     currentTest.done = true;
     if (!expected.equals(actual)) {
-      currentTest.success = false;
       currentTest.error = "expected '" + expected + "' but was '" + actual + "'";
-      currentTest.posInfos = c;
-      throw currentTest;
+      fail(c);
     }
   }
 
   public function assertFlxPointEquals(expected : FlxPoint, actual : FlxPoint, ?c : PosInfos) {
     currentTest.done = true;
     if (expected.x != actual.x || expected.y != actual.y) {
-      currentTest.success = false;
       currentTest.error = "expected '" + expected + "' but was '" + actual + "'";
-      currentTest.posInfos = c;
-      throw currentTest;
+      fail(c);
     }
   }
 
@@ -58,10 +75,8 @@ class TestCase extends haxe.unit.TestCase {
     }
 
     if (! errCaught) {
-      currentTest.success = false;
       currentTest.error = "Exception not thrown";
-      currentTest.posInfos = c;
-      throw currentTest;
+      fail(c);
     }
   }
 }

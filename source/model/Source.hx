@@ -5,7 +5,7 @@ import common.*;
 using common.IntExtender;
 using common.ArrayExtender;
 
-class Source extends Hex implements Equitable<Source> {
+class Source extends Hex {
 
   private var availableColors(null, null) : Array<Color>;
   private var currentIndex(default, set) : Int;

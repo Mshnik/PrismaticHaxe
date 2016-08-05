@@ -3,6 +3,7 @@ package common;
 /** A Positionable is any object that has a position in (row,col) form.
  * Implementing classes can be imutable if the setter simply throws
  */
+import common.Equitable.EquitableUtils;
 interface Positionable {
   public var position(default,set) : Point;
 }
@@ -12,7 +13,7 @@ interface Positionable {
  * result in thrown error. To change this behavior, override set_data(..)
  * Position is initally (-1,-1) until set
  **/
-class Tile<T> implements Positionable implements Equitable<Tile<T>> {
+class Tile<T> implements Positionable {
 
   public var data(default, set) : T;
   private var dataSet : Bool;
@@ -43,7 +44,7 @@ class Tile<T> implements Positionable implements Equitable<Tile<T>> {
    * Inner data. Inner data is not copied, each will reference the same in mem.
    **/
   public static function creator<T>(t : T = null) : Void->Tile<T> {
-    return return function(){return wrap(t);};
+    return function(){return wrap(t);};
   }
 
   public function set_data(newData : T) : T {

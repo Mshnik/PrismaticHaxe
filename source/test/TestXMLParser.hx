@@ -52,7 +52,7 @@ class TestXMLParser extends TestCase {
   public function testWrite() {
     sys.io.File.saveContent(AssetPaths.TEST2__xml, "");
     XMLParser.write(AssetPaths.TEST2__xml, getTestBoard());
-    assertTrue(getTestBoard().equalsBoard(XMLParser.read(AssetPaths.TEST2__xml)));
+    assertEquitable(getTestBoard(), XMLParser.read(AssetPaths.TEST2__xml));
   }
   #end
 }

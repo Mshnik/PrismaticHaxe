@@ -8,7 +8,7 @@ package model;
 import common.*;
 using common.IntExtender;
 
-@:abstract class Hex implements Positionable implements Equitable<Hex> {
+@:abstract class Hex implements Positionable {
 
   /** 0 Used to denote uninitialized ID, thus 1 is the first valid ID */
   private static var nextID : Int = 1;
@@ -208,6 +208,10 @@ using common.IntExtender;
 
   public inline function isRotator() : Bool {
     return Std.is(this, Rotator);
+  }
+
+  public inline function asHex() : Hex {
+    return this;
   }
 
   public inline function asPrism() : Prism {

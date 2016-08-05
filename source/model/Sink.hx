@@ -3,7 +3,7 @@ package model;
 import common.Equitable;
 import common.Color;
 
-class Sink extends Hex implements Equitable<Sink> {
+class Sink extends Hex {
 
   private var currentColor : Color;
 
