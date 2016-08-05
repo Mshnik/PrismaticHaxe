@@ -249,4 +249,27 @@ class TestBoard extends TestCase {
     assertArrayEquals(Util.arrayOf(5,len), arr.map(getOrientation));
   }
 
+  public function testDisableOnRotate() {
+    var b = new Board(3,3);
+    assertFalse(b.disableOnRotate);
+
+    b.disableOnRotate = true;
+    assertTrue(b.disableOnRotate);
+
+    var source = b.set(0,1,new Source());
+    b.set(1,1,new Rotator()).rotateClockwise();
+
+    assertEquals(source, b.get(0,1));
+
+    b.disableOnRotate = false;
+    b.get(1,1).rotateClockwise();
+    assertEquals(source, b.get(1,2));
+
+    b.get(1,1).rotateCounterClockwise();
+    assertEquals(source, b.get(0,1));
+  }
+
+  public function testEquals() {
+    var b = new Board(3,3).fillWith(SimpleHex.create);
+  }
 }

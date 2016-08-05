@@ -366,39 +366,39 @@ class TestArray2D extends TestCase {
     assertArrayEquals([null,null,t,null,null,null], b.getNeighborsOf(Point.get(0,0)));
   }
 
-  public function testEquals() {
+  public function testEqualsUsing() {
     var b1 = new Array2D<Tile<Int>>(2,2);
 
-    assertFalse(b1.equals(null));
-    assertFalse(b1.equals(new Array2D<Tile<Int>>(2,1)));
-    assertFalse(b1.equals(new Array2D<Tile<Int>>(1,2)));
+    assertFalse(b1.equalsUsing(null));
+    assertFalse(b1.equalsUsing(new Array2D<Tile<Int>>(2,1)));
+    assertFalse(b1.equalsUsing(new Array2D<Tile<Int>>(1,2)));
 
     var b2 = new Array2D<Tile<Int>>(2,2);
 
-    assertTrue(b1.equals(b2));
-    assertTrue(b2.equals(b1));
+    assertTrue(b1.equalsUsing(b2));
+    assertTrue(b2.equalsUsing(b1));
 
     var eq = EquitableUtils.equalsFunc(Tile);
 
     var t = Tile.wrap(1);
     b1.set(0,0,t);
     b2.set(0,0,t);
-    assertTrue(b1.equals(b2));
-    assertTrue(b1.equals(b2, eq));
-    assertTrue(b2.equals(b1));
-    assertTrue(b2.equals(b1, eq));
+    assertTrue(b1.equalsUsing(b2));
+    assertTrue(b1.equalsUsing(b2, eq));
+    assertTrue(b2.equalsUsing(b1));
+    assertTrue(b2.equalsUsing(b1, eq));
 
     b1.set(0,1,Tile.wrap(2));
-    assertFalse(b1.equals(b2));
-    assertFalse(b1.equals(b2, eq));
-    assertFalse(b2.equals(b1));
-    assertFalse(b2.equals(b1, eq));
+    assertFalse(b1.equalsUsing(b2));
+    assertFalse(b1.equalsUsing(b2, eq));
+    assertFalse(b2.equalsUsing(b1));
+    assertFalse(b2.equalsUsing(b1, eq));
 
     b2.set(0,1,Tile.wrap(2));
-    assertFalse(b1.equals(b2));
-    assertTrue(b1.equals(b2, eq));
-    assertFalse(b2.equals(b1));
-    assertTrue(b2.equals(b1, eq));
+    assertFalse(b1.equalsUsing(b2));
+    assertTrue(b1.equalsUsing(b2, eq));
+    assertFalse(b2.equalsUsing(b1));
+    assertTrue(b2.equalsUsing(b1, eq));
   }
 }
 

@@ -105,7 +105,7 @@ class Prism extends Hex implements Equitable<Prism> {
 
   public override function equals(h : Hex) : Bool {
     return super.equals(h) && h.isPrism()
-      && connections.equals(h.asPrism().connections, EquitableUtils.equalsFunc(ColorConnector));
+      && connections.equalsUsing(h.asPrism().connections, EquitableUtils.equalsFunc(ColorConnector));
   }
 }
 

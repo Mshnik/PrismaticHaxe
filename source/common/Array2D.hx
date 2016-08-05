@@ -326,8 +326,9 @@ using common.IntExtender;
    * equalsOp should return true on (null,null).
    *
    * modCount is not checked for equality purposes.
+   * Implementing Equitable correctly is left to the subclasses.
    **/
-  public function equals(arr : Array2D<T>, equalsOp : T -> T -> Bool = null) : Bool {
+  public function equalsUsing(arr : Array2D<T>, equalsOp : T -> T -> Bool = null) : Bool {
     if (arr == null || getWidth() != arr.getWidth() || getHeight() != arr.getHeight()) {
       return false;
     }

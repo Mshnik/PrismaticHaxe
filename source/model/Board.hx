@@ -5,15 +5,19 @@ import common.*;
 
 using common.IntExtender;
 
-class Board extends Array2D<Hex> {
+class Board extends Array2D<Hex> implements Equitable<Board>{
 
   private var sources : Array<Source>;
   private var sinks : Array<Sink>;
+
+  /** True if Rotator onRotate shouldn't be called. Useful during whole-board manipulation */
+  public var disableOnRotate : Bool;
 
   public function new(rows : Int = 0, cols : Int = 0) {
     super(rows, cols);
     sources = [];
     sinks = [];
+    disableOnRotate = false;
   }
 
   /** Helper to add a source to the sources array.
@@ -146,20 +150,24 @@ class Board extends Array2D<Hex> {
     var h1 = getAt(p1);
     var h2 = getAt(p2);
 
-    if (h1.isSource()) {
-      addSource(Std.instance(h1,Source), true);
-    } else if (h1.isSink()) {
-      addSink(Std.instance(h1,Sink), true);
-    } else if (h1.isRotator()) {
-      h1.rotationListener = onRotatorRotate;
+    if (h1 != null) {
+      if (h1.isSource()) {
+        addSource(Std.instance(h1,Source), true);
+      } else if (h1.isSink()) {
+        addSink(Std.instance(h1,Sink), true);
+      } else if (h1.isRotator()) {
+        h1.rotationListener = onRotatorRotate;
+      }
     }
 
-    if (h2.isSource()) {
-      addSource(Std.instance(h2,Source), true);
-    } else if (h2.isSink()) {
-      addSink(Std.instance(h2,Sink), true);
-    } else if (h2.isRotator()) {
-      h2.rotationListener = onRotatorRotate;
+    if (h2 != null) {
+      if (h2.isSource()) {
+        addSource(Std.instance(h2,Source), true);
+      } else if (h2.isSink()) {
+        addSink(Std.instance(h2,Sink), true);
+      } else if (h2.isRotator()) {
+        h2.rotationListener = onRotatorRotate;
+      }
     }
 
     return this;
@@ -185,22 +193,24 @@ class Board extends Array2D<Hex> {
   private function onRotatorRotate(h : Hex, i : Int) : Void {
     if(! h.isRotator()) throw "expected Rotator, have " + h;
 
-    //Update orientations of hexes to be moved this way
-    for(p in h.position.getNeighbors()) {
-      var n = getAt(p, true);
-      if (n != null) {
-        n.orientation += (h.orientation - i);
+    if (! disableOnRotate) {
+      //Update orientations of hexes to be moved this way
+      for(p in h.position.getNeighbors()) {
+        var n = getAt(p, true);
+        if (n != null) {
+          n.orientation += (h.orientation - i);
+        }
       }
-    }
 
-    //Move hexes
-    while(i < h.orientation) {
-      swapManyBackward(h.position.getNeighbors());
-      i++;
-    }
-    while(i > h.orientation) {
-      swapManyForward(h.position.getNeighbors());
-      i--;
+      //Move hexes
+      while(i < h.orientation) {
+        swapManyBackward(h.position.getNeighbors());
+        i++;
+      }
+      while(i > h.orientation) {
+        swapManyForward(h.position.getNeighbors());
+        i--;
+      }
     }
   }
 
@@ -211,8 +221,8 @@ class Board extends Array2D<Hex> {
   }
 
   /** Equals function for boards. */
-  public function equalsBoard(b : Board) : Bool {
-    return super.equals(b, EquitableUtils.equalsFunc(Hex));
+  public function equals(b : Board) : Bool {
+    return this == b || super.equalsUsing(b, EquitableUtils.equalsFunc(Hex));
   }
 
   /** Causes the board to relight entirely. */
