@@ -117,12 +117,13 @@ class XMLParser {
       }
     }
 
+    trace(xml.toString());
     sys.io.File.saveContent(p,xml.toString());
     #end
   }
 
   #if !flash
-  
+
   /** Helper that adds the color attribute.
    * Returns the data passed in with the newly added attribute.
    **/

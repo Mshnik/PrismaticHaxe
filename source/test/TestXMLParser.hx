@@ -47,4 +47,12 @@ class TestXMLParser extends TestCase {
     var b = getTestBoard();
     assertTrue(b.get(3,2).isRotator());
   }
+
+  #if !flash
+  public function testWrite() {
+    sys.io.File.saveContent(AssetPaths.TEST2__xml, "");
+    XMLParser.write(AssetPaths.TEST2__xml, getTestBoard());
+    assertTrue(getTestBoard().equalsBoard(XMLParser.read(AssetPaths.TEST2__xml)));
+  }
+  #end
 }

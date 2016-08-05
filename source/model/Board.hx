@@ -1,5 +1,6 @@
 package model;
 
+import common.Equitable.EquitableUtils;
 import common.*;
 
 using common.IntExtender;
@@ -207,6 +208,11 @@ class Board extends Array2D<Hex> {
   public override function fillWith(elmCreator : Void->Hex) : Board {
     super.fillWith(elmCreator);
     return this;
+  }
+
+  /** Equals function for boards. */
+  public function equalsBoard(b : Board) : Bool {
+    return super.equals(b, EquitableUtils.equalsFunc(Hex));
   }
 
   /** Causes the board to relight entirely. */
