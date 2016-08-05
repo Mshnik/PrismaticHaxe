@@ -1,5 +1,6 @@
 package;
 
+import view.PrismSprite;
 import model.Hex;
 import flash.utils.Timer;
 import openfl.display.Sprite;
@@ -33,6 +34,7 @@ class Main extends Sprite {
   function prepForGame() {
     Point.clearPool();
     Hex.resetIDs();
+    PrismSprite.initGeometry();
   }
 
   function runGame() {

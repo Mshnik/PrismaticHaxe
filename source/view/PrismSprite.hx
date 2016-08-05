@@ -28,7 +28,7 @@ class PrismSprite extends RotatableHexSprite {
   private static var CONNECTOR_LINE_STYLE : LineStyle;
   private static var connectorSprites : Array<Array<FlxSprite>>;
 
-  public static function __init__() {
+  public static function initGeometry() {
     HEX_MIDPOINTS = [
       FlxPoint.get(HexSprite.HEX_SIDE_LENGTH, 0),
       FlxPoint.get(HexSprite.HEX_SIDE_LENGTH * 7/4, (HexSprite.HEX_SIDE_LENGTH * (Util.ROOT3-1)/2)),

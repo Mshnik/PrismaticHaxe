@@ -106,7 +106,7 @@ class Board extends Array2D<Hex> {
     super.set(row, col, h);
 
     //If h is a Rotator, make sure there are no adjacent Rotators to prevent infinite recursion
-    if (h.isRotator()) {
+    if (h != null && h.isRotator()) {
       for (p in h.position.getNeighbors()) {
         if (getAt(p,true) != null && getAt(p,true).isRotator()) {
           super.set(row,col,oldH); //Undo setting before throwing
@@ -116,19 +116,23 @@ class Board extends Array2D<Hex> {
     }
 
     if (oldH != h) {
-      if (oldH.isSource()) {
-        sources.remove(Std.instance(oldH,Source));
-      } else if (oldH.isSink()) {
-        sinks.remove(Std.instance(oldH,Sink));
-      } else if (oldH.isRotator()) {
-        oldH.rotationListener = null;
+      if (oldH != null) {
+        if (oldH.isSource()) {
+          sources.remove(Std.instance(oldH,Source));
+        } else if (oldH.isSink()) {
+          sinks.remove(Std.instance(oldH,Sink));
+        } else if (oldH.isRotator()) {
+          oldH.rotationListener = null;
+        }
       }
-      if (h.isSource()) {
-        addSource(Std.instance(h,Source));
-      } else if (h.isSink()) {
-        addSink(Std.instance(h,Sink));
-      } else if (h.isRotator()) {
-        h.rotationListener = onRotatorRotate;
+      if (h != null) {
+        if (h.isSource()) {
+          addSource(Std.instance(h,Source));
+        } else if (h.isSink()) {
+          addSink(Std.instance(h,Sink));
+        } else if (h.isRotator()) {
+          h.rotationListener = onRotatorRotate;
+        }
       }
     }
     return h;

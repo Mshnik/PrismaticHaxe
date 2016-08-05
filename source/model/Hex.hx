@@ -20,6 +20,9 @@ using common.IntExtender;
   /** The unique id assigned to this Hex upon instantiation. */
   @final public var id(default, set) : Int;
 
+  /** True once the id has been set, false until then */
+  private var idSet : Bool;
+
   /** Current rotational orientation of this hex. Always in the range [0-(SIDES-1)].
    * Value is the side index currently point up.
    **/
@@ -54,6 +57,7 @@ using common.IntExtender;
     position = Point.get(-1,-1);
     orientation = 0;
     acceptConnections = true;
+    idSet = false;
     id = nextID++;
     lightIn = Util.arrayOf(Color.NONE, Util.HEX_SIDES);
     lightOut = Util.arrayOf(Color.NONE, Util.HEX_SIDES);
@@ -64,9 +68,10 @@ using common.IntExtender;
   }
 
   public function set_id(i : Int) : Int {
-    if (id != 0) {
+    if (idSet) {
       throw "Can't reset final ID field";
     }
+    idSet = true;
     return id = i;
   }
 
