@@ -1,20 +1,19 @@
 package;
 
-import view.PrismSprite;
-import model.Hex;
-import flash.utils.Timer;
-import openfl.display.Sprite;
-
 #if flash
 import openfl.Lib;
 #end
 
+import flash.utils.Timer;
+import openfl.display.Sprite;
 import flixel.addons.plugin.FlxMouseControl;
 import flixel.FlxG;
 import flixel.FlxGame;
 
 import common.Point;
 import controller.PlayState;
+import model.Hex;
+import view.PrismSprite;
 import test.*;
 
 class Main extends Sprite {
@@ -70,6 +69,7 @@ class Main extends Sprite {
     #if flash
       Lib.fscommand("quit");
     #else
+      Sys.exit(0);
     #end
   }
 }

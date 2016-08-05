@@ -79,6 +79,8 @@
 
 	<!--Enable this for Nape release builds for a serious peformance improvement-->
 	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
+
+	<!-- Neko bugfixes -->
 	<haxedef name="NAPE_NO_INLINE" if="neko"/>
 	<haxedef name="no-inline" if="neko"/>
 	<haxedef name="dce=full" if="neko"/>

@@ -89,6 +89,9 @@ class XMLParser {
   /** Writing **/
 
   public inline static function write(p : Dynamic, b : Board) : Void {
+    #if flash
+    throw "Can't perform file writing using flash.";
+    #else
     var xml = Xml.createElement(BOARD);
 
     xml.set(HEIGHT, b.getHeight().toString());
@@ -114,8 +117,12 @@ class XMLParser {
       }
     }
 
+    sys.io.File.saveContent(p,xml.toString());
+    #end
   }
 
+  #if !flash
+  
   /** Helper that adds the color attribute.
    * Returns the data passed in with the newly added attribute.
    **/
@@ -192,4 +199,6 @@ class XMLParser {
     data.addChild(p);
     return data;
   }
+
+  #end
 }
