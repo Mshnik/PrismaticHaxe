@@ -34,11 +34,13 @@ class TestArray2D extends TestCase {
 
     shouldFail(t.set_data.apply1B(3));
 
+    var n : Tile<Int> = null;
+    assertEquitable(n, null);
     assertEquitable(Tile.wrap(5), Tile.wrap(5));
     assertNotEquitable(Tile.wrap(5), null);
     assertNotEquitable(Tile.wrap(5), Tile.wrap(4));
 
-    assertEquitable(Tile.wrap(SimpleHex.create()), Tile.wrap(SimpleHex.create()));
+    assertEquitable(Tile.wrap(Tile.wrap(1)), Tile.wrap(Tile.wrap(1)));
 
     var h : Hex = new Source();
     assertNotEquitable(Tile.wrap(SimpleHex.create()), Tile.wrap(h));

@@ -58,7 +58,7 @@ class Tile<T> implements Positionable {
   }
 
   public function equals(t : Tile<T>) : Bool {
-    return t != null && data == t.data;
+    return t != null && EquitableUtils.equalsFull(data, t.data);
   }
 
 }
