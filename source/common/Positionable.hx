@@ -4,6 +4,7 @@ package common;
  * Implementing classes can be imutable if the setter simply throws
  */
 import common.Equitable.EquitableUtils;
+
 interface Positionable {
   public var position(default,set) : Point;
 }
@@ -18,7 +19,6 @@ class Tile<T> implements Positionable {
   public var data(default, set) : T;
   private var dataSet : Bool;
   public var position(default, set) : Point;
-
 
   public function new(t : T = null) {
     data = t;

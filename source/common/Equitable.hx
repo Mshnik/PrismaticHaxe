@@ -3,31 +3,28 @@ package common;
 /**
  * Implementing classes have an equals method on the type T, should be the implementing type
  *  Standard rules for equals apply.
- *  As a typedef, now Covariant
+ *  As a typedef, now Contravariant on argument type.
  **/
 typedef Equitable<T> = {
-  public function equals(t : T) : Bool;
+  public function equals(x : T) : Bool;
 }
 
-private enum EquitableEnum<T> {
-  Equit(val : Equitable<T>);
-  NonEquit(val : Dynamic);
+/** Enum wrapper for Equitable or not. Extend upon by the below abstract */
+private enum EquitableEnum<T>{
+  Equit(v:Equitable<T>);
+  NonEquit(v:Dynamic);
 }
 
 /** Abstract wrapper that handles checking if the wrapped generic type is Equitable */
 private abstract EquitableWrapper<T>(EquitableEnum<T>) from EquitableEnum<T> to EquitableEnum<T>{
-  public function new(t) {
-    this = t;
+  public function new(self){
+    this = self;
   }
-
-  @:from
-  public static function fromEquitable<T>(t : Equitable<T>) : EquitableWrapper<T> {
-    return EquitableEnum.Equit(t);
+  @:from static public function fromEquit<T>(v:Equitable<T>):EquitableWrapper<T>{
+    return EquitableEnum.Equit(v);
   }
-
-  @:from
-  public static function fromNonEquitable<T>(t : T) : EquitableWrapper<T> {
-    return EquitableEnum.NonEquit(t);
+  @:from static public function fromNonEquit<T>(v:Dynamic):EquitableWrapper<T>{
+    return EquitableEnum.NonEquit(v);
   }
 }
 
@@ -39,14 +36,17 @@ class EquitableUtils {
     return (x1 == null && x2 == null) || (x1 != null && x2 != null && x1.equals(x2));
   }
 
-  /** Performs an equity check if possible, otherwise checks equality */
-  public static inline function equalsFull<X>(x1 : X, x2 : X) : Bool {
-    if (x1 == null && x2 == null) return true;
-    var wrap : EquitableWrapper<X> = x1;
-    trace(wrap);
-    switch(wrap) {
-      case EquitableEnum.Equit(v) : return x1 != null && x2 != null && v.equals(x2);
-      case EquitableEnum.NonEquit(v) : return v == x2;
+  /** Performs an equity check if possible, otherwise checks equality.
+   * Can pass in two T instances, the first will automatically be wrapped into a EquitableWrapper.
+   **/
+  public static function equalsFull<T>(t : EquitableWrapper<T>, t2 : T) : Bool {
+    switch(t){
+      case EquitableEnum.Equit(v) :
+        trace("Got equitable " + v);
+        return (v == null && t2 == null) || (v != null && t2 != null && v.equals(t2));
+      case EquitableEnum.NonEquit(v) :
+        trace("Got nonequitable " + v);
+        return v == t2;
     }
   }
 

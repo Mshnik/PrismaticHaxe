@@ -1,9 +1,5 @@
 package;
 
-#if flash
-import openfl.Lib;
-#end
-
 import flash.utils.Timer;
 import openfl.display.Sprite;
 import flixel.addons.plugin.FlxMouseControl;
@@ -13,8 +9,11 @@ import flixel.FlxGame;
 import common.Point;
 import controller.PlayState;
 import model.Hex;
-import view.PrismSprite;
 import test.*;
+
+#if flash
+import openfl.Lib;
+#end
 
 class Main extends Sprite {
 
