@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="HAXE_MODULE" version="4">
+  <component name="HaxeModuleSettingsStorage">
+    <option name="outputFolder" value="$MODULE_DIR$/../out/production/Test" />
+  </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/../out/production/Test" />
     <exclude-output />
@@ -8,6 +11,8 @@
       <sourceFolder url="file://$MODULE_DIR$/testAssets" type="java-resource" />
     </content>
     <orderEntry type="jdk" jdkName="Haxe 3.3.0" jdkType="Haxe toolkit" />
+    <orderEntry type="module" module-name="PrismaticHaxe" />
+    <orderEntry type="library" name="Haxelib 1.8.7" level="application" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

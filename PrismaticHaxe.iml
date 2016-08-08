@@ -5,7 +5,6 @@
     <option name="excludeFromCompilation" value="true" />
     <option name="flexSdkName" value="flex_4.6" />
     <option name="openFLPath" value="$MODULE_DIR$/Project.xml" />
-    <option name="openFLTarget" value="Neko" />
     <option name="outputFolder" value="$MODULE_DIR$/export" />
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
@@ -14,7 +13,6 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/source" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/assets" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/PrismaticTests" isTestSource="true" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="jdk" jdkName="Haxe 3.3.0" jdkType="Haxe toolkit" />
