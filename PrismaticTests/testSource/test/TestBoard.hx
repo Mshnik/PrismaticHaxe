@@ -1,5 +1,7 @@
 package test;
 
+import common.ColorUtil;
+import model.Score;
 import model.Rotator;
 import model.Hex;
 import model.Prism;
@@ -289,5 +291,58 @@ class TestBoard extends TestCase {
     b.set(0,0, new Source());
 
     assertNotEquitable(b2, b);
+  }
+
+  public function testScores() {
+    var b = new Board(3,3);
+
+    var s = new Score();
+    for(c in ColorUtil.realColors()) {
+      assertEquals(0, s.getGoal(c));
+    }
+
+    assertEquals(s, b.relight(s));
+    for(c in ColorUtil.realColors()) {
+      assertEquals(0, s.getGoal(c));
+    }
+
+    s.setGoal(Color.RED, 2);
+    assertFalse(s.isSatisfied());
+
+    b.set(0,0,new Source().addColor(Color.RED));
+    b.set(0,1,new Sink());
+    b.set(1,0,new Sink());
+
+    b.relight(s);
+    assertEquals(2, s.getCount(Color.RED));
+    assertTrue(s.isSatisfied());
+
+    b.get(0,0).asSource().addColor(Color.BLUE).useNextColor();
+    b.relight(s);
+    assertEquals(0, s.getCount(Color.RED));
+    assertEquals(2, s.getCount(Color.BLUE));
+    assertFalse(s.isSatisfied());
+
+    b.get(0,0).asSource().usePreviousColor();
+    b.relight(s);
+    assertEquals(0, s.getCount(Color.BLUE));
+    assertEquals(2, s.getCount(Color.RED));
+    assertTrue(s.isSatisfied());
+
+    b.set(2,2,new Source().addColor(Color.GREEN));
+    b.set(2,1,new Sink());
+
+    s.setGoal(Color.GREEN, 1);
+    b.relight(s);
+    assertEquals(0, s.getCount(Color.BLUE));
+    assertEquals(1, s.getCount(Color.GREEN));
+    assertEquals(2, s.getCount(Color.RED));
+    assertTrue(s.isSatisfied());
+
+    var s2 = b.relight();
+    assertEquals(0, s2.getCount(Color.BLUE));
+    assertEquals(1, s2.getCount(Color.GREEN));
+    assertEquals(2, s2.getCount(Color.RED));
+    assertTrue(s2.isSatisfied());
   }
 }
