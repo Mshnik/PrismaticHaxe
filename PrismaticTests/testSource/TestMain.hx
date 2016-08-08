@@ -19,6 +19,7 @@ class TestMain {
     r.add(new TestSource());
     r.add(new TestSink());
     r.add(new TestRotator());
+    r.add(new TestScore());
     r.add(new TestBoard());
     r.add(new TestXMLParser());
 

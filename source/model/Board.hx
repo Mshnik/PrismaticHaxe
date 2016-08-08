@@ -225,8 +225,16 @@ class Board extends Array2D<Hex> {
     return this == b || super.equalsUsing(b, EquitableUtils.equalsFunc(Hex));
   }
 
-  /** Causes the board to relight entirely. */
-  public function relight() {
+  /** Causes the board to relight entirely.
+   * If s is non-null, mutates it to be the current score from the re-lighting and returns it.
+   * If s is null, creates a new score from the re-lighting and returns it.
+   **/
+  public function relight(score : Score = null) : Score {
+    if (score == null) {
+      score = new Score();
+    } else {
+      score.reset();
+    }
 
     //First, remove light from the whole board.
     for(h in this) {
@@ -255,22 +263,13 @@ class Board extends Array2D<Hex> {
         }
       }
     }
+    for (sink in sinks) {
+      if (sink.getCurrentColor() != Color.NONE) {
+        score.increment(sink.getCurrentColor());
+      }
+    }
+    return score;
   }
-//
-//  /** Updates the set connections attribute of the given hex. If this causes a change, relights */
-//  public function setAcceptConnections(row : Int, col : Int, accept : Bool) : Board {
-//    var h : Hex = get(row, col);
-//    if (h != null) {
-//      var currentlyAccepting = h.acceptConnections;
-//      h.acceptConnections = accept;
-//
-//      if (currentlyAccepting != accept) {
-//        relight();
-//      }
-//    }
-//
-//    return this;
-//  }
 }
 
 /** Represents light of a given color being pushed to a given destination,

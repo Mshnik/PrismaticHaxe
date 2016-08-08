@@ -51,4 +51,17 @@ class ColorUtil {
   public static function toString(c : Color) {
     return Std.string(c);
   }
+
+  public static inline function realColorsAndAny() : Array<Color> {
+    var arr = Type.allEnums(Color);
+    arr.remove(Color.NONE);
+    return arr;
+  }
+
+  public static inline function realColors() : Array<Color> {
+    var arr = Type.allEnums(Color);
+    arr.remove(Color.NONE);
+    arr.remove(Color.ANY);
+    return arr;
+  }
 }
