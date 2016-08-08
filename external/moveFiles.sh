@@ -1,8 +1,20 @@
 #!/bin/bash
 
 curPath=$(pwd)
-fromPath=$curPath$"/../export/mac64/neko/bin/PrismaticHaxe.app/Contents/Resources/assets/data"
-toPath=$curPath$"/../assets/data"
+
+if [[ $curPath != *"PrismaticHaxe" ]]
+then
+  echo "Current path is wrong, should be run with project root as WD"
+  echo "Current path: "$curPath
+  exit 2
+fi
+
+fromPath=$curPath$"/export/mac64/neko/bin/PrismaticHaxe.app/Contents/Resources/assets/data"
+toPath=$curPath$"/assets/data"
+
+echo "Performing file moving"
+echo "From "$fromPath
+echo "To "$toPath
 
 if test -d $fromPath
   then
@@ -32,5 +44,6 @@ if test -d $fromPath
     done
   fi    
 else
-  echo "Nothing to move"
+  echo "Nothing to move. File location error?"
+  exit 1
 fi
