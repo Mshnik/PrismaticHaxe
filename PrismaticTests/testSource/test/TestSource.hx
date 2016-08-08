@@ -1,11 +1,4 @@
 package test;
-import model.Rotator;
-import model.Sink;
-import model.Prism;
-import model.Hex;
-import common.Color;
-import common.Util;
-import model.Source;
 class TestSource extends TestCase {
 
   public function testConstructionAndAddColors() {

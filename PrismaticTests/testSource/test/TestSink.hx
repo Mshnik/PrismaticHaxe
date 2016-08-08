@@ -1,9 +1,4 @@
 package test;
-import model.Rotator;
-import model.Source;
-import model.Prism;
-import model.Sink;
-import common.Color;
 class TestSink extends TestCase {
 
   public function testConstructionAndLighting() {

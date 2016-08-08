@@ -1,6 +1,5 @@
 package test;
 
-import common.Point;
 class TestPoint extends TestCase {
 
   private static inline function get(row : Int, col : Int) : Point {

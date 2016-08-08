@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PrismaticHaxe.iml" filepath="$PROJECT_DIR$/PrismaticHaxe.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PrismaticTests/PrismaticTests.iml" filepath="$PROJECT_DIR$/PrismaticTests/PrismaticTests.iml" />
     </modules>
   </component>
 </project>

@@ -2,7 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="PrismaticHaxe" file="PrismaticHaxe" main="Main" version="0.0.1" company="Tallwood" />
+	<app title="PrismaticHaxeTests" file="Test" main="TestMain" version="0.0.1" company="Tallwood" />
 
 	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
 		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->
@@ -29,7 +29,9 @@
 
 	<set name="BUILD_DIR" value="export" />
 	<classpath name="source" />
+	<classpath name="testSource" />
 	<assets path="assets" />
+	<assets path="testAssets" />
 
 	<!-- _______________________________ Libraries ______________________________ -->
 

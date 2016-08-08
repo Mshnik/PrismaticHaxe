@@ -1,8 +1,5 @@
 package test;
 
-import common.Color;
-import model.*;
-
 class TestXMLParser extends TestCase {
 
   private function getTestBoard() : Board {

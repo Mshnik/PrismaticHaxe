@@ -1,8 +1,5 @@
 package test;
 
-import common.*;
-import model.*;
-
 using common.ArrayExtender;
 using common.FunctionExtender;
 

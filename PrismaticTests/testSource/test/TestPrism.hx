@@ -1,12 +1,5 @@
 package test;
-import model.Rotator;
-import model.Sink;
-import model.Source;
 import common.Positionable.Tile;
-import common.Util;
-import common.Point;
-import common.Color;
-import model.Prism;
 import model.Prism.ColorConnector;
 
 using common.ArrayExtender;

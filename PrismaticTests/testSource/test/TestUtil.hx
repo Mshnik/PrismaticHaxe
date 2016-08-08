@@ -1,7 +1,4 @@
 package test;
-import flixel.math.FlxPoint;
-import common.Util;
-import model.Hex;
 class TestUtil extends TestCase {
 
   public function testNullAndNonNullFuncs() {

@@ -1,11 +1,6 @@
 package test;
 
-import model.Hex;
-import model.Source;
 import common.Equitable.EquitableUtils;
-import common.Positionable;
-import common.Point;
-import common.Array2D;
 
 using common.FunctionExtender;
 
