@@ -9,7 +9,7 @@ then
   exit 2
 fi
 
-fromPath=${curPath}$"/export/mac64/neko/bin/PrismaticHaxe.app/Contents/Resources/assets/data"
+fromPath=${curPath}$"/export/mac64/neko/bin/PrismaticTests.app/Contents/assets/data"
 toPath=${curPath}$"/assets/data"
 
 echo "Performing file moving"
