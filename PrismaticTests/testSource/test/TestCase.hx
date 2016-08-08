@@ -1,4 +1,10 @@
 package test;
+
+import flixel.math.FlxPoint;
+import common.Equitable.EquitableUtils;
+import common.Equitable;
+import common.Point;
+import model.Hex;
 import haxe.PosInfos;
 
 using common.ArrayExtender;

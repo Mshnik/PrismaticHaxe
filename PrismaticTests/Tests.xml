@@ -27,10 +27,10 @@
 
 	<!-- _____________________________ Path Settings ____________________________ -->
 
-	<set name="BUILD_DIR" value="export" />
+	<set name="BUILD_DIR" value="../export" />
 	<classpath name="source" />
 	<classpath name="testSource" />
-	<assets path="assets" />
+	<assets path="../assets" />
 	<assets path="testAssets" />
 
 	<!-- _______________________________ Libraries ______________________________ -->

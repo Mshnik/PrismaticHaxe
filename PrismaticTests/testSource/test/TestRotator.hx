@@ -1,4 +1,8 @@
 package test;
+import model.Sink;
+import model.Source;
+import model.Prism;
+import model.Rotator;
 class TestRotator extends TestCase {
 
   public function testEquals() {

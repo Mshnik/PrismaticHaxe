@@ -1,5 +1,9 @@
 package test;
 
+import model.*;
+import common.Color;
+import common.Point;
+import common.Util;
 using common.IntExtender;
 using common.FunctionExtender;
 

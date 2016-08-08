@@ -1,5 +1,7 @@
 package test;
 
+import common.Color;
+import common.ColorUtil;
 class TestColors extends TestCase {
 
   public function testCompatability() {

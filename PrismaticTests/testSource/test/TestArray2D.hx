@@ -1,5 +1,10 @@
 package test;
 
+import model.Hex;
+import model.Source;
+import common.Positionable.Tile;
+import common.Point;
+import common.Array2D;
 import common.Equitable.EquitableUtils;
 
 using common.FunctionExtender;

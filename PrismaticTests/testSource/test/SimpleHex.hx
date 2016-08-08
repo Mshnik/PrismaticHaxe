@@ -3,6 +3,8 @@ package test;
 /** A simple hex extension, for testing.
  *  Functions as a prism that just reflects all light sent in back out.
 **/
+import common.Color;
+import model.Hex;
 class SimpleHex extends Hex {
 
   public static function create() : Hex {

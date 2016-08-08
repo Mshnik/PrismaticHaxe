@@ -1,4 +1,10 @@
 package test;
+import model.Rotator;
+import model.Sink;
+import model.Prism;
+import common.Util;
+import common.Color;
+import model.Source;
 class TestSource extends TestCase {
 
   public function testConstructionAndAddColors() {

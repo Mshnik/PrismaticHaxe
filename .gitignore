@@ -4,6 +4,7 @@
 
 #Compiled files
 export/
+out/
 
 #Mac OSX stuff
 **/.DS_STORE
