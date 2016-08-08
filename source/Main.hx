@@ -1,6 +1,5 @@
 package;
 
-import flash.utils.Timer;
 import openfl.display.Sprite;
 import flixel.addons.plugin.FlxMouseControl;
 import flixel.FlxG;

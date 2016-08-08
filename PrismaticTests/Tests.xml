@@ -28,7 +28,7 @@
 	<!-- _____________________________ Path Settings ____________________________ -->
 
 	<set name="BUILD_DIR" value="../export" />
-	<classpath name="source" />
+	<classpath name="../source" />
 	<classpath name="testSource" />
 	<assets path="../assets" />
 	<assets path="testAssets" />
@@ -48,7 +48,8 @@
 
 	<!-- ______________________________ Haxedefines _____________________________ -->
 
-	<!-- When true, runs tests. When false, runs game -->
+	<haxedef name="RUN_TESTS" />
+
 	<!--<haxedef name="debug"/>-->
 
 	<!--Enable the Flixel core recording system-->

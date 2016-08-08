@@ -2,6 +2,7 @@ package test;
 import model.Rotator;
 import model.Source;
 import model.Sink;
+import model.Prism;
 import common.Util;
 import common.Point;
 import common.Color;
