@@ -69,4 +69,45 @@ class TestScore extends TestCase {
     assertTrue(s.isSatisfied());
   }
 
+  public function testEquals() {
+    var s = new Score();
+    var s2 = new Score();
+
+    assertEquitable(s, s);
+    assertNotEquitable(s, null);
+
+    assertEquitable(s, s2);
+    assertEquitable(s2, s);
+
+    s.setGoal(Color.RED, 1);
+
+    assertNotEquitable(s, s2);
+    assertNotEquitable(s2, s);
+
+    s2.setGoal(Color.RED, 1);
+
+    assertEquitable(s, s2);
+    assertEquitable(s2, s);
+
+    s.increment(Color.RED);
+
+    assertEquitable(s, s2);
+    assertEquitable(s2, s);
+
+    s.setGoal(Color.RED, 2);
+    s2.setGoal(Color.RED, 2);
+
+    assertEquitable(s, s2);
+    assertEquitable(s2, s);
+
+    s.increment(Color.RED);
+
+    assertEquitable(s, s2);
+    assertEquitable(s2, s);
+
+    s.setGoal(Color.BLUE, 2);
+
+    assertNotEquitable(s, s2);
+    assertNotEquitable(s2, s);
+  }
 }

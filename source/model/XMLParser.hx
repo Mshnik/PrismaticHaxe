@@ -1,5 +1,6 @@
 package model;
 
+import common.ColorUtil;
 import model.Prism.ColorConnector;
 import common.Color;
 import common.Point;
@@ -23,15 +24,18 @@ class XMLParser {
   public static inline var CONNECTOR_FROM = "from";
   public static inline var CONNECTOR_TO = "to";
   public static inline var COLOR_ATTRIUBTE = "color";
+  public static inline var COUNT_ATTRIBUTE = "count";
 
   /** Elements */
   public static inline var BOARD = "board";
+  public static inline var GOAL = "goal";
   public static inline var SINKS = "sink";
   public static inline var SOURCES = "source";
   public static inline var PRISMS = "prism";
   public static inline var ROTATORS = "rotator";
   public static inline var CONNECTORS = "connector";
   public static inline var COLOR_ELEMENTS = "color";
+  public static inline var COLOR_COUNT_ELEMENTS = "colorCount";
 
   /** Reading **/
 
@@ -42,6 +46,16 @@ class XMLParser {
     var width : Int = Std.parseInt(content.att.resolve(WIDTH));
     var height : Int = Std.parseInt(content.att.resolve(HEIGHT));
     board.ensureSize(height, width);
+
+    //Read Goal
+    if (content.nodes.resolve(GOAL).length == 1) {
+      var goal = content.nodes.resolve(GOAL).first();
+      for (colorCount in goal.nodes.resolve(COLOR_COUNT_ELEMENTS)) {
+        board.getScore().setGoal(parseColor(colorCount.att.resolve(COLOR_ATTRIUBTE)), getIntAttribute(colorCount, COUNT_ATTRIBUTE));
+      }
+    } else if (content.nodes.resolve(GOAL).length > 1) {
+      throw "Can't have more than one Goal element in XML";
+    }
 
     //Read Sinks
     for (sink in content.nodes.resolve(SINKS)) {
@@ -87,16 +101,21 @@ class XMLParser {
     return Type.createEnum(Color, s);
   }
 
+  /** Returns an int attribute from the given element */
+  private inline static function getIntAttribute(elm : Fast, attribute : String) : Int {
+    return Std.parseInt(elm.att.resolve(attribute));
+  }
+
   /** Gets the orientation for the given element. */
   private inline static function getOrientation(elm : Fast) : Int {
-    return Std.parseInt(elm.att.resolve(ORIENTATION));
+    return getIntAttribute(elm, ORIENTATION);
   }
 
   /** Gets the row/col location for the given element.
    * Expects row and col attributes within the open tag.
    **/
   private inline static function getLocation(elm : Fast) : Point {
-    return Point.get(Std.parseInt(elm.att.resolve(ROW)), Std.parseInt(elm.att.resolve(COL)));
+    return Point.get(getIntAttribute(elm, ROW), getIntAttribute(elm, COL));
   }
 
   /** Writing **/
@@ -112,6 +131,8 @@ class XMLParser {
 
     xml.set(HEIGHT, b.getHeight().toString());
     xml.set(WIDTH, b.getWidth().toString());
+
+    xml.addScoreXML(b.getScore());
 
     for(r in 0...b.getHeight()) {
       for(c in 0...b.getWidth()) {
@@ -219,6 +240,31 @@ class XMLParser {
       p.addConnectorXML(pt.row, pt.col, prism.getConnector(pt.row, pt.col).baseColor);
     }
     data.addChild(p);
+    return data;
+  }
+
+  /** Helper that creates the Xml for a color count for the score.
+   * Returns the data passed in with the newly added color count
+   **/
+  public static inline function addColorCountXML(data : Xml, color : Color, count : Int) : Xml {
+    var colorCount : Xml = Xml.createElement(COLOR_COUNT_ELEMENTS);
+    colorCount.set(COLOR_ATTRIUBTE, color.toString());
+    colorCount.set(COUNT_ATTRIBUTE, count.toString());
+    data.addChild(colorCount);
+    return data;
+  }
+
+  /** Helper that creates the Xml for a score.
+   * Returns the data passed in with the newly added score.
+   **/
+  public static inline function addScoreXML(data : Xml, score : Score) : Xml {
+    var s : Xml = Xml.createElement(GOAL);
+    for(color in ColorUtil.realColors()) {
+      if (score.getGoal(color) != 0) {
+        s.addColorCountXML(color, score.getGoal(color));
+      }
+    }
+    data.addChild(s);
     return data;
   }
 

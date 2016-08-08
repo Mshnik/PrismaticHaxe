@@ -9,6 +9,7 @@ class Board extends Array2D<Hex> {
 
   private var sources : Array<Source>;
   private var sinks : Array<Sink>;
+  private var score : Score;
 
   /** True if Rotator onRotate shouldn't be called. Useful during whole-board manipulation */
   public var disableOnRotate : Bool;
@@ -18,6 +19,12 @@ class Board extends Array2D<Hex> {
     sources = [];
     sinks = [];
     disableOnRotate = false;
+    score = new Score();
+  }
+
+  /** Equals function for boards. */
+  public function equals(b : Board) : Bool {
+    return this == b || (score.equals(b.getScore()) && super.equalsUsing(b, EquitableUtils.equalsFunc(Hex)));
   }
 
   /** Helper to add a source to the sources array.
@@ -220,21 +227,16 @@ class Board extends Array2D<Hex> {
     return this;
   }
 
-  /** Equals function for boards. */
-  public function equals(b : Board) : Bool {
-    return this == b || super.equalsUsing(b, EquitableUtils.equalsFunc(Hex));
+  /** Returns a reference to the score object stored in this Board */
+  public inline function getScore() : Score {
+    return score;
   }
 
   /** Causes the board to relight entirely.
-   * If s is non-null, mutates it to be the current score from the re-lighting and returns it.
-   * If s is null, creates a new score from the re-lighting and returns it.
+   * Returns the score object stored in this board, updated with the new lighting.
    **/
-  public function relight(score : Score = null) : Score {
-    if (score == null) {
-      score = new Score();
-    } else {
-      score.reset();
-    }
+  public function relight() : Score {
+    score.reset();
 
     //First, remove light from the whole board.
     for(h in this) {

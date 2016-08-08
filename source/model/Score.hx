@@ -15,6 +15,18 @@ class Score {
     ];
   }
 
+  /** Two goals are equal if they have the same color requirements.
+   * They don't have to have the same current values.
+   **/
+  public function equals(s : Score) : Bool {
+    if (this == s) return true;
+    if (s == null) return false;
+    for(c in ColorUtil.realColors()) {
+      if (getGoal(c) != s.getGoal(c)) return false;
+    }
+    return true;
+  }
+
   /** Returns the goal for the given color */
   public inline function getGoal(c : Color) : Int {
     return scoreByColor.get(c).goal;

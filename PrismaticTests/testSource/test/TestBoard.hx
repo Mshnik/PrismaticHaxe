@@ -291,17 +291,26 @@ class TestBoard extends TestCase {
     b.set(0,0, new Source());
 
     assertNotEquitable(b2, b);
+
+    b2.set(0,0,new Source());
+    assertEquitable(b, b2);
+
+    b.getScore().setGoal(Color.RED, 1);
+    assertNotEquitable(b2, b);
+
+    b2.getScore().setGoal(Color.RED, 1);
+    assertEquitable(b, b2);
   }
 
   public function testScores() {
     var b = new Board(3,3);
 
-    var s = new Score();
+    var s = b.getScore();
     for(c in ColorUtil.realColors()) {
       assertEquals(0, s.getGoal(c));
     }
 
-    assertEquals(s, b.relight(s));
+    assertEquals(s, b.relight());
     for(c in ColorUtil.realColors()) {
       assertEquals(0, s.getGoal(c));
     }
@@ -313,18 +322,18 @@ class TestBoard extends TestCase {
     b.set(0,1,new Sink());
     b.set(1,0,new Sink());
 
-    b.relight(s);
+    b.relight();
     assertEquals(2, s.getCount(Color.RED));
     assertTrue(s.isSatisfied());
 
     b.get(0,0).asSource().addColor(Color.BLUE).useNextColor();
-    b.relight(s);
+    b.relight();
     assertEquals(0, s.getCount(Color.RED));
     assertEquals(2, s.getCount(Color.BLUE));
     assertFalse(s.isSatisfied());
 
     b.get(0,0).asSource().usePreviousColor();
-    b.relight(s);
+    b.relight();
     assertEquals(0, s.getCount(Color.BLUE));
     assertEquals(2, s.getCount(Color.RED));
     assertTrue(s.isSatisfied());
@@ -333,7 +342,7 @@ class TestBoard extends TestCase {
     b.set(2,1,new Sink());
 
     s.setGoal(Color.GREEN, 1);
-    b.relight(s);
+    b.relight();
     assertEquals(0, s.getCount(Color.BLUE));
     assertEquals(1, s.getCount(Color.GREEN));
     assertEquals(2, s.getCount(Color.RED));

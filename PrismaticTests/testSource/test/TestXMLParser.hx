@@ -48,6 +48,16 @@ class TestXMLParser extends TestCase {
     assertTrue(b.get(3,2).isRotator());
   }
 
+  public function testScore() {
+    var b = getTestBoard();
+    assertEquals(2, b.getScore().getGoal(Color.RED));
+    assertEquals(1, b.getScore().getGoal(Color.BLUE));
+    assertEquals(0, b.getScore().getGoal(Color.YELLOW));
+    assertEquals(0, b.getScore().getGoal(Color.GREEN));
+
+    shouldFail(function(){ XMLParser.read(AssetPaths.TEST_BADSCORE__xml);});
+  }
+
   #if !flash
   public function testWrite() {
     sys.io.File.saveContent(AssetPaths.TEST2__xml, "");
