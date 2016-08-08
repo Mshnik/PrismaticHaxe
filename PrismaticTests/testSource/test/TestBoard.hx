@@ -3,12 +3,14 @@ package test;
 import model.Rotator;
 import model.Hex;
 import model.Prism;
-import common.Util;
-import common.Color;
-import common.Point;
 import model.Sink;
 import model.Source;
 import model.Board;
+import common.Util;
+import common.Color;
+import common.Point;
+import util.SimpleHex;
+
 using common.ArrayExtender;
 using common.FunctionExtender;
 

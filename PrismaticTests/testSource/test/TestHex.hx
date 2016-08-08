@@ -4,6 +4,8 @@ import model.*;
 import common.Color;
 import common.Point;
 import common.Util;
+import util.SimpleHex;
+
 using common.IntExtender;
 using common.FunctionExtender;
 

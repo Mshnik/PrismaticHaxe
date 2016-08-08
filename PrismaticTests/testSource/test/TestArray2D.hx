@@ -6,6 +6,7 @@ import common.Positionable.Tile;
 import common.Point;
 import common.Array2D;
 import common.Equitable.EquitableUtils;
+import util.SimpleHex;
 
 using common.FunctionExtender;
 
