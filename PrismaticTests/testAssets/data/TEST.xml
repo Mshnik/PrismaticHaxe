@@ -1,4 +1,9 @@
 <board height="5" width="5">
+    <goal>
+        <colorCount color="RED" count="2"/>
+        <colorCount color="BLUE" count="1"/>
+    </goal>
+
     <sink row="0" col="0" orientation="0"/>
     <sink row="0" col="1" orientation="0"/>
 

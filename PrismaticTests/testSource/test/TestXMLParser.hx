@@ -6,7 +6,7 @@ import model.Board;
 class TestXMLParser extends TestCase {
 
   private function getTestBoard() : Board {
-    return XMLParser.read(AssetPaths.TEST__xml);
+    return XMLParser.read(TestAssetPaths.TEST__xml);
   }
 
   public function testBoardAttributes() {
@@ -55,14 +55,14 @@ class TestXMLParser extends TestCase {
     assertEquals(0, b.getScore().getGoal(Color.YELLOW));
     assertEquals(0, b.getScore().getGoal(Color.GREEN));
 
-    shouldFail(function(){ XMLParser.read(AssetPaths.TEST_BADSCORE__xml);});
+    shouldFail(function(){ XMLParser.read(TestAssetPaths.TEST_BADSCORE__xml);});
   }
 
   #if !flash
   public function testWrite() {
-    sys.io.File.saveContent(AssetPaths.TEST2__xml, "");
-    XMLParser.write(AssetPaths.TEST2__xml, getTestBoard());
-    assertEquitable(getTestBoard(), XMLParser.read(AssetPaths.TEST2__xml));
+    sys.io.File.saveContent(TestAssetPaths.TEST2__xml, "");
+    XMLParser.write(TestAssetPaths.TEST2__xml, getTestBoard());
+    assertEquitable(getTestBoard(), XMLParser.read(TestAssetPaths.TEST2__xml));
   }
   #end
 }
