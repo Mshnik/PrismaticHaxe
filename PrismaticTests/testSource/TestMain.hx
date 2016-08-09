@@ -9,6 +9,7 @@ class TestMain {
     var r = new haxe.unit.TestRunner();
 
     r.add(new TestUtil());
+    r.add(new TestPair());
     r.add(new TestIntExtender());
     r.add(new TestArrayExtention());
     r.add(new TestPoint());

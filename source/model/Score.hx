@@ -1,5 +1,6 @@
 package model;
 
+import common.Pair;
 import common.ColorUtil;
 import common.Color;
 
@@ -29,12 +30,12 @@ class Score {
 
   /** Returns the goal for the given color */
   public inline function getGoal(c : Color) : Int {
-    return scoreByColor.get(c).goal;
+    return scoreByColor.get(c).getGoal();
   }
 
   /** Returns the current count for the given color */
   public inline function getCount(c : Color) : Int {
-    return scoreByColor.get(c).current;
+    return scoreByColor.get(c).getCurrent();
   }
 
   /** Checks if this Score is currently satisfied. Returns true if each color requirement is satisfied */
@@ -47,7 +48,7 @@ class Score {
 
   /** Sets the requirement for the given color to the given goal. Returns this */
   public inline function setGoal(c : Color, goal : Int) : Score {
-    scoreByColor.get(c).goal = goal;
+    scoreByColor.get(c).setGoal(goal);
     return this;
   }
 
@@ -62,13 +63,13 @@ class Score {
 
   /** Sets the current count for the given color to the given count. Returns this */
   public inline function setCount(c : Color, count : Int) : Score {
-    scoreByColor.get(c).current = count;
+    scoreByColor.get(c).setCurrent(count);
     return this;
   }
 
   /** Adds 1 to the current count for the given color. Returns this. */
   public inline function increment(c : Color) : Score {
-    scoreByColor.get(c).current += 1;
+    scoreByColor.get(c).setCurrent(scoreByColor.get(c).getCurrent() + 1);
     return this;
   }
 
@@ -84,7 +85,7 @@ class Score {
   /** Resets the current counts for all colors to 0. Returns this */
   public inline function reset() : Score {
     for (c in ColorUtil.realColors()) {
-      scoreByColor.get(c).current = 0;
+      scoreByColor.get(c).setCurrent(0);
     }
     return this;
   }
@@ -96,20 +97,32 @@ class Score {
 }
 
 /** A simple mutable int pair implementation for score. Represents a current count and a goal count */
-private class ScorePair {
-  public var current : Int;
-  public var goal : Int;
-
+private class ScorePair extends Pair<Int, Int> {
   public function new() {
-    current = 0;
-    goal = 0;
+    super(0,0);
   }
 
-  public function isSatisfied() : Bool {
-    return current >= goal;
+  public inline function getCurrent() : Int {
+    return _1;
   }
 
-  public function toString() : String {
-    return current + "/" + goal;
+  public inline function getGoal() : Int {
+    return _2;
+  }
+
+  public inline function setCurrent(c : Int) : Int {
+    return _1 = c;
+  }
+
+  public inline function setGoal(g : Int) : Int {
+    return _2 = g;
+  }
+
+  public inline function isSatisfied() : Bool {
+    return _1 >= _2;
+  }
+
+  public override function toString() : String {
+    return _1 + "/" + _2;
   }
 }
