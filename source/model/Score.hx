@@ -4,6 +4,8 @@ import common.Pair;
 import common.ColorUtil;
 import common.Color;
 
+using common.CollectionExtender;
+
 class Score {
 
   private var scoreByColor : Map<Color, ScorePair>;
@@ -36,6 +38,13 @@ class Score {
   /** Returns the current count for the given color */
   public inline function getCount(c : Color) : Int {
     return scoreByColor.get(c).getCurrent();
+  }
+
+  /** Returns a full map of the color to the current and goal for that color */
+  public inline function get() : Map<Color, Pair<Int, Int>> {
+    return [
+      for(c in ColorUtil.realColors()) c => Pair.of(getCount(c), getGoal(c))
+    ];
   }
 
   /** Checks if this Score is currently satisfied. Returns true if each color requirement is satisfied */

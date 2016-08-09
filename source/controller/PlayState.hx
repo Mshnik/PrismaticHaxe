@@ -1,5 +1,6 @@
 package controller;
 
+import model.Score;
 import model.*;
 import view.*;
 import common.*;
@@ -14,8 +15,8 @@ class PlayState extends FlxState {
   /** The file this PlayState is loaded from. This should be set before create() is called. */
   public var sourceFile(default, set) : Dynamic;
 
-  private static inline var BOARD_MARGIN_VERT = 20;
-  private static inline var BOARD_MARGIN_HORIZ = 50;
+  private static inline var BOARD_MARGIN_VERT = 40;
+  private static inline var BOARD_MARGIN_HORIZ = 40;
 
   private var boardModel : Board;
   private var boardView : BoardView;
@@ -56,7 +57,8 @@ class PlayState extends FlxState {
     viewNeedsSync = true;
     currentRotator = null;
 
-//    boardView.spriteGroup.setPosition(BOARD_MARGIN_HORIZ, BOARD_MARGIN_VERT);
+    boardView.vertMargin = BOARD_MARGIN_VERT;
+    boardView.horizMargin = BOARD_MARGIN_HORIZ;
     add(boardView.spriteGroup);
     add(hud);
 
@@ -195,15 +197,16 @@ class PlayState extends FlxState {
 
     if(currentRotator != null) {
       for(sprite in currentRotator.getSprites()) {
-        BoardView.setGraphicPosition(sprite);
+        boardView.setGraphicPosition(sprite);
       }
     }
 
     if(viewNeedsSync) {
       viewNeedsSync = false;
-      boardModel.relight();
+      var score : Score = boardModel.relight();
       boardView.spriteGroup.forEachOfType(PrismSprite, updatePrismSpriteLightings);
       boardView.spriteGroup.forEachOfType(SinkSprite, updateSinkSpriteLighting);
+      hud.setGoalValues(score.get());
     }
   }
 

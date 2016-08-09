@@ -19,6 +19,9 @@ class TestScore extends TestCase {
       assertEquals(2, s.getGoal(c));
       assertEquals(0, s.getCount(c));
     }
+    for(c in ColorUtil.realColors()) {
+      assertEquals(2, s.get().get(c).getSecond());
+    }
 
     s.setGoals([Color.RED, Color.BLUE], [1,3]);
     assertEquals(1, s.getGoal(Color.RED));
@@ -35,6 +38,9 @@ class TestScore extends TestCase {
 
       s.increment(c);
       assertEquals(3, s.getCount(c));
+    }
+    for(c in ColorUtil.realColors()) {
+      assertEquals(3, s.get().get(c).getFirst());
     }
 
     s.setCounts([Color.RED, Color.BLUE], [2,4]);

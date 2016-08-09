@@ -15,6 +15,8 @@ class BoardView extends Array2D<HexSprite> {
   /** Graphic width of a col of hexes. Amount to shift when a col moves. */
   private static var COL_WIDTH = Util.ROOT3 * HexSprite.HEX_SIDE_LENGTH;
 
+  public var vertMargin(default, set) : Int;
+  public var horizMargin(default, set) : Int;
   @final public var spriteGroup(default, null) : FlxTypedSpriteGroup<HexSprite>;
 
   public function new(rows : Int = 0, cols : Int = 0) {
@@ -24,11 +26,11 @@ class BoardView extends Array2D<HexSprite> {
   }
 
   /** Helper function for setting position of a HexSprite based on its row,col position */
-  public static inline function setGraphicPosition(h : HexSprite) {
+  public inline function setGraphicPosition(h : HexSprite) {
     if (h != null) {
       if (h.rotator == null) {
-        h.y = (h.position.row + h.position.col.mod(2)/2) * ROW_HEIGHT;
-        h.x = h.position.col * COL_WIDTH;
+        h.y = (h.position.row + h.position.col.mod(2)/2) * ROW_HEIGHT + vertMargin;
+        h.x = h.position.col * COL_WIDTH + horizMargin;
       } else {
         var startAngle = Util.degToRad(h.rotator.position.angleTo(h.position));
         var rotatorAngleDelta = Util.degToRad((h.rotator.angle % 360)
@@ -40,6 +42,22 @@ class BoardView extends Array2D<HexSprite> {
         h.x = h.rotator.x + (Math.cos(angle) * ROW_HEIGHT);
       }
     }
+  }
+
+  public function set_vertMargin(margin : Int) : Int {
+    vertMargin = margin;
+    for(h in this) {
+      setGraphicPosition(h);
+    }
+    return vertMargin;
+  }
+
+  public function set_horizMargin(margin : Int) : Int {
+    horizMargin = margin;
+    for(h in this) {
+      setGraphicPosition(h);
+    }
+    return horizMargin;
   }
 
   /** Helper function for setting position of a HexSprite based on its row,col position */

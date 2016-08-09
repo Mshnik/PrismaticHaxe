@@ -6,9 +6,17 @@ class Pair<A,B> {
   private var _1 : A;
   private var _2 : B;
 
+  public static inline function of<A,B>(a : A, b : B) {
+    return new Pair<A,B>(a,b);
+  }
+
   private function new(a : A, b : B) {
     _1 = a;
     _2 = b;
+  }
+
+  public function copy() : Pair<A,B> {
+    return of(_1,_2);
   }
 
   public inline function getFirst() : A {
@@ -17,10 +25,6 @@ class Pair<A,B> {
 
   public inline function getSecond() : B {
     return _2;
-  }
-
-  public static inline function of<A,B>(a : A, b : B) {
-    return new Pair<A,B>(a,b);
   }
 
   public function equals(p : Pair<A,B>) : Bool {
