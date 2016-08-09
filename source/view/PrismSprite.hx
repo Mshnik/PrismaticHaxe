@@ -12,7 +12,7 @@ import common.Point;
 import view.HexSprite;
 
 using flixel.util.FlxSpriteUtil;
-using common.ArrayExtender;
+using common.CollectionExtender;
 
 class PrismSprite extends RotatableHexSprite {
 

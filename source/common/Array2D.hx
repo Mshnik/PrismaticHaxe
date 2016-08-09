@@ -1,6 +1,6 @@
 package common;
 
-using common.ArrayExtender;
+using common.CollectionExtender;
 using common.IntExtender;
 
 /**

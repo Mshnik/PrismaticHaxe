@@ -1,8 +1,8 @@
 package test;
 
-using common.ArrayExtender;
+using common.CollectionExtender;
 
-class TestArrayExtention extends TestCase {
+class TestCollectionExtension extends TestCase {
 
   public function testContains() {
     assertTrue([1,2,3,4].contains(4));

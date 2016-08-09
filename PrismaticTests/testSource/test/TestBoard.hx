@@ -13,7 +13,7 @@ import common.Color;
 import common.Point;
 import util.SimpleHex;
 
-using common.ArrayExtender;
+using common.CollectionExtender;
 using common.FunctionExtender;
 
 class TestBoard extends TestCase {

@@ -3,7 +3,7 @@ package model;
 import common.*;
 
 using common.IntExtender;
-using common.ArrayExtender;
+using common.CollectionExtender;
 
 class Source extends Hex {
 

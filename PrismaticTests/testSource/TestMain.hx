@@ -11,7 +11,7 @@ class TestMain {
     r.add(new TestUtil());
     r.add(new TestPair());
     r.add(new TestIntExtender());
-    r.add(new TestArrayExtention());
+    r.add(new TestCollectionExtension());
     r.add(new TestPoint());
     r.add(new TestArray2D());
     r.add(new TestColors());

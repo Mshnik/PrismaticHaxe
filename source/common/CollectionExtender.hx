@@ -1,5 +1,5 @@
 package common;
-class ArrayExtender {
+class CollectionExtender {
 
   /** Returns true iff t is in arr, by the == operation */
   @:generic public static function contains<T>(arr : Array<T>, t : T) : Bool {
@@ -93,4 +93,12 @@ class ArrayExtender {
     return arr.map(m);
   }
 
+  /** Returns an array of key,value pairs that make up the map */
+  @:generic public inline static function toEntrySet<K,V>(map : Map<K,V>) : Array<Pair<K,V>> {
+    var arr = [];
+    for (k in map.keys()) {
+      arr.push(Pair.of(k, map.get(k)));
+    }
+    return arr;
+  }
 }

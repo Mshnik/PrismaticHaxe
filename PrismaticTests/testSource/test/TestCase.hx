@@ -7,7 +7,7 @@ import common.Point;
 import model.Hex;
 import haxe.PosInfos;
 
-using common.ArrayExtender;
+using common.CollectionExtender;
 
 class TestCase extends haxe.unit.TestCase {
 

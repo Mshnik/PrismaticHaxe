@@ -3,7 +3,7 @@ package test;
 import common.Color;
 import common.ColorUtil;
 
-using common.ArrayExtender;
+using common.CollectionExtender;
 
 class TestColors extends TestCase {
 

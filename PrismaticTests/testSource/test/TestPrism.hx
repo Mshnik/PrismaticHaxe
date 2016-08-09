@@ -9,7 +9,7 @@ import common.Color;
 import common.Positionable.Tile;
 import model.Prism.ColorConnector;
 
-using common.ArrayExtender;
+using common.CollectionExtender;
 using common.FunctionExtender;
 
 class TestPrism extends TestCase {

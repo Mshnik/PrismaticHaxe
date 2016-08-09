@@ -1,9 +1,7 @@
 package view;
-import flixel.math.FlxMath;
 import view.HexSprite;
 import common.Util;
 import common.Point;
-import view.HexSprite;
 import common.Array2D;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 

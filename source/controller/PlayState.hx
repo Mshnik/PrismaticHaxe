@@ -19,6 +19,7 @@ class PlayState extends FlxState {
 
   private var boardModel : Board;
   private var boardView : BoardView;
+  private var hud : HUDView;
 
   private var rows : Int;
   private var cols : Int;
@@ -35,7 +36,7 @@ class PlayState extends FlxState {
   }
 
   /** Helper function to make sure visuals are ready to go */
-  public function prepForVisuals() {
+  public static inline function prepForVisuals() {
     PrismSprite.initGeometry();
   }
 
@@ -50,12 +51,14 @@ class PlayState extends FlxState {
     add(bg);
 
     sourceFile = AssetPaths.TEST__xml;
+    hud = new HUDView();
     loadFromFile();
     viewNeedsSync = true;
     currentRotator = null;
 
 //    boardView.spriteGroup.setPosition(BOARD_MARGIN_HORIZ, BOARD_MARGIN_VERT);
     add(boardView.spriteGroup);
+    add(hud);
 
     prepForVisuals();
   }
