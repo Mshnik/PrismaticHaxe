@@ -41,6 +41,13 @@ class TestXMLParser extends TestCase {
     assertEquals(Color.BLUE, b.get(2,2).asPrism().getConnector(0,1).baseColor);
     assertEquals(Color.RED, b.get(2,2).asPrism().getConnector(1,2).baseColor);
     assertEquals(Color.BLUE, b.get(2,2).asPrism().getConnector(1,0).baseColor);
+
+    assertTrue(b.get(2,3).isPrism());
+    assertEquals(1, b.get(2,3).orientation);
+
+    assertTrue(b.get(2,4).isPrism());
+    assertEquals(5, b.get(2,4).orientation);
+    assertEquals(Color.BLUE, b.get(2,4).asPrism().getConnector(1,2).baseColor);
   }
 
   public function testRotators() {

@@ -42,6 +42,7 @@ class XMLParser {
   public inline static function read(path : Dynamic) : Board {
     var content = new Fast(Xml.parse(Assets.getText(path)).firstElement());
     var board = new Board();
+    board.disableOnRotate = true;
 
     var width : Int = Std.parseInt(content.att.resolve(WIDTH));
     var height : Int = Std.parseInt(content.att.resolve(HEIGHT));
@@ -89,10 +90,11 @@ class XMLParser {
     //Read Rotators
     for(rotator in content.nodes.resolve(ROTATORS)) {
       var rotatorModel = new Rotator();
-      rotatorModel.orientation;
+      rotatorModel.orientation = getOrientation(rotator);
       board.setAt(getLocation(rotator), rotatorModel);
     }
 
+    board.disableOnRotate = false;
     return board;
   }
 
