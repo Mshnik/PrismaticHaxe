@@ -29,8 +29,8 @@ class BoardView extends Array2D<HexSprite> {
   public inline function setGraphicPosition(h : HexSprite) {
     if (h != null) {
       if (h.rotator == null) {
-        h.y = (h.position.row + h.position.col.mod(2)/2) * ROW_HEIGHT + vertMargin;
-        h.x = h.position.col * COL_WIDTH + horizMargin;
+        h.y = (h.position.row + h.position.col.mod(2)/2) * ROW_HEIGHT + vertMargin - h.height/2;
+        h.x = h.position.col * COL_WIDTH + horizMargin - h.width/2;
       } else {
         var startAngle = Util.degToRad(h.rotator.position.angleTo(h.position));
         var rotatorAngleDelta = Util.degToRad((h.rotator.angle % 360)
@@ -38,8 +38,8 @@ class BoardView extends Array2D<HexSprite> {
 
         var angle = startAngle + rotatorAngleDelta;
 
-        h.y = h.rotator.y + (Math.sin(angle) * ROW_HEIGHT);
-        h.x = h.rotator.x + (Math.cos(angle) * ROW_HEIGHT);
+        h.y = h.rotator.y + (Math.sin(angle) * ROW_HEIGHT) + (h.rotator.height - h.height)/2;
+        h.x = h.rotator.x + (Math.cos(angle) * ROW_HEIGHT) + (h.rotator.width - h.width)/2;
       }
     }
   }

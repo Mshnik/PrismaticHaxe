@@ -17,8 +17,8 @@ class PlayState extends FlxState {
   /** The file this PlayState is loaded from. This should be set before create() is called. */
   public var sourceFile(default, set) : Dynamic;
 
-  private static inline var BOARD_MARGIN_VERT = 40;
-  private static inline var BOARD_MARGIN_HORIZ = 40;
+  private static inline var BOARD_MARGIN_VERT = 90;
+  private static inline var BOARD_MARGIN_HORIZ = 90;
 
   private var boardModel : Board;
   private var boardView : BoardView;
@@ -184,7 +184,11 @@ class PlayState extends FlxState {
     var spriteLocations : Array<Point> = h.position.getNeighbors();
     for(sprite in spriteLocations.map(boardView.getAtSafe).filter(Util.isNonNull)) {
       h.asRotatorSprite().addSpriteToGroup(sprite);
+      //Add to back of sprite group to move to the top (z-index)
+      boardView.spriteGroup.remove(sprite, true);
+      boardView.spriteGroup.add(sprite);
     }
+    //Set as connection group so light only works within this group
     boardModel.setAsNextConnectionGroup(spriteLocations);
     viewNeedsSync = true;
     currentRotator = h.asRotatorSprite();
