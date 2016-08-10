@@ -1,10 +1,10 @@
 <board height="5" width="5">
-    <!--<sink row="0" col="0" orientation="0"/>-->
-    <!--<sink row="0" col="1" orientation="0"/>-->
+    <sink row="0" col="0" orientation="0"/>
+    <sink row="0" col="1" orientation="0"/>
 
-    <!--<source row="1" col="0" orientation="0">-->
-        <!--<color>RED</color>-->
-    <!--</source>-->
+    <source row="1" col="0" orientation="0">
+        <color>RED</color>
+    </source>
     <source row="1" col="1" orientation="0">
         <color>RED</color>
         <color>BLUE</color>
@@ -23,7 +23,7 @@
         <connector from="2" to="1" color="RED"/>
     </prism>
 
-    <!--<rotator row="3" col="2" orientation="0"/>-->
-    <!--<rotator row="1" col="2" orientation="0"/>-->
+    <rotator row="3" col="2" orientation="0"/>
+    <rotator row="1" col="2" orientation="0"/>
 
 </board>

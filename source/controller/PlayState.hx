@@ -10,6 +10,8 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 
+using common.CollectionExtender;
+
 class PlayState extends FlxState {
 
   /** The file this PlayState is loaded from. This should be set before create() is called. */
@@ -27,6 +29,9 @@ class PlayState extends FlxState {
 
   /** True when the model has changed, next update loop should update the view */
   private var viewNeedsSync : Bool;
+
+  /** All current rotating sprites */
+  private var rotatingSprites : Array<RotatableHexSprite>;
 
   /** Rotator currently rotating hexes */
   private var currentRotator : RotatorSprite;
@@ -54,6 +59,7 @@ class PlayState extends FlxState {
     sourceFile = AssetPaths.TEST__xml;
     hud = new HUDView();
     loadFromFile();
+    rotatingSprites = [];
     viewNeedsSync = true;
     currentRotator = null;
 
@@ -118,10 +124,27 @@ class PlayState extends FlxState {
     boardModel.disableOnRotate = false;
   }
 
+  /** Helper function for when any sprites starts rotation callback. Called by more specific callbacks */
+  private function onStartRotation(h : RotatableHexSprite) {
+    if (! rotatingSprites.contains(h)){
+      rotatingSprites.push(h);
+    }
+  }
+
+  /** Helper function for when any sprites ends rotation callback. Called by more specific callbacks */
+  private function onEndRotation(h : RotatableHexSprite) {
+    rotatingSprites.remove(h);
+    if (rotatingSprites.length == 0) {
+      boardModel.resetNextConnectionGroupCounter();
+    }
+  }
+
   /** Helper function for PrismSprite starting rotation callback */
   private function onPrismStartRotation(h : RotatableHexSprite) {
-    var m : Hex = boardModel.getAt(h.position);
-    m.acceptConnections = false;
+    onStartRotation(h);
+    if (h.rotator == null) {
+      boardModel.setAsNextConnectionGroup([h.position]);
+    }
     viewNeedsSync = true;
   }
 
@@ -129,8 +152,11 @@ class PlayState extends FlxState {
   private function onPrismEndRotation(h : RotatableHexSprite) {
     var m : Hex = boardModel.getAt(h.position);
     m.orientation = h.getOrientation();
-    m.acceptConnections = true;
+    if (h.rotator == null) {
+      boardModel.resetToDefaultConnectionGroup([h.position]);
+    }
     viewNeedsSync = true;
+    onEndRotation(h);
   }
 
   /** Helper function for when a Source is clicked. Cycles to next/previous color */
@@ -152,12 +178,14 @@ class PlayState extends FlxState {
 
   /** Helper function for RotatorSprite starting rotation callback */
   private function onRotatorStartRotation(h : RotatableHexSprite) {
+    onStartRotation(h);
     h.asRotatorSprite().orientationAtRotationStart = h.getOrientation();
 
-    for(sprite in h.asRotatorSprite().position.getNeighbors().map(boardView.getAtSafe).filter(Util.isNonNull)) {
+    var spriteLocations : Array<Point> = h.position.getNeighbors();
+    for(sprite in spriteLocations.map(boardView.getAtSafe).filter(Util.isNonNull)) {
       h.asRotatorSprite().addSpriteToGroup(sprite);
-      boardModel.getAt(sprite.position).acceptConnections = false;
     }
+    boardModel.setAsNextConnectionGroup(spriteLocations);
     viewNeedsSync = true;
     currentRotator = h.asRotatorSprite();
   }
@@ -179,14 +207,16 @@ class PlayState extends FlxState {
       i--;
     }
 
-    var sprites = r.position.getNeighbors().map(boardView.getAtSafe).filter(Util.isNonNull);
+    var spriteLocations : Array<Point> = r.position.getNeighbors();
+    var sprites = spriteLocations.map(boardView.getAtSafe).filter(Util.isNonNull);
 
     //Update model
     var m : Hex = boardModel.getAt(h.position);
     m.orientation = h.getOrientation();
 
+    boardModel.resetToDefaultConnectionGroup(spriteLocations);
+
     for(sprite in sprites) {
-      boardModel.getAt(sprite.position).acceptConnections = true;
       if (sprite.isPrismSprite()) {
         boardModel.getAt(sprite.position).orientation = sprite.asPrismSprite().getOrientation();
       }
@@ -194,6 +224,7 @@ class PlayState extends FlxState {
 
     viewNeedsSync = true;
     currentRotator = null;
+    onEndRotation(h);
   }
 
   override public function update(elapsed : Float) : Void {
@@ -243,6 +274,7 @@ class PlayState extends FlxState {
     boardModel = null;
     boardView = null;
     hud = null;
+    rotatingSprites = null;
     currentRotator = null;
     rows = -1;
     cols = -1;
