@@ -235,13 +235,15 @@ class PlayState extends FlxState {
 
   /**
    * Destroy function called when this state is swapped away.
-   * SourceFile and XML parser left so it can be reloaded
+   * sourceFile left so it can be reloaded
    **/
   public override function destroy() {
     super.destroy();
 
     boardModel = null;
     boardView = null;
+    hud = null;
+    currentRotator = null;
     rows = -1;
     cols = -1;
     viewNeedsSync = false;

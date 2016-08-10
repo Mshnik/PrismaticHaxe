@@ -1,29 +1,29 @@
 <board height="5" width="5">
-    <sink row="0" col="0" orientation="0"/>
-    <sink row="0" col="1" orientation="0"/>
+    <!--<sink row="0" col="0" orientation="0"/>-->
+    <!--<sink row="0" col="1" orientation="0"/>-->
 
-    <source row="1" col="0" orientation="0">
-        <color>RED</color>
-    </source>
+    <!--<source row="1" col="0" orientation="0">-->
+        <!--<color>RED</color>-->
+    <!--</source>-->
     <source row="1" col="1" orientation="0">
         <color>RED</color>
         <color>BLUE</color>
     </source>
 
     <prism row="2" col="1" orientation="3">
-        <connector from="0" to="1" color="BLUE"/>
         <connector from="1" to="2" color="RED"/>
-        <connector from="1" to="0" color="BLUE"/>
         <connector from="2" to="1" color="RED"/>
     </prism>
     <prism row="2" col="2" orientation="0">
-        <connector from="0" to="1" color="BLUE"/>
+        <connector from="1" to="3" color="RED"/>
+        <connector from="3" to="1" color="RED"/>
+    </prism>
+    <prism row="2" col="3" orientation="0">
         <connector from="1" to="2" color="RED"/>
-        <connector from="1" to="0" color="BLUE"/>
         <connector from="2" to="1" color="RED"/>
     </prism>
 
-    <rotator row="3" col="2" orientation="0"/>
-    <rotator row="1" col="2" orientation="0"/>
+    <!--<rotator row="3" col="2" orientation="0"/>-->
+    <!--<rotator row="1" col="2" orientation="0"/>-->
 
 </board>
