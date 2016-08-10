@@ -68,6 +68,7 @@ class PlayState extends FlxState {
   /** Reads this.sourceFile into memory. Also creates a boardView that matches the read model */
   private function loadFromFile() {
     boardModel = XMLParser.read(sourceFile);
+    boardModel.disableOnRotate = true;
 
     //Create a view that matches the model
     boardView = new BoardView().ensureSize(boardModel.getHeight(), boardModel.getWidth());
@@ -79,10 +80,13 @@ class PlayState extends FlxState {
           if (h.isPrism()) {
             var prismSprite = new PrismSprite();
             var prismModel = h.asPrism();
-            prismSprite.addRotation(prismModel.orientation);
+            var orientation = prismModel.orientation;
+            prismModel.orientation = 0;
             for (p in prismModel.getConnectionLocations()) {
               prismSprite.addConnection(prismModel.getConnector(p.row, p.col).baseColor, p.row, p.col);
             }
+            prismModel.orientation = orientation;
+            prismSprite.addRotation(orientation);
             prismSprite.rotationStartListener = onPrismStartRotation;
             prismSprite.rotationEndListener = onPrismEndRotation;
             boardView.set(r,c,prismSprite);
@@ -110,11 +114,12 @@ class PlayState extends FlxState {
         }
       }
     }
+
+    boardModel.disableOnRotate = false;
   }
 
   /** Helper function for PrismSprite starting rotation callback */
   private function onPrismStartRotation(h : RotatableHexSprite) {
-    //trace(h.position + " Started rotation");
     var m : Hex = boardModel.getAt(h.position);
     m.acceptConnections = false;
     viewNeedsSync = true;
@@ -122,7 +127,6 @@ class PlayState extends FlxState {
 
   /** Helper function for PrismSprite ending rotation callback */
   private function onPrismEndRotation(h : RotatableHexSprite) {
-    //trace("Ended rotation on orientation " + h.getOrientation());
     var m : Hex = boardModel.getAt(h.position);
     m.orientation = h.getOrientation();
     m.acceptConnections = true;

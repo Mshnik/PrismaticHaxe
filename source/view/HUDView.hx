@@ -25,7 +25,7 @@ class HUDView extends FlxTypedGroup<FlxSprite>{
     super();
 
     var bg = new FlxSprite();
-    bg.makeGraphic(FlxG.width, TOP_BAR_HEIGHT, 0x88000000);
+    bg.makeGraphic(FlxG.width, TOP_BAR_HEIGHT, FlxColor.BLACK);
     bg.scrollFactor.x=0;
     bg.scrollFactor.y=0;
     add(bg);

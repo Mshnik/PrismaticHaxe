@@ -9,7 +9,7 @@ import flixel.math.FlxPoint;
 class HexSprite extends BaseSprite implements Positionable {
 
   //Magic number corresponds to graphic size
-  public inline static var HEX_SIDE_LENGTH : Float = SCALE * 52;
+  public inline static var HEX_SIDE_LENGTH : Float = SCALE * 55;
   public inline static var SCALE : Float = 1.0;
 
   /** Checks if a mouse click should be treated in reverse */

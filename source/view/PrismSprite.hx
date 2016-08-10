@@ -127,6 +127,3 @@ class PrismSprite extends RotatableHexSprite {
     }
   }
 }
-
-/** Can't delete this without crashing, not sure why... */
-class UNUSED {}

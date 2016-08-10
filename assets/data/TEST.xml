@@ -10,9 +10,7 @@
         <color>BLUE</color>
     </source>
 
-    <prism row="2" col="0" orientation="0">
-    </prism>
-    <prism row="2" col="1" orientation="0">
+    <prism row="2" col="1" orientation="3">
         <connector from="0" to="1" color="BLUE"/>
         <connector from="1" to="2" color="RED"/>
         <connector from="1" to="0" color="BLUE"/>
