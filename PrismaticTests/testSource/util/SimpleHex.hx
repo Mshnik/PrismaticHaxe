@@ -25,7 +25,7 @@ class SimpleHex extends Hex {
   public override function addLightIn(side : Int, c : Color) : Array<Int> {
     lightIn[correctForOrientation(side)] = c;
     lightOut[correctForOrientation(side)] = c;
-    return [correctForOrientation(side)];
+    return [side];
   }
 
   /** Two SimpleHexes are equal if they are equal as Hexes. */

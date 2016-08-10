@@ -86,7 +86,7 @@ class Prism extends Hex {
         connector.litColor = c;
         if (! connector.isDeadEnd() && getLightOut(side) == Color.NONE) {
           lightOut[correctedTo] = c;
-          newLightOut.push(correctForOrientation(to));
+          newLightOut.push(to);
         }
       }
     }

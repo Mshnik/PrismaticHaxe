@@ -262,13 +262,15 @@ class TestPrism extends TestCase {
     resetAndCheck(p, expectedLightIn, expectedLightOut, expectedLit);
 
     //Test rotation
-    var p2 = new Prism().addConnector(0,1,Color.RED);
+    var p2 = new Prism().addConnector(0,1,Color.RED).addConnector(0,2,Color.RED);
     p2.rotateClockwise();
     arr = p2.addLightIn(1, Color.RED);
     expectedLightIn[1] = Color.RED;
     expectedLightOut[2] = Color.RED;
+    expectedLightOut[3] = Color.RED;
     expectedLit[1][2] = Color.RED;
-    assertArrayEquals([1], arr);
+    expectedLit[1][3] = Color.RED;
+    assertArrayEquals([2,3], arr);
     checkLight(p2, expectedLightIn, expectedLightOut, expectedLit);
     resetAndCheck(p2, expectedLightIn, expectedLightOut, expectedLit);
   }
