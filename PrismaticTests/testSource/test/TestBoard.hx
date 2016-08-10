@@ -49,6 +49,29 @@ class TestBoard extends TestCase {
     assertArrayEquals([source2, source], b.getSources());
   }
 
+  public function testConnectionGroups() {
+    var b = new Board().ensureSize(3,3).fillWith(SimpleHex.create);
+
+    for(h in b) {
+      assertEquals(Board.DEFAULT_CONNECTION_GROUP, h.connectionGroup);
+    }
+
+    var nextGroup : Int = b.setAsNextConnectionGroup([Point.get(0,0)]);
+
+    assertEquals(nextGroup, b.get(0,0).connectionGroup);
+    assertEquals(Board.DEFAULT_CONNECTION_GROUP, b.get(0,1).connectionGroup);
+
+    var nextGroup2 : Int = b.setAsNextConnectionGroup([Point.get(0,1), Point.get(1,0)]);
+    assertEquals(nextGroup, b.get(0,0).connectionGroup);
+    assertEquals(nextGroup2, b.get(0,1).connectionGroup);
+    assertEquals(nextGroup2, b.get(1,0).connectionGroup);
+
+    b.resetToDefaultConnectionGroup([Point.get(0,0)]);
+    assertEquals(Board.DEFAULT_CONNECTION_GROUP, b.get(0,0).connectionGroup);
+    assertEquals(nextGroup2, b.get(0,1).connectionGroup);
+    assertEquals(nextGroup2, b.get(1,0).connectionGroup);
+  }
+
   public function testLighting() {
     var b : Board = new Board(5,5);
 
@@ -150,18 +173,20 @@ class TestBoard extends TestCase {
     assertEquals(Color.BLUE, b2.get(0,1).getLightOut(3));
   }
 
-  public function testLightingWithAcceptConnections() {
+  public function testLightingWithConnectionGroup() {
     var b = new Board().ensureSize(3,3);
 
     b.set(0,0,new Source().addColor(Color.BLUE));
+    assertEquals(Board.DEFAULT_CONNECTION_GROUP, b.get(0,0).connectionGroup);
     b.set(0,1,new Prism().addConnector(5,0,Color.BLUE));
+    assertEquals(Board.DEFAULT_CONNECTION_GROUP, b.get(0,1).connectionGroup);
 
     b.relight();
 
     assertEquals(Color.BLUE, b.get(0,1).getLightIn(5));
     assertEquals(Color.BLUE, b.get(0,1).getLightOut(0));
 
-    b.get(0,1).acceptConnections = false;
+    b.setAsNextConnectionGroup([Point.get(0,1)]);
     assertEquals(Color.NONE, b.get(0,1).getLightIn(5));
     assertEquals(Color.NONE, b.get(0,1).getLightOut(0));
 
@@ -169,13 +194,42 @@ class TestBoard extends TestCase {
     assertEquals(Color.NONE, b.get(0,1).getLightIn(5));
     assertEquals(Color.NONE, b.get(0,1).getLightOut(0));
 
-    b.get(0,1).acceptConnections = true;
+    b.resetToDefaultConnectionGroup([Point.get(0,1)]);
     assertEquals(Color.NONE, b.get(0,1).getLightIn(5));
     assertEquals(Color.NONE, b.get(0,1).getLightOut(0));
 
     b.relight();
     assertEquals(Color.BLUE, b.get(0,1).getLightIn(5));
     assertEquals(Color.BLUE, b.get(0,1).getLightOut(0));
+
+    b.get(0,1).asPrism().addConnector(4,2,Color.BLUE);
+    b.set(1,0,new Source().addColor(Color.BLUE));
+    b.setAsNextConnectionGroup([Point.get(1,0)]);
+
+    b.relight();
+    assertEquals(Color.BLUE, b.get(0,1).getLightIn(5));
+    assertEquals(Color.BLUE, b.get(0,1).getLightOut(0));
+    assertEquals(Color.NONE, b.get(0,1).getLightIn(4));
+    assertEquals(Color.NONE, b.get(0,1).getLightOut(2));
+
+    b.get(0,1).asPrism().addConnector(3,2,Color.BLUE);
+    b.set(1,1, new Prism().addConnector(5,0,Color.BLUE));
+
+    b.resetToDefaultConnectionGroup([Point.get(1,0)]);
+    var group = b.setAsNextConnectionGroup([Point.get(1,0), Point.get(1,1)]);
+
+    assertEquals(group, b.get(1,0).connectionGroup);
+    assertEquals(group, b.get(1,1).connectionGroup);
+
+    b.relight();
+    assertEquals(Color.BLUE, b.get(0,1).getLightIn(5));
+    assertEquals(Color.BLUE, b.get(0,1).getLightOut(0));
+    assertEquals(Color.NONE, b.get(0,1).getLightIn(4));
+    assertEquals(Color.NONE, b.get(0,1).getLightOut(2));
+    assertEquals(Color.NONE, b.get(0,1).getLightIn(3));
+
+    assertEquals(Color.BLUE, b.get(1,1).getLightIn(5));
+    assertEquals(Color.BLUE, b.get(1,1).getLightOut(0));
   }
 
   /** Returns the orientation of h. For use in mapping */
@@ -207,6 +261,8 @@ class TestBoard extends TestCase {
     assertTrue(r.rotationListener != null);
 
     shouldFail(b.set.apply3B(0).apply2B(1).apply1B(new Rotator()));
+
+    b.set(1,1,r);
 
     // Check rotation of rotator and that orientations change with it
 

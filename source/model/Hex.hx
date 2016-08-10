@@ -28,10 +28,13 @@ using common.IntExtender;
    **/
   public var orientation(default, set) : Int;
 
-  /** True if this hex is currently allowed to connect to adjacent hexes.
-   *  False otherwise, such as when this is currently rotating or the like.
-   */
-  public var acceptConnections(default, set) : Bool;
+  @:isVar public static var UNSET_CONNECTION_GROUP(default, never) = -1;
+
+  /** The connection group this belongs to.
+   * Only accepts connections from hexes in the same group.
+   * -1 until this is put into a board.
+   **/
+  public var connectionGroup(default, set) : Int;
 
   /** The position of this hex in the board it belongs to.
    *  Initially (-1,-1) if this doesn't belong to a board.
@@ -56,9 +59,9 @@ using common.IntExtender;
   public function new() {
     position = Point.get(-1,-1);
     orientation = 0;
-    acceptConnections = true;
     idSet = false;
     id = nextID++;
+    connectionGroup = UNSET_CONNECTION_GROUP;
     lightIn = Util.arrayOf(Color.NONE, Util.HEX_SIDES);
     lightOut = Util.arrayOf(Color.NONE, Util.HEX_SIDES);
   }
@@ -101,11 +104,11 @@ using common.IntExtender;
     orientation = orientation + 1;
   }
 
-  public function set_acceptConnections(b : Bool) : Bool {
-    if (! b) {
+  public function set_connectionGroup(g : Int) : Int {
+    if (connectionGroup != g) {
       resetLight();
     }
-    return acceptConnections = b;
+    return connectionGroup = g;
   }
 
   /** Helper that corrects for the current orientation of the Hex.

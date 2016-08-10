@@ -25,7 +25,6 @@ class TestMain {
     r.add(new TestXMLParser());
 
     r.run();
-    trace(r.result);
 
     haxe.Timer.delay(quit, 1000);
   }

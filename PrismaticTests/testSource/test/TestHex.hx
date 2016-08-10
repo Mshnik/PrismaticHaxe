@@ -112,6 +112,20 @@ class TestHex extends TestCase {
     assertEquals(p, h.uncorrectPtForOrientation(h.correctPtForOrientation(p)));
   }
 
+  public function testConnectionGroup() {
+    var h = SimpleHex.create();
+    assertEquals(Hex.UNSET_CONNECTION_GROUP, h.connectionGroup);
+    h.connectionGroup = 2;
+    assertEquals(2, h.connectionGroup);
+
+    h.addLightIn(0, Color.RED);
+    h.connectionGroup = 2;
+    assertEquals(Color.RED, h.getLightIn(0));
+    h.connectionGroup = 1;
+    assertEquals(1, h.connectionGroup);
+    assertEquals(Color.NONE, h.getLightIn(0));
+  }
+
   public function testPosition() {
     var h = SimpleHex.create();
     assertEquals(Point.get(-1,-1),h.position);

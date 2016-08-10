@@ -55,6 +55,15 @@ class Util {
     return arr;
   }
 
+  /** Creates an array out of the given iterator (and exhausts it) */
+  @:generic public inline static function toArray<T>(iter : Iterator<T>) : Array<T> {
+    var arr : Array<T> = [];
+    while(iter.hasNext()) {
+      arr.push(iter.next());
+    }
+    return arr;
+  }
+
   /** Linearly interpolates the given points.
    * If dispose, calls put() on points in array before returning. Do this if points are not
    * needed after this call

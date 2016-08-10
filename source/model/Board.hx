@@ -7,9 +7,12 @@ using common.IntExtender;
 
 class Board extends Array2D<Hex> {
 
+  @:isVar public static var DEFAULT_CONNECTION_GROUP(default, never) : Int = 0;
+
   private var sources : Array<Source>;
   private var sinks : Array<Sink>;
   private var score : Score;
+  private var nextConnectionGroup : Int;
 
   /** True if Rotator onRotate shouldn't be called. Useful during whole-board manipulation */
   public var disableOnRotate : Bool;
@@ -20,6 +23,7 @@ class Board extends Array2D<Hex> {
     sinks = [];
     disableOnRotate = false;
     score = new Score();
+    resetNextConnectionGroupCounter();
   }
 
   /** Equals function for boards. */
@@ -118,7 +122,7 @@ class Board extends Array2D<Hex> {
     super.set(row, col, h);
 
     //If h is a Rotator, make sure there are no adjacent Rotators to prevent infinite recursion
-    if (h != null && h.isRotator()) {
+    if (h != null && oldH != h && h.isRotator()) {
       for (p in h.position.getNeighbors()) {
         if (getAt(p,true) != null && getAt(p,true).isRotator()) {
           super.set(row,col,oldH); //Undo setting before throwing
@@ -129,6 +133,7 @@ class Board extends Array2D<Hex> {
 
     if (oldH != h) {
       if (oldH != null) {
+        oldH.connectionGroup = Hex.UNSET_CONNECTION_GROUP;
         if (oldH.isSource()) {
           sources.remove(Std.instance(oldH,Source));
         } else if (oldH.isSink()) {
@@ -138,6 +143,7 @@ class Board extends Array2D<Hex> {
         }
       }
       if (h != null) {
+        h.connectionGroup = DEFAULT_CONNECTION_GROUP;
         if (h.isSource()) {
           addSource(Std.instance(h,Source));
         } else if (h.isSink()) {
@@ -232,6 +238,38 @@ class Board extends Array2D<Hex> {
     return score;
   }
 
+  /** Resets the next connection group to 1, the non-default connection group. Returns this */
+  public inline function resetNextConnectionGroupCounter() : Board {
+    nextConnectionGroup = 1;
+    return this;
+  }
+
+  /** Resets the hexes at the given locations to the DEFAULT_CONNECTION_GROUP. Returns this */
+  public inline function resetToDefaultConnectionGroup(locations : Array<Point>) : Board {
+    for(pt in locations) {
+      var h = getAt(pt);
+      if (h != null) {
+        h.connectionGroup = DEFAULT_CONNECTION_GROUP;
+      }
+    }
+    return this;
+  }
+
+  /** Sets each of the hexes at the given locations as the next connection group.
+   * Ignores locations with null hexes.
+   * Returns the connection group ID this new group belongs to.
+   **/
+  public inline function setAsNextConnectionGroup(locations : Array<Point>) : Int {
+    for(pt in locations) {
+      var h = getAt(pt);
+      if (h != null) {
+        h.connectionGroup = nextConnectionGroup;
+      }
+    }
+    nextConnectionGroup++;
+    return (nextConnectionGroup-1);
+  }
+
   /** Causes the board to relight entirely.
    * Returns the score object stored in this board, updated with the new lighting.
    **/
@@ -248,7 +286,7 @@ class Board extends Array2D<Hex> {
     for(s in sources) {
       s.updateLightOut();
       for(i in 0...Util.HEX_SIDES) {
-        queue.push(LightPusher.get(s.position, s.getCurrentColor(), i));
+        queue.push(LightPusher.get(s.position, s.getCurrentColor(), i, s.connectionGroup));
       }
     }
 
@@ -256,11 +294,11 @@ class Board extends Array2D<Hex> {
     while (queue.length > 0) {
       var l = queue.shift();
       var h : Hex = getAt(l.destination, true);
-      if (h != null && h.acceptConnections) {
+      if (h != null && h.connectionGroup == l.connectionGroup) {
         var newOut = h.addLightIn(l.inDirection,l.color);
         for (x in newOut) {
           if (h.getLightOut(x) != Color.NONE) {
-            queue.push(LightPusher.get(h.position,h.getLightOut(x),x));
+            queue.push(LightPusher.get(h.position,h.getLightOut(x),x,h.connectionGroup));
           }
         }
       }
@@ -282,16 +320,18 @@ class LightPusher {
   public var color(default, null) : Color;
   public var destination(default, null) : Point;
   public var inDirection(default, null) : Int;
+  public var connectionGroup(default, null) : Int;
 
-  private function new (destination : Point, c : Color, inDirection : Int) {
+  private function new (destination : Point, c : Color, inDirection : Int, connectionGroup : Int) {
     this.destination = destination;
     color = c;
     this.inDirection = inDirection;
+    this.connectionGroup = connectionGroup;
   }
 
-  public static inline function get(startLoc : Point, c : Color, exitSide : Int) : LightPusher {
+  public static inline function get(startLoc : Point, c : Color, exitSide : Int, connectionGroup : Int) : LightPusher {
     return new LightPusher(startLoc.add(Point.NEIGHBOR_DELTAS[startLoc.col%2][exitSide]),
-                           c, (exitSide + Std.int(Util.HEX_SIDES/2)).mod(Util.HEX_SIDES));
+                           c, (exitSide + Std.int(Util.HEX_SIDES/2)).mod(Util.HEX_SIDES), connectionGroup);
   }
 
   public inline function toString() : String {

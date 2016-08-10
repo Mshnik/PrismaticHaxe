@@ -23,6 +23,15 @@ class Source extends Hex {
     }
   }
 
+  /** Make sure to set light out to correct current color, no matter what else */
+  public override function resetLight() : Array<Int> {
+    super.resetLight();
+    if (availableColors != null) {
+      updateLightOut();
+    }
+    return Util.toArray(0...Util.HEX_SIDES);
+  }
+
   /** Adds the given color to the array of available colors, if it isn't already present.
    * If adding Color.NONE, does nothing.
    * If adding a duplicate, does nothing

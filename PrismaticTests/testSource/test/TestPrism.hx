@@ -1,4 +1,5 @@
 package test;
+import model.Hex;
 import model.Rotator;
 import model.Source;
 import model.Sink;
@@ -171,7 +172,7 @@ class TestPrism extends TestCase {
    **/
   private inline function resetAndCheck(p : Prism, expectedLightIn : Array<Color>,
                                         expectedLightOut : Array<Color>, expectedLit : Array<Array<Color>>) {
-    p.acceptConnections = false;
+    p.resetLight();
     for(i in 0...Util.HEX_SIDES) {
       expectedLightIn[i] = Color.NONE;
       expectedLightOut[i] = Color.NONE;
@@ -179,7 +180,6 @@ class TestPrism extends TestCase {
         expectedLit[i][k] = Color.NONE;
       }
     }
-    p.acceptConnections = true;
     checkLight(p, expectedLightIn, expectedLightOut, expectedLit);
   }
 

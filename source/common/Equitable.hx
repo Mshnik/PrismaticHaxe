@@ -42,10 +42,10 @@ class EquitableUtils {
   public static function equalsFull<T>(t : EquitableWrapper<T>, t2 : T) : Bool {
     switch(t){
       case EquitableEnum.Equit(v) :
-        trace("Got equitable " + v);
+        //trace("Got equitable " + v);
         return (v == null && t2 == null) || (v != null && t2 != null && v.equals(t2));
       case EquitableEnum.NonEquit(v) :
-        trace("Got nonequitable " + v);
+        //trace("Got nonequitable " + v);
         return v == t2;
     }
   }
