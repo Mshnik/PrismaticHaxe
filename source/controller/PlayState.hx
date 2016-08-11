@@ -3,13 +3,14 @@ package controller;
 import model.*;
 import view.*;
 import common.*;
-import controller.util.KeyThrottler;
+import controller.util.InputThrottler;
 
 import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.math.FlxRect;
 
 using common.CollectionExtender;
 
@@ -43,10 +44,16 @@ class PlayState extends FlxState {
    *
    *
    **/
-  private var keyLeft : KeyThrottler;
-  private var keyRight : KeyThrottler;
-  private var keyUp : KeyThrottler;
-  private var keyDown : KeyThrottler;
+  private var keyLeft : InputThrottler;
+  private var keyRight : InputThrottler;
+  private var keyUp : InputThrottler;
+  private var keyDown : InputThrottler;
+
+  private static var MOUSE_SCROLL_BOX_SIZE = 20;
+  private var mouseScrollLeft : InputThrottler;
+  private var mouseScrollRight : InputThrottler;
+  private var mouseScrollUp : InputThrottler;
+  private var mouseScrollDown : InputThrottler;
 
   /** Sets the sourceFile to the given path, also creates an XMLParser around it. */
   public function set_sourceFile(path : Dynamic) : Dynamic {
@@ -83,10 +90,23 @@ class PlayState extends FlxState {
     add(hud);
 
     //Input
-    keyLeft = new KeyThrottler(FlxKey.LEFT, arrowKeyPressed);
-    keyRight = new KeyThrottler(FlxKey.RIGHT, arrowKeyPressed);
-    keyDown = new KeyThrottler(FlxKey.DOWN, arrowKeyPressed);
-    keyUp = new KeyThrottler(FlxKey.UP, arrowKeyPressed);
+    keyLeft = InputThrottler.onKey(FlxKey.LEFT, arrowKeyPressed, InputThrottler.EVERY_FRAME);
+    keyRight = InputThrottler.onKey(FlxKey.RIGHT, arrowKeyPressed, InputThrottler.EVERY_FRAME);
+    keyDown = InputThrottler.onKey(FlxKey.DOWN, arrowKeyPressed, InputThrottler.EVERY_FRAME);
+    keyUp = InputThrottler.onKey(FlxKey.UP, arrowKeyPressed, InputThrottler.EVERY_FRAME);
+
+    mouseScrollRight = InputThrottler.onMouseInRect(FlxRect.get(0,0,MOUSE_SCROLL_BOX_SIZE,FlxG.height),
+                                                    function() {shiftView(Point.LEFT);},
+                                                    InputThrottler.SLOW_DECAY);
+    mouseScrollLeft = InputThrottler.onMouseInRect(FlxRect.get(FlxG.width-MOUSE_SCROLL_BOX_SIZE,0,MOUSE_SCROLL_BOX_SIZE,FlxG.height),
+                                                   function() {shiftView(Point.RIGHT);},
+                                                   InputThrottler.SLOW_DECAY);
+    mouseScrollUp = InputThrottler.onMouseInRect(FlxRect.get(0,FlxG.height-MOUSE_SCROLL_BOX_SIZE,FlxG.width,MOUSE_SCROLL_BOX_SIZE),
+                                                 function() {shiftView(Point.DOWN);},
+                                                 InputThrottler.SLOW_DECAY);
+    mouseScrollDown = InputThrottler.onMouseInRect(FlxRect.get(0,0,FlxG.width,MOUSE_SCROLL_BOX_SIZE),
+                                                   function() {shiftView(Point.UP);},
+                                                   InputThrottler.SLOW_DECAY);
 
     //Misc prep
     prepForVisuals();
@@ -276,6 +296,11 @@ class PlayState extends FlxState {
     keyRight.update(elapsed);
     keyDown.update(elapsed);
     keyUp.update(elapsed);
+
+    mouseScrollLeft.update(elapsed);
+    mouseScrollRight.update(elapsed);
+    mouseScrollDown.update(elapsed);
+    mouseScrollUp.update(elapsed);
   }
 
   /** Updates the lighting of the given PrismSprite to match its prism model */
@@ -334,5 +359,23 @@ class PlayState extends FlxState {
     currentRotator = null;
     viewNeedsSync = false;
     hasWon = false;
+
+    keyLeft.destroy();
+    keyLeft = null;
+    keyUp.destroy();
+    keyUp = null;
+    keyDown.destroy();
+    keyDown = null;
+    keyRight.destroy();
+    keyRight = null;
+
+    mouseScrollDown.destroy();
+    mouseScrollDown = null;
+    mouseScrollUp.destroy();
+    mouseScrollUp = null;
+    mouseScrollLeft.destroy();
+    mouseScrollLeft = null;
+    mouseScrollRight.destroy();
+    mouseScrollRight = null;
   }
 }
