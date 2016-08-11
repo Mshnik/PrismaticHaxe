@@ -1,10 +1,11 @@
 package controller;
 
-import model.Score;
 import model.*;
 import view.*;
 import common.*;
+import controller.util.KeyThrottler;
 
+import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -17,24 +18,35 @@ class PlayState extends FlxState {
   /** The file this PlayState is loaded from. This should be set before create() is called. */
   public var sourceFile(default, set) : Dynamic;
 
-  private static inline var BOARD_MARGIN_VERT = 90;
-  private static inline var BOARD_MARGIN_HORIZ = 90;
-
+  /**
+   *
+   *
+   *  State Vars
+   *
+   *
+   **/
+  private static inline var INITIAL_BOARD_MARGIN_VERT = 90;
+  private static inline var INITIAL_BOARD_MARGIN_HORIZ = 90;
+  private static inline var BOARD_SCROLL_DELTA = 30;
   private var boardModel : Board;
   private var boardView : BoardView;
   private var hud : HUDView;
+  private var hasWon : Bool; //True after this person has won
+  private var viewNeedsSync : Bool; //True when the model has changed, next update loop should update the view
+  private var rotatingSprites : Array<RotatableHexSprite>; //All current rotating sprites
+  private var currentRotator : RotatorSprite; //Rotator currently rotating hexes
 
-  private var rows : Int;
-  private var cols : Int;
-
-  /** True when the model has changed, next update loop should update the view */
-  private var viewNeedsSync : Bool;
-
-  /** All current rotating sprites */
-  private var rotatingSprites : Array<RotatableHexSprite>;
-
-  /** Rotator currently rotating hexes */
-  private var currentRotator : RotatorSprite;
+  /**
+   *
+   *
+   * Input/Controls Vars
+   *
+   *
+   **/
+  private var keyLeft : KeyThrottler;
+  private var keyRight : KeyThrottler;
+  private var keyUp : KeyThrottler;
+  private var keyDown : KeyThrottler;
 
   /** Sets the sourceFile to the given path, also creates an XMLParser around it. */
   public function set_sourceFile(path : Dynamic) : Dynamic {
@@ -50,6 +62,7 @@ class PlayState extends FlxState {
   public override function create() : Void {
     super.create();
 
+    //Add elements and set fields
     var bg = new FlxSprite();
     bg.makeGraphic(FlxG.width, FlxG.height, FlxColor.CYAN);
     bg.scrollFactor.x=0;
@@ -62,12 +75,20 @@ class PlayState extends FlxState {
     rotatingSprites = [];
     viewNeedsSync = true;
     currentRotator = null;
+    hasWon = false;
 
-    boardView.vertMargin = BOARD_MARGIN_VERT;
-    boardView.horizMargin = BOARD_MARGIN_HORIZ;
+    boardView.vertMargin = INITIAL_BOARD_MARGIN_VERT;
+    boardView.horizMargin = INITIAL_BOARD_MARGIN_HORIZ;
     add(boardView.spriteGroup);
     add(hud);
 
+    //Input
+    keyLeft = new KeyThrottler(FlxKey.LEFT, arrowKeyPressed);
+    keyRight = new KeyThrottler(FlxKey.RIGHT, arrowKeyPressed);
+    keyDown = new KeyThrottler(FlxKey.DOWN, arrowKeyPressed);
+    keyUp = new KeyThrottler(FlxKey.UP, arrowKeyPressed);
+
+    //Misc prep
     prepForVisuals();
   }
 
@@ -246,11 +267,19 @@ class PlayState extends FlxState {
       boardView.spriteGroup.forEachOfType(PrismSprite, updatePrismSpriteLightings);
       boardView.spriteGroup.forEachOfType(SinkSprite, updateSinkSpriteLighting);
       hud.setGoalValues(score.get());
+      if (score.isSatisfied()) {
+        onVictory();
+      }
     }
+
+    keyLeft.update(elapsed);
+    keyRight.update(elapsed);
+    keyDown.update(elapsed);
+    keyUp.update(elapsed);
   }
 
   /** Updates the lighting of the given PrismSprite to match its prism model */
-  private function updatePrismSpriteLightings(sprite : PrismSprite) {
+  private inline function updatePrismSpriteLightings(sprite : PrismSprite) {
     var model : Prism = boardModel.getAt(sprite.position).asPrism();
     for(p in model.getConnectionLocations()) {
       var lit = model.isConnectorLit(p.row, p.col);
@@ -263,9 +292,32 @@ class PlayState extends FlxState {
   }
 
   /** Updates the lighting of the given SinkSprite to match its Sink model */
-  private function updateSinkSpriteLighting(sprite : SinkSprite) {
+  private inline function updateSinkSpriteLighting(sprite : SinkSprite) {
     var model : Sink = boardModel.getAt(sprite.position).asSink();
     sprite.asSinkSprite().litColor = model.getCurrentColor();
+  }
+
+  private function arrowKeyPressed(keyCode : Int) {
+    switch(keyCode) {
+      case FlxKey.LEFT:   shiftView(Point.LEFT);
+      case FlxKey.RIGHT:  shiftView(Point.RIGHT);
+      case FlxKey.UP:     shiftView(Point.UP);
+      case FlxKey.DOWN:   shiftView(Point.DOWN);
+    }
+  }
+
+  /** Helper that shifts the boardView in the given direction */
+  private inline function shiftView(direction : Point) {
+    boardView.horizMargin += direction.col * BOARD_SCROLL_DELTA;
+    boardView.vertMargin += direction.row * BOARD_SCROLL_DELTA;
+  }
+
+  /** Called when the person wins for the first time this play state. */
+  private function onVictory() {
+    if (! hasWon) {
+      hasWon = true;
+      trace("You win!");
+    }
   }
 
   /**
@@ -280,8 +332,7 @@ class PlayState extends FlxState {
     hud = null;
     rotatingSprites = null;
     currentRotator = null;
-    rows = -1;
-    cols = -1;
     viewNeedsSync = false;
+    hasWon = false;
   }
 }

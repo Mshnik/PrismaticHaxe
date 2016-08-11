@@ -48,7 +48,7 @@ class Score {
   }
 
   /** Checks if this Score is currently satisfied. Returns true if each color requirement is satisfied */
-  public inline function isSatisfied() : Bool {
+  public function isSatisfied() : Bool {
     for(c in ColorUtil.realColors()) {
       if (! scoreByColor.get(c).isSatisfied()) return false;
     }
