@@ -45,19 +45,17 @@ class BoardView extends Array2D<HexSprite> {
   }
 
   public function set_vertMargin(margin : Int) : Int {
-    vertMargin = margin;
     for(h in this) {
-      setGraphicPosition(h);
+      h.y += (margin - vertMargin);
     }
-    return vertMargin;
+    return vertMargin = margin;
   }
 
   public function set_horizMargin(margin : Int) : Int {
-    horizMargin = margin;
     for(h in this) {
-      setGraphicPosition(h);
+      h.x += (margin - horizMargin);
     }
-    return horizMargin;
+    return horizMargin = margin;
   }
 
   /** Helper function for setting position of a HexSprite based on its row,col position */
