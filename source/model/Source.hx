@@ -21,6 +21,7 @@ class Source extends Hex {
     for(i in 0...Util.HEX_SIDES) {
       lightOut[i] = getCurrentColor();
     }
+    updateHasLightInOut();
   }
 
   /** Make sure to set light out to correct current color, no matter what else */

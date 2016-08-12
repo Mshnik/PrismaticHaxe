@@ -141,6 +141,7 @@ class BoardView extends Array2D<HexSprite> {
     var oldH = get(row,col);
     if (oldH != null) {
       spriteGroup.remove(oldH);
+      oldH.isHidden = false;
     }
     return super.remove(row,col);
   }
@@ -149,15 +150,20 @@ class BoardView extends Array2D<HexSprite> {
    * and they stay in the group
    **/
   public override function swap(p1 : Point, p2 : Point) : BoardView {
+    var h1 = getAt(p1);
+    var h1WasHidden = h1 != null && h1.isHidden;
+    var h2 = getAt(p2);
+    var h2WasHidden = h2 != null && h2.isHidden;
+
     super.swap(p1,p2);
 
-    var h1 = getAt(p1);
     if (h1 != null) {
       setGraphicPosition(spriteGroup.add(h1));
+      h1.isHidden = h1WasHidden;
     }
-    var h2 = getAt(p2);
     if (h2 != null) {
       setGraphicPosition(spriteGroup.add(h2));
+      h2.isHidden = h2WasHidden;
     }
 
     return this;
