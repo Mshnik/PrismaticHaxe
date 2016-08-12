@@ -1,5 +1,6 @@
 package view;
 
+import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import common.ColorUtil;
@@ -23,8 +24,9 @@ class HUDView extends FlxTypedGroup<FlxSprite>{
 
   private var nameLabel : FlxText;
   private var scoreLabels : Map<Color, FlxText>;
+  private var pauseButton : FlxButton;
 
-  public function new(levelName : String = "") {
+  public function new(pauseHandler : Void -> Void, levelName : String = "") {
     super();
 
     var bg = new FlxSprite();
@@ -36,13 +38,18 @@ class HUDView extends FlxTypedGroup<FlxSprite>{
     nameLabel = new FlxText(TOP_MARGIN,TOP_MARGIN,0,levelName,LEVEL_NAME_SIZE);
     add(nameLabel);
 
+    pauseButton = new FlxButton(0,TOP_MARGIN/2,pauseHandler);
+    pauseButton.loadGraphic(AssetPaths.settings_icon__png);
+    pauseButton.x = FlxG.width - pauseButton.width - TOP_MARGIN;
+    add(pauseButton);
+
     scoreLabels = [
       for(c in ColorUtil.realColors())
         c => new FlxText(0,TOP_MARGIN,0,"0/0", SCORE_TEXT_SIZE)
     ];
 
     var xInc = 3 * SCORE_TEXT_SIZE;
-    var xPos = FlxG.width - 4 * xInc;
+    var xPos = pauseButton.x - 4 * xInc;
     for(t in scoreLabels.iterator()) {
       t.scrollFactor.x = 0;
       t.scrollFactor.y = 0;
@@ -59,5 +66,4 @@ class HUDView extends FlxTypedGroup<FlxSprite>{
     }
     return this;
   }
-
 }

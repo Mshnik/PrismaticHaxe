@@ -1,10 +1,10 @@
 package controller;
 
-import controller.LevelSelectState.LevelUtils;
 import input.InputSettings;
 import model.*;
 import view.*;
 import common.*;
+import controller.util.LevelUtils;
 import controller.util.InputThrottler;
 
 import flixel.input.keyboard.FlxKey;
@@ -56,16 +56,17 @@ class PlayState extends FlxState {
    *
    *
    **/
-  private var keyLeft : InputThrottler;
-  private var keyRight : InputThrottler;
-  private var keyUp : InputThrottler;
-  private var keyDown : InputThrottler;
-
+  private var inputThrottlers : Array<InputThrottler>;
   private static var MOUSE_SCROLL_BOX_SIZE = 20;
-  private var mouseScrollLeft : InputThrottler;
-  private var mouseScrollRight : InputThrottler;
-  private var mouseScrollUp : InputThrottler;
-  private var mouseScrollDown : InputThrottler;
+
+  /**
+   *
+   *
+   * Pause and Menu Vars
+   *
+   *
+   **/
+  private static var PAUSE_MENU_BASE_TINT : Int = 0x99000000;
 
   /** Helper function to make sure visuals are ready to go. Has to be here, not in Main. IDK why. */
   public static inline function prepForVisuals() {
@@ -97,28 +98,29 @@ class PlayState extends FlxState {
     boardView.horizMargin = INITIAL_BOARD_MARGIN_HORIZ;
     add(boardView.spriteGroup);
 
-    //Add HUD
-    hud = new HUDView(LevelUtils.getLevelName(sourceFile));
+    //Add HUD and other menus
+    hud = new HUDView(pause,LevelUtils.getLevelName(sourceFile));
     add(hud);
 
     //Set up Input
-    keyLeft = InputThrottler.onKey(InputSettings.LEFT, arrowKeyPressed, InputThrottler.EVERY_FRAME);
-    keyRight = InputThrottler.onKey(InputSettings.RIGHT, arrowKeyPressed, InputThrottler.EVERY_FRAME);
-    keyDown = InputThrottler.onKey(InputSettings.DOWN, arrowKeyPressed, InputThrottler.EVERY_FRAME);
-    keyUp = InputThrottler.onKey(InputSettings.UP, arrowKeyPressed, InputThrottler.EVERY_FRAME);
+    inputThrottlers = [];
+    inputThrottlers.push(InputThrottler.onKey(InputSettings.LEFT, arrowKeyPressed, InputThrottler.EVERY_FRAME));
+    inputThrottlers.push(InputThrottler.onKey(InputSettings.RIGHT, arrowKeyPressed, InputThrottler.EVERY_FRAME));
+    inputThrottlers.push(InputThrottler.onKey(InputSettings.DOWN, arrowKeyPressed, InputThrottler.EVERY_FRAME));
+    inputThrottlers.push(InputThrottler.onKey(InputSettings.UP, arrowKeyPressed, InputThrottler.EVERY_FRAME));
 
-    mouseScrollRight = InputThrottler.onMouseInRect(FlxRect.get(0,0,MOUSE_SCROLL_BOX_SIZE,FlxG.height),
-                                                    function() {shiftView(Point.LEFT);},
-                                                    InputThrottler.SLOW_DECAY);
-    mouseScrollLeft = InputThrottler.onMouseInRect(FlxRect.get(FlxG.width-MOUSE_SCROLL_BOX_SIZE,0,MOUSE_SCROLL_BOX_SIZE,FlxG.height),
-                                                   function() {shiftView(Point.RIGHT);},
-                                                   InputThrottler.SLOW_DECAY);
-    mouseScrollUp = InputThrottler.onMouseInRect(FlxRect.get(0,FlxG.height-MOUSE_SCROLL_BOX_SIZE,FlxG.width,MOUSE_SCROLL_BOX_SIZE),
-                                                 function() {shiftView(Point.DOWN);},
-                                                 InputThrottler.SLOW_DECAY);
-    mouseScrollDown = InputThrottler.onMouseInRect(FlxRect.get(0,0,FlxG.width,MOUSE_SCROLL_BOX_SIZE),
-                                                   function() {shiftView(Point.UP);},
-                                                   InputThrottler.SLOW_DECAY);
+//    mouseScrollRight = InputThrottler.onMouseInRect(FlxRect.get(0,0,MOUSE_SCROLL_BOX_SIZE,FlxG.height),
+//                                                    function() {shiftView(Point.LEFT);},
+//                                                    InputThrottler.SLOW_DECAY);
+//    mouseScrollLeft = InputThrottler.onMouseInRect(FlxRect.get(FlxG.width-MOUSE_SCROLL_BOX_SIZE,0,MOUSE_SCROLL_BOX_SIZE,FlxG.height),
+//                                                   function() {shiftView(Point.RIGHT);},
+//                                                   InputThrottler.SLOW_DECAY);
+//    mouseScrollUp = InputThrottler.onMouseInRect(FlxRect.get(0,FlxG.height-MOUSE_SCROLL_BOX_SIZE,FlxG.width,MOUSE_SCROLL_BOX_SIZE),
+//                                                 function() {shiftView(Point.DOWN);},
+//                                                 InputThrottler.SLOW_DECAY);
+//    mouseScrollDown = InputThrottler.onMouseInRect(FlxRect.get(0,0,FlxG.width,MOUSE_SCROLL_BOX_SIZE),
+//                                                   function() {shiftView(Point.UP);},
+//                                                   InputThrottler.SLOW_DECAY);
 
     //Misc prep
     prepForVisuals();
@@ -311,15 +313,9 @@ class PlayState extends FlxState {
       }
     }
 
-    keyLeft.update(elapsed);
-    keyRight.update(elapsed);
-    keyDown.update(elapsed);
-    keyUp.update(elapsed);
-
-    mouseScrollLeft.update(elapsed);
-    mouseScrollRight.update(elapsed);
-    mouseScrollDown.update(elapsed);
-    mouseScrollUp.update(elapsed);
+    for(inputThrottler in inputThrottlers) {
+      inputThrottler.update(elapsed);
+    }
   }
 
   /** Reveals tiles based on their lighting status */
@@ -364,6 +360,12 @@ class PlayState extends FlxState {
     boardView.vertMargin += direction.row * BOARD_SCROLL_DELTA;
   }
 
+  /** Pauses the game, opening the pause state. The substate is not persistant, it will be destroyed on close */
+  public function pause() {
+    var pauseState:PauseState = new PauseState(PAUSE_MENU_BASE_TINT);
+    openSubState(pauseState);
+  }
+
   /** Called when the person wins for the first time this play state. */
   private function onVictory() {
     if (! hasWon) {
@@ -387,22 +389,9 @@ class PlayState extends FlxState {
     viewNeedsSync = false;
     hasWon = false;
 
-    keyLeft.destroy();
-    keyLeft = null;
-    keyUp.destroy();
-    keyUp = null;
-    keyDown.destroy();
-    keyDown = null;
-    keyRight.destroy();
-    keyRight = null;
-
-    mouseScrollDown.destroy();
-    mouseScrollDown = null;
-    mouseScrollUp.destroy();
-    mouseScrollUp = null;
-    mouseScrollLeft.destroy();
-    mouseScrollLeft = null;
-    mouseScrollRight.destroy();
-    mouseScrollRight = null;
+    for(inputThrottler in inputThrottlers) {
+      inputThrottler.destroy();
+    }
+    inputThrottlers = null;
   }
 }

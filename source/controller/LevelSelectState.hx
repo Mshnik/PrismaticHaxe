@@ -1,5 +1,6 @@
 package controller;
 
+import controller.util.LevelUtils;
 import input.InputSettings;
 import flixel.FlxG;
 import controller.util.IndexedFlxButton;
@@ -62,14 +63,5 @@ class LevelSelectState extends FlxState {
   public override function destroy() {
     super.destroy();
     levelButtons = null;
-  }
-}
-
-class LevelUtils {
-  private function new() {}
-
-  /** Returns the name of the level in the given path (the last part of the path) */
-  public static inline function getLevelName(levelPath : String) : String {
-    return levelPath.substring(levelPath.lastIndexOf("/")+1,levelPath.indexOf("."));
   }
 }
