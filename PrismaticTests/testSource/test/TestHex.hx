@@ -138,34 +138,42 @@ class TestHex extends TestCase {
   }
 
   public function testLightInLightOut() {
-    //TODO - add checks for bool fields
-    assertTrue(false);
-
     shouldFail(new Hex().addLightIn.apply2B(0).apply1B(Color.RED));
 
     var h = SimpleHex.create();
 
     var expectedLight : Array<Color> = Util.arrayOf(Color.NONE, Util.HEX_SIDES);
 
+    assertFalse(h.hasLightIn);
+    assertFalse(h.hasLightOut);
+
     var arr = h.addLightIn(0, Color.RED);
     expectedLight[0] = Color.RED;
+    assertTrue(h.hasLightIn);
+    assertTrue(h.hasLightOut);
     assertArrayEquals([0], arr);
     assertArrayEquals(expectedLight, h.getLightInArray());
     assertArrayEquals(expectedLight, h.getLightOutArray());
 
     arr = h.addLightIn(0,Color.BLUE);
+    assertTrue(h.hasLightIn);
+    assertTrue(h.hasLightOut);
     expectedLight[0] = Color.BLUE;
     assertArrayEquals([0], arr);
     assertArrayEquals(expectedLight, h.getLightInArray());
     assertArrayEquals(expectedLight, h.getLightOutArray());
 
     arr = h.addLightIn(1,Color.YELLOW);
+    assertTrue(h.hasLightIn);
+    assertTrue(h.hasLightOut);
     expectedLight[1] = Color.YELLOW;
     assertArrayEquals([1], arr);
     assertArrayEquals(expectedLight, h.getLightInArray());
     assertArrayEquals(expectedLight, h.getLightOutArray());
 
     arr = h.resetLight();
+    assertFalse(h.hasLightIn);
+    assertFalse(h.hasLightOut);
     expectedLight[0] = Color.NONE;
     expectedLight[1] = Color.NONE;
     assertArrayEquals([0, 1], arr);
