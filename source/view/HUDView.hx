@@ -17,11 +17,14 @@ class HUDView extends FlxTypedGroup<FlxSprite>{
   private static inline var TOP_BAR_HEIGHT = 35;
 
   /** Font size of the text representing the score */
+  private static inline var LEVEL_NAME_SIZE = 16;
+  /** Font size of the text representing the score */
   private static inline var SCORE_TEXT_SIZE = 16;
 
+  private var nameLabel : FlxText;
   private var scoreLabels : Map<Color, FlxText>;
 
-  public function new() {
+  public function new(levelName : String = "") {
     super();
 
     var bg = new FlxSprite();
@@ -30,19 +33,20 @@ class HUDView extends FlxTypedGroup<FlxSprite>{
     bg.scrollFactor.y=0;
     add(bg);
 
+    nameLabel = new FlxText(TOP_MARGIN,TOP_MARGIN,0,levelName,LEVEL_NAME_SIZE);
+    add(nameLabel);
+
     scoreLabels = [
       for(c in ColorUtil.realColors())
-        c => new FlxText(0,0,0,"0/0", SCORE_TEXT_SIZE)
+        c => new FlxText(0,TOP_MARGIN,0,"0/0", SCORE_TEXT_SIZE)
     ];
 
     var xInc = 3 * SCORE_TEXT_SIZE;
     var xPos = FlxG.width - 4 * xInc;
-    var yPos = TOP_MARGIN;
     for(t in scoreLabels.iterator()) {
       t.scrollFactor.x = 0;
       t.scrollFactor.y = 0;
       t.x = xPos;
-      t.y = yPos;
       xPos += xInc;
       add(t);
     }

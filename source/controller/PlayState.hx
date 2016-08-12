@@ -1,5 +1,6 @@
 package controller;
 
+import controller.LevelSelectState.LevelUtils;
 import input.InputSettings;
 import model.*;
 import view.*;
@@ -18,7 +19,7 @@ using common.CollectionExtender;
 class PlayState extends FlxState {
 
   /** The file this PlayState is loaded from. This should be set before create() is called. */
-  public var sourceFile(default, set) : Dynamic;
+  public var sourceFile(default, default) : String;
 
   /** True if this is exploration mode, false for original puzzle mode */
   public var hideTilesUntilLit(default, default) : Bool;
@@ -26,7 +27,7 @@ class PlayState extends FlxState {
   /** Constructor to set the few pre-create() fields */
   public function new(sourceFile : Dynamic, hideTilesUntilLit : Bool) {
     super();
-    this.sourceFile = sourceFile;
+    this.sourceFile = Std.string(sourceFile);
     this.hideTilesUntilLit = hideTilesUntilLit;
   }
 
@@ -66,11 +67,6 @@ class PlayState extends FlxState {
   private var mouseScrollUp : InputThrottler;
   private var mouseScrollDown : InputThrottler;
 
-  /** Sets the sourceFile to the given path, also creates an XMLParser around it. */
-  public function set_sourceFile(path : Dynamic) : Dynamic {
-    return sourceFile = path;
-  }
-
   /** Helper function to make sure visuals are ready to go. Has to be here, not in Main. IDK why. */
   public static inline function prepForVisuals() {
     PrismSprite.initGeometry();
@@ -102,7 +98,7 @@ class PlayState extends FlxState {
     add(boardView.spriteGroup);
 
     //Add HUD
-    hud = new HUDView();
+    hud = new HUDView(LevelUtils.getLevelName(sourceFile));
     add(hud);
 
     //Set up Input

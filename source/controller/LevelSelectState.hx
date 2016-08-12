@@ -10,17 +10,19 @@ class LevelSelectState extends FlxState {
 
   private static var LEVEL_PATHS : Array<String>;
   private static var DATA_PATH : String;
+  private static var LEVEL_EXTENSION : String;
 
   /** Call to set up level paths for all classic levels. Subsequent calls won't do anything */
   public static function initLevelPaths() {
     var levelListPath = AssetPaths.level_list__txt;
     DATA_PATH = levelListPath.substr(0, levelListPath.lastIndexOf("/")+1);
+    LEVEL_EXTENSION = ".xml";
     LEVEL_PATHS = Assets.getText(levelListPath).split("\n").map(resolveLevelName);
   }
 
   /** Helper for initLevelPaths() */
   private static function resolveLevelName(name : String) : String {
-    var p = DATA_PATH + name;
+    var p = DATA_PATH + name + LEVEL_EXTENSION;
     if (! Assets.exists(p, AssetType.TEXT)) {
       trace("Got non-existant level path " + p);
       #if debug
@@ -38,7 +40,7 @@ class LevelSelectState extends FlxState {
 
     levelButtons = [];
     for(i in 0...LEVEL_PATHS.length) {
-      var btn = new IndexedFlxButton(0,0,"Level", onLevelButtonClicked, i);
+      var btn = new IndexedFlxButton(0,0,LevelUtils.getLevelName(LEVEL_PATHS[i]), onLevelButtonClicked, i);
       add(btn);
       levelButtons[i] = btn;
     }
@@ -60,5 +62,14 @@ class LevelSelectState extends FlxState {
   public override function destroy() {
     super.destroy();
     levelButtons = null;
+  }
+}
+
+class LevelUtils {
+  private function new() {}
+
+  /** Returns the name of the level in the given path (the last part of the path) */
+  public static inline function getLevelName(levelPath : String) : String {
+    return levelPath.substring(levelPath.lastIndexOf("/")+1,levelPath.indexOf("."));
   }
 }
