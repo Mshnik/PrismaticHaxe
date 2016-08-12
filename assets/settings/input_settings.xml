@@ -1,0 +1,9 @@
+<settings>
+    <keys>
+        <BACK code="27"/>
+        <LEFT code="37"/>
+        <RIGHT code="39"/>
+        <UP code="38"/>
+        <DOWN code="40"/>
+    </keys>
+</settings>

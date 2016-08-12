@@ -106,10 +106,10 @@ class PlayState extends FlxState {
     add(hud);
 
     //Set up Input
-    keyLeft = InputThrottler.onKey(FlxKey.LEFT, arrowKeyPressed, InputThrottler.EVERY_FRAME);
-    keyRight = InputThrottler.onKey(FlxKey.RIGHT, arrowKeyPressed, InputThrottler.EVERY_FRAME);
-    keyDown = InputThrottler.onKey(FlxKey.DOWN, arrowKeyPressed, InputThrottler.EVERY_FRAME);
-    keyUp = InputThrottler.onKey(FlxKey.UP, arrowKeyPressed, InputThrottler.EVERY_FRAME);
+    keyLeft = InputThrottler.onKey(InputSettings.LEFT, arrowKeyPressed, InputThrottler.EVERY_FRAME);
+    keyRight = InputThrottler.onKey(InputSettings.RIGHT, arrowKeyPressed, InputThrottler.EVERY_FRAME);
+    keyDown = InputThrottler.onKey(InputSettings.DOWN, arrowKeyPressed, InputThrottler.EVERY_FRAME);
+    keyUp = InputThrottler.onKey(InputSettings.UP, arrowKeyPressed, InputThrottler.EVERY_FRAME);
 
     mouseScrollRight = InputThrottler.onMouseInRect(FlxRect.get(0,0,MOUSE_SCROLL_BOX_SIZE,FlxG.height),
                                                     function() {shiftView(Point.LEFT);},
@@ -291,7 +291,7 @@ class PlayState extends FlxState {
   override public function update(elapsed : Float) : Void {
     super.update(elapsed);
 
-    if (InputSettings.CHECK_BACK_KEY()) {
+    if (InputSettings.CHECK_BACK()) {
       FlxG.switchState(new MainMenuState());
     }
 

@@ -1,5 +1,6 @@
 package;
 
+import input.InputSettings;
 import openfl.display.Sprite;
 import flixel.addons.plugin.FlxMouseControl;
 import flixel.FlxG;
@@ -32,6 +33,11 @@ class Main extends Sprite {
 
     //Views
     BoardView.initRowAndColDimens();
+
+    //Controllers
+
+    //Input
+    InputSettings.init();
 
     //Final Asset Loading/Locating
     LevelSelectState.initLevelPaths();

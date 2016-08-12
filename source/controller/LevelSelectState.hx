@@ -52,7 +52,7 @@ class LevelSelectState extends FlxState {
   override public function update(elapsed : Float) : Void {
     super.update(elapsed);
 
-    if (InputSettings.CHECK_BACK_KEY()) {
+    if (InputSettings.CHECK_BACK()) {
       FlxG.switchState(new MainMenuState());
     }
   }
