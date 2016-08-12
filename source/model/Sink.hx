@@ -32,6 +32,7 @@ class Sink extends Hex {
     if (currentColor == Color.NONE) {
       currentColor = c;
     }
+    updateHasLightInOut();
 
     return [];
   }

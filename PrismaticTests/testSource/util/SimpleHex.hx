@@ -25,6 +25,7 @@ class SimpleHex extends Hex {
   public override function addLightIn(side : Int, c : Color) : Array<Int> {
     lightIn[correctForOrientation(side)] = c;
     lightOut[correctForOrientation(side)] = c;
+    updateHasLightInOut();
     return [side];
   }
 

@@ -90,6 +90,7 @@ class Prism extends Hex {
         }
       }
     }
+    updateHasLightInOut();
 
     return newLightOut;
   }

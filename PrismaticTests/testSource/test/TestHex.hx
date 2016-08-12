@@ -138,6 +138,9 @@ class TestHex extends TestCase {
   }
 
   public function testLightInLightOut() {
+    //TODO - add checks for bool fields
+    assertTrue(false);
+
     shouldFail(new Hex().addLightIn.apply2B(0).apply1B(Color.RED));
 
     var h = SimpleHex.create();

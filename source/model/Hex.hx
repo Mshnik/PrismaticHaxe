@@ -6,6 +6,7 @@ package model;
  * behavior is undefined when a single hext instance is added to multiple boards.
  */
 import common.*;
+
 using common.IntExtender;
 
 @:abstract class Hex implements Positionable {
@@ -47,11 +48,17 @@ using common.IntExtender;
    **/
   private var lightIn : Array<Color>;
 
+  /** True if this has any light in (lightIn contains anything other than Color.NONE) */
+  public var hasLightIn(default, null) : Bool;
+
   /**
    * An array of light coming out of this hex
    * Has length Util.HEX_SIDES, correct indexing is handled by correctForOrientation(..)
    * */
   private var lightOut : Array<Color>;
+
+  /** True if this has any light out (lightOut contains anything other than Color.NONE) */
+  public var hasLightOut(default, null) : Bool;
 
   /** A listener to call when this rotates. Args are (this, oldOrientation) */
   public var rotationListener : Hex->Int->Void;
@@ -63,7 +70,9 @@ using common.IntExtender;
     id = nextID++;
     connectionGroup = UNSET_CONNECTION_GROUP;
     lightIn = Util.arrayOf(Color.NONE, Util.HEX_SIDES);
+    hasLightIn = false;
     lightOut = Util.arrayOf(Color.NONE, Util.HEX_SIDES);
+    hasLightOut = false;
   }
 
   public function toString() {
@@ -184,7 +193,21 @@ using common.IntExtender;
         lightOut[i] = Color.NONE;
       }
     }
+    hasLightIn = false;
+    hasLightOut = false;
     return arr;
+  }
+
+  /** Helper for addLightIn. Updates hasLightIn hasLightOut. Calling this should be part of addLightIn impl */
+  private function updateHasLightInOut() {
+    hasLightIn = false;
+    hasLightOut = false;
+    for(c in lightIn) {
+      if (c != Color.NONE) hasLightIn = true;
+    }
+    for(c in lightOut) {
+      if (c != Color.NONE) hasLightOut = true;
+    }
   }
 
   /**

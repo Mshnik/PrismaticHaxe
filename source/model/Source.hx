@@ -88,6 +88,7 @@ class Source extends Hex {
     if(lightIn[correctedSide] == Color.NONE) {
       lightIn[correctedSide] = c;
     }
+    updateHasLightInOut();
 
     return [];
   }
