@@ -1,5 +1,6 @@
 package view;
 
+import flixel.addons.display.FlxExtendedSprite.MouseCallback;
 import flixel.input.FlxInput.FlxInputState;
 import flixel.FlxG;
 import flixel.input.keyboard.FlxKey;
@@ -25,6 +26,14 @@ class HexSprite extends BaseSprite implements Positionable {
   /** The rotator currently rotating this to a new position. Null if none */
   public var rotator(default, default) : RotatorSprite;
 
+  /** True if this View is hidden (drawn as opaque and locked from interaction) */
+  public var isHidden(default, set) : Bool;
+
+  /** Mouse Handler that was present when isHidden was set to true.
+   *   Kept here to avoid deletion, but not registered
+   **/
+  private var disabledMouseHandeler : MouseCallback;
+
   /** Constructor for HexSprite
    *
    *  @param x - x position, graphically. 0 if unset
@@ -39,12 +48,44 @@ class HexSprite extends BaseSprite implements Positionable {
     position = Point.get(-1,-1);
     scale = FlxPoint.get(SCALE,SCALE);
     rotator = null;
+    disabledMouseHandeler = null;
+    isHidden = false;
 
     //Input handling
     enableMouseClicks(true, true);
     disableMouseDrag();
     disableMouseThrow();
     disableMouseSpring();
+  }
+
+  public inline function set_isHidden(hidden : Bool) : Bool {
+    if (hidden == isHidden) return isHidden;
+
+    if (hidden) {
+      disabledMouseHandeler = mouseReleasedCallback;
+      disableMouseClicks();
+      var oldWidth = width;
+      var oldHeight = height;
+      loadGraphic(AssetPaths.locked_hex__png);
+      updateHitbox();
+      x -= (width - oldWidth)/2;
+      y -= (height - oldHeight)/2;
+    } else {
+      enableMouseClicks(true, true);
+      mouseReleasedCallback = disabledMouseHandeler;
+      disabledMouseHandeler = null;
+      var oldWidth = width;
+      var oldHeight = height;
+      loadTrueGraphic();
+      updateHitbox();
+      x -= (width - oldWidth)/2;
+      y -= (height - oldHeight)/2;
+    }
+    return isHidden = hidden;
+  }
+
+  private function loadTrueGraphic() {
+    throw "Must be overidden in subclass " + this;
   }
 
   public inline function set_position(p : Point) : Point {

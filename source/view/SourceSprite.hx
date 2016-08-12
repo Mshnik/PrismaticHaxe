@@ -15,11 +15,15 @@ class SourceSprite extends HexSprite {
     super(x,y);
 
     //Graphics
-    loadGraphic(AssetPaths.source_back__png, false, 0, 0, true);
+    loadTrueGraphic();
 
     litColor = Color.NONE;
     mouseReleasedCallback = onMouseRelease;
     colorSwitchListener = null;
+  }
+
+  private override function loadTrueGraphic() {
+    loadGraphic(AssetPaths.source_back__png, false, 0, 0, true);
   }
 
   private function onMouseRelease(f : FlxExtendedSprite, x : Int, y : Int) : Void {

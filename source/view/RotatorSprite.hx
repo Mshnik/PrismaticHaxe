@@ -14,12 +14,16 @@ class RotatorSprite extends RotatableHexSprite {
     super(x,y);
 
     //Graphics
+    loadTrueGraphic();
+
+    rotationGroup = new FlxTypedSpriteGroup<HexSprite>();
+  }
+
+  private override function loadTrueGraphic() {
     loadGraphic(AssetPaths.rotator_back__png);
 
     //TODO - use rotateGraphic and animations to increase speed
     //    loadRotatedGraphic(AssetPaths.hex_back__png, Std.int(360.0/ROTATION_INC));
-
-    rotationGroup = new FlxTypedSpriteGroup<HexSprite>();
   }
 
   public inline function getSprites() : Array<HexSprite> {

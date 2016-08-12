@@ -83,10 +83,7 @@ class PrismSprite extends RotatableHexSprite {
     super(x,y);
 
     //Graphics
-    loadGraphic(AssetPaths.hex_back__png, false, 0, 0, true);
-
-    //TODO - use rotateGraphic and animations to increase speed
-    //    loadRotatedGraphic(AssetPaths.hex_back__png, Std.int(360.0/ROTATION_INC));
+    loadTrueGraphic();
 
     //Fields
     litArr = Util.arrayOf(null, Util.HEX_SIDES);
@@ -96,6 +93,13 @@ class PrismSprite extends RotatableHexSprite {
       colorArr[i] = Util.arrayOf(Color.NONE, Util.HEX_SIDES);
     }
     hasConnector = [];
+  }
+
+  private override function loadTrueGraphic() {
+    loadGraphic(AssetPaths.prism_back__png, false, 0, 0, true);
+
+    //TODO - use rotateGraphic and animations to increase speed
+    //    loadRotatedGraphic(AssetPaths.hex_back__png, Std.int(360.0/ROTATION_INC));
   }
 
   public function setLighting(from : Int, to : Int, lit : Bool) : PrismSprite {
@@ -120,10 +124,12 @@ class PrismSprite extends RotatableHexSprite {
 
   public override function draw() : Void {
     super.draw();
-    for(p in hasConnector) {
-      var lit = litArr[uncorrectForOrientation(p.row)][uncorrectForOrientation(p.col)];
-      connectorSprites[p.row][p.col].color = ColorUtil.toFlxColor(colorArr[p.row][p.col], lit);
-      stamp(connectorSprites[p.row][p.col],0,0);
+    if (! isHidden) {
+      for(p in hasConnector) {
+        var lit = litArr[uncorrectForOrientation(p.row)][uncorrectForOrientation(p.col)];
+        connectorSprites[p.row][p.col].color = ColorUtil.toFlxColor(colorArr[p.row][p.col], lit);
+        stamp(connectorSprites[p.row][p.col],0,0);
+      }
     }
   }
 }

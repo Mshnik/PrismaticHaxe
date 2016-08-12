@@ -10,11 +10,15 @@ class SinkSprite extends HexSprite {
     super(x,y);
 
     //Graphics
-    loadGraphic(AssetPaths.sink_back__png, false, 0, 0, true);
+    loadTrueGraphic();
 
     //Fields
     litColor = Color.NONE;
     mouseReleasedCallback = null;
+  }
+
+  private override function loadTrueGraphic() {
+    loadGraphic(AssetPaths.sink_back__png, false, 0, 0, true);
   }
 
   public function set_litColor(c : Color) : Color {

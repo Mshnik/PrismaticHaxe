@@ -19,6 +19,9 @@ class PlayState extends FlxState {
   /** The file this PlayState is loaded from. This should be set before create() is called. */
   public var sourceFile(default, set) : Dynamic;
 
+  /** True if this is exploration mode, false for original puzzle mode */
+  public var hideTilesUntilLit(default, default) : Bool;
+
   /**
    *
    *
@@ -69,27 +72,36 @@ class PlayState extends FlxState {
   public override function create() : Void {
     super.create();
 
-    //Add elements and set fields
+    //Set fields
+    rotatingSprites = [];
+    viewNeedsSync = true;
+    currentRotator = null;
+    hasWon = false;
+
+    //TODO - these fields should be set externally
+    sourceFile = AssetPaths.TEST__xml;
+    hideTilesUntilLit = true;
+
+    //Load board from sourceFile
+    loadFromFile();
+
+    //Add background
     var bg = new FlxSprite();
     bg.makeGraphic(FlxG.width, FlxG.height, FlxColor.CYAN);
     bg.scrollFactor.x=0;
     bg.scrollFactor.y=0;
     add(bg);
 
-    sourceFile = AssetPaths.TEST__xml;
-    hud = new HUDView();
-    loadFromFile();
-    rotatingSprites = [];
-    viewNeedsSync = true;
-    currentRotator = null;
-    hasWon = false;
-
+    //Tweak and add board view
     boardView.vertMargin = INITIAL_BOARD_MARGIN_VERT;
     boardView.horizMargin = INITIAL_BOARD_MARGIN_HORIZ;
     add(boardView.spriteGroup);
+
+    //Add HUD
+    hud = new HUDView();
     add(hud);
 
-    //Input
+    //Set up Input
     keyLeft = InputThrottler.onKey(FlxKey.LEFT, arrowKeyPressed, InputThrottler.EVERY_FRAME);
     keyRight = InputThrottler.onKey(FlxKey.RIGHT, arrowKeyPressed, InputThrottler.EVERY_FRAME);
     keyDown = InputThrottler.onKey(FlxKey.DOWN, arrowKeyPressed, InputThrottler.EVERY_FRAME);
@@ -118,7 +130,7 @@ class PlayState extends FlxState {
     boardModel.disableOnRotate = true;
 
     //Create a view that matches the model
-    boardView = new BoardView().ensureSize(boardModel.getHeight(), boardModel.getWidth());
+    boardView = new BoardView(boardModel.getHeight(), boardModel.getWidth(), hideTilesUntilLit);
 
     for(r in 0...boardModel.getHeight()) {
       for(c in 0...boardModel.getWidth()) {
@@ -286,6 +298,9 @@ class PlayState extends FlxState {
       var score : Score = boardModel.relight();
       boardView.spriteGroup.forEachOfType(PrismSprite, updatePrismSpriteLightings);
       boardView.spriteGroup.forEachOfType(SinkSprite, updateSinkSpriteLighting);
+      if (hideTilesUntilLit) {
+        boardView.spriteGroup.forEach(revealLitTiles);
+      }
       hud.setGoalValues(score.get());
       if (score.isSatisfied()) {
         onVictory();
@@ -301,6 +316,14 @@ class PlayState extends FlxState {
     mouseScrollRight.update(elapsed);
     mouseScrollDown.update(elapsed);
     mouseScrollUp.update(elapsed);
+  }
+
+  /** Reveals tiles based on their lighting status */
+  private inline function revealLitTiles(sprite : HexSprite) {
+    var model : Hex = boardModel.getAt(sprite.position);
+    if (model.hasLightIn || model.hasLightOut) {
+      sprite.isHidden = false;
+    }
   }
 
   /** Updates the lighting of the given PrismSprite to match its prism model */

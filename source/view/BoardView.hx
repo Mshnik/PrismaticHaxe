@@ -15,13 +15,15 @@ class BoardView extends Array2D<HexSprite> {
   /** Graphic width of a col of hexes. Amount to shift when a col moves. */
   private static var COL_WIDTH = Util.ROOT3 * HexSprite.HEX_SIDE_LENGTH;
 
+  private var hideTilesUntilLit : Bool;
   public var vertMargin(default, set) : Int;
   public var horizMargin(default, set) : Int;
   @final public var spriteGroup(default, null) : FlxTypedSpriteGroup<HexSprite>;
 
-  public function new(rows : Int = 0, cols : Int = 0) {
+  public function new(rows : Int = 0, cols : Int = 0, hideTilesUntilLit : Bool = false) {
     super(rows, cols);
 
+    this.hideTilesUntilLit = hideTilesUntilLit;
     spriteGroup = new FlxTypedSpriteGroup<HexSprite>();
   }
 
@@ -122,10 +124,12 @@ class BoardView extends Array2D<HexSprite> {
     var oldH = get(row,col);
     if (oldH != null) {
       spriteGroup.remove(oldH);
+      oldH.isHidden = false;
     }
     super.set(row,col,h);
     if (h != null) {
       spriteGroup.add(h);
+      h.isHidden = hideTilesUntilLit;
       setGraphicPosition(h);
     }
     return h;
