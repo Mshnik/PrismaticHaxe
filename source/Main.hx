@@ -6,8 +6,11 @@ import flixel.FlxG;
 import flixel.FlxGame;
 
 import common.Point;
-import controller.PlayState;
+import controller.MainMenuState;
+import controller.LevelSelectState;
 import model.Hex;
+import view.PrismSprite;
+import view.BoardView;
 
 #if flash
 import openfl.Lib;
@@ -23,12 +26,19 @@ class Main extends Sprite {
   }
 
   function prepForGame() {
+    //Models
     Point.clearPool();
     Hex.resetIDs();
+
+    //Views
+    BoardView.initRowAndColDimens();
+
+    //Final Asset Loading/Locating
+    LevelSelectState.initLevelPaths();
   }
 
   function runGame() {
-    var g = new FlxGame(0, 0, PlayState);
+    var g = new FlxGame(0, 0, MainMenuState);
     FlxG.plugins.add(new FlxMouseControl());
     addChild(g);
   }

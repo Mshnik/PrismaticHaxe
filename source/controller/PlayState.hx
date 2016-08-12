@@ -1,5 +1,6 @@
 package controller;
 
+import input.InputSettings;
 import model.*;
 import view.*;
 import common.*;
@@ -21,6 +22,13 @@ class PlayState extends FlxState {
 
   /** True if this is exploration mode, false for original puzzle mode */
   public var hideTilesUntilLit(default, default) : Bool;
+
+  /** Constructor to set the few pre-create() fields */
+  public function new(sourceFile : Dynamic, hideTilesUntilLit : Bool) {
+    super();
+    this.sourceFile = sourceFile;
+    this.hideTilesUntilLit = hideTilesUntilLit;
+  }
 
   /**
    *
@@ -63,7 +71,7 @@ class PlayState extends FlxState {
     return sourceFile = path;
   }
 
-  /** Helper function to make sure visuals are ready to go */
+  /** Helper function to make sure visuals are ready to go. Has to be here, not in Main. IDK why. */
   public static inline function prepForVisuals() {
     PrismSprite.initGeometry();
   }
@@ -77,10 +85,6 @@ class PlayState extends FlxState {
     viewNeedsSync = true;
     currentRotator = null;
     hasWon = false;
-
-    //TODO - these fields should be set externally
-    sourceFile = AssetPaths.TEST__xml;
-    hideTilesUntilLit = true;
 
     //Load board from sourceFile
     loadFromFile();
@@ -286,6 +290,10 @@ class PlayState extends FlxState {
 
   override public function update(elapsed : Float) : Void {
     super.update(elapsed);
+
+    if (InputSettings.CHECK_BACK_KEY()) {
+      FlxG.switchState(new MainMenuState());
+    }
 
     if(currentRotator != null) {
       for(sprite in currentRotator.getSprites()) {

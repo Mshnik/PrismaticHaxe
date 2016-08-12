@@ -9,11 +9,16 @@ using common.IntExtender;
 
 class BoardView extends Array2D<HexSprite> {
 
+  public static function initRowAndColDimens() {
+    ROW_HEIGHT = 2 * HexSprite.HEX_SIDE_LENGTH;
+    COL_WIDTH = Util.ROOT3 * HexSprite.HEX_SIDE_LENGTH;
+  }
+
   /** Graphic height of a row of hexes. Amount to shift when a row moves. */
-  private static var ROW_HEIGHT = 2 * HexSprite.HEX_SIDE_LENGTH;
+  private static var ROW_HEIGHT : Float;
 
   /** Graphic width of a col of hexes. Amount to shift when a col moves. */
-  private static var COL_WIDTH = Util.ROOT3 * HexSprite.HEX_SIDE_LENGTH;
+  private static var COL_WIDTH : Float;
 
   private var hideTilesUntilLit : Bool;
   public var vertMargin(default, set) : Int;
@@ -25,6 +30,9 @@ class BoardView extends Array2D<HexSprite> {
 
     this.hideTilesUntilLit = hideTilesUntilLit;
     spriteGroup = new FlxTypedSpriteGroup<HexSprite>();
+
+    vertMargin = 0;
+    horizMargin = 0;
   }
 
   /** Helper function for setting position of a HexSprite based on its row,col position */
