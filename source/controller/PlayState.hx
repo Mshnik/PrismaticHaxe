@@ -289,10 +289,6 @@ class PlayState extends FlxState {
   override public function update(elapsed : Float) : Void {
     super.update(elapsed);
 
-    if (InputSettings.CHECK_BACK()) {
-      FlxG.switchState(new MainMenuState());
-    }
-
     if(currentRotator != null) {
       for(sprite in currentRotator.getSprites()) {
         boardView.setGraphicPosition(sprite);
