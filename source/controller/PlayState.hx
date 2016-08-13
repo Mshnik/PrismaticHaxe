@@ -88,7 +88,7 @@ class PlayState extends FlxState {
 
     //Add background
     var bg = new FlxSprite();
-    bg.makeGraphic(FlxG.width, FlxG.height, FlxColor.CYAN);
+    bg.loadGraphic(AssetPaths.main_bg__jpg);
     bg.scrollFactor.x=0;
     bg.scrollFactor.y=0;
     add(bg);

@@ -1,5 +1,6 @@
 package controller;
 
+import flixel.FlxSprite;
 import controller.util.LevelUtils;
 import input.InputSettings;
 import flixel.FlxG;
@@ -38,6 +39,12 @@ class LevelSelectState extends FlxState {
 
   override public function create() : Void {
     super.create();
+
+    var bg = new FlxSprite();
+    bg.loadGraphic(AssetPaths.main_bg__jpg);
+    bg.scrollFactor.x=0;
+    bg.scrollFactor.y=0;
+    add(bg);
 
     levelButtons = [];
     for(i in 0...LEVEL_PATHS.length) {

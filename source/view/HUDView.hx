@@ -1,5 +1,6 @@
 package view;
 
+import flixel.util.FlxGradient;
 import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 import flixel.FlxG;
@@ -15,7 +16,7 @@ class HUDView extends FlxTypedGroup<FlxSprite>{
   /** Margin between top of screen and elements placed at the top of the hud */
   private static inline var TOP_MARGIN = 5;
   /** Height of the translucent top hud bar */
-  private static inline var TOP_BAR_HEIGHT = 35;
+  private static inline var TOP_BAR_HEIGHT = 50;
 
   /** Font size of the text representing the score */
   private static inline var LEVEL_NAME_SIZE = 16;
@@ -29,10 +30,7 @@ class HUDView extends FlxTypedGroup<FlxSprite>{
   public function new(pauseHandler : Void -> Void, levelName : String = "") {
     super();
 
-    var bg = new FlxSprite();
-    bg.makeGraphic(FlxG.width, TOP_BAR_HEIGHT, FlxColor.BLACK);
-    bg.scrollFactor.x=0;
-    bg.scrollFactor.y=0;
+    var bg = FlxGradient.createGradientFlxSprite(FlxG.width, TOP_BAR_HEIGHT, [FlxColor.BLACK, FlxColor.TRANSPARENT]);
     add(bg);
 
     nameLabel = new FlxText(TOP_MARGIN,TOP_MARGIN,0,levelName,LEVEL_NAME_SIZE);
@@ -51,12 +49,18 @@ class HUDView extends FlxTypedGroup<FlxSprite>{
     var xInc = 3 * SCORE_TEXT_SIZE;
     var xPos = pauseButton.x - 4 * xInc;
     for(t in scoreLabels.iterator()) {
-      t.scrollFactor.x = 0;
-      t.scrollFactor.y = 0;
       t.x = xPos;
       xPos += xInc;
       add(t);
     }
+  }
+
+  public override function add(t : FlxSprite) : FlxSprite {
+    if (t != null) {
+      t.scrollFactor.x = 0;
+      t.scrollFactor.y = 0;
+    }
+    return super.add(t);
   }
 
   public function setGoalValues(map : Map<Color, Pair<Int, Int>>) : HUDView {

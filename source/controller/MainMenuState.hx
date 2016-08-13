@@ -15,7 +15,7 @@ class MainMenuState extends FlxState {
     super.create();
 
     var bg = new FlxSprite();
-    bg.makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+    bg.loadGraphic(AssetPaths.main_bg__jpg);
     bg.scrollFactor.x=0;
     bg.scrollFactor.y=0;
     add(bg);

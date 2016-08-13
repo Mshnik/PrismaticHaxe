@@ -1,13 +1,12 @@
 package input;
 
-/** Container class for key and mouse bindings across the game. Can be modified mid game. */
 import openfl.Assets;
 import haxe.xml.Fast;
 import flixel.FlxG;
-import flixel.input.keyboard.FlxKey;
 
 using input.InputSettings;
 
+/** Container class for key and mouse bindings across the game. Can be modified mid game. */
 class InputSettings {
   private function new() {
     throw "Illegal Construction";
