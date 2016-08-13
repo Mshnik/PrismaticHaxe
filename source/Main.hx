@@ -1,5 +1,6 @@
 package;
 
+import controller.SoundController;
 import input.InputSettings;
 import openfl.display.Sprite;
 import flixel.addons.plugin.FlxMouseControl;
@@ -35,6 +36,7 @@ class Main extends Sprite {
     BoardView.initRowAndColDimens();
 
     //Controllers
+    SoundController.init();
 
     //Input
     InputSettings.init();

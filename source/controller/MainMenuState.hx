@@ -1,7 +1,6 @@
 package controller;
 
 import flixel.ui.FlxButton;
-import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -16,14 +15,19 @@ class MainMenuState extends FlxState {
 
     var bg = new FlxSprite();
     bg.loadGraphic(AssetPaths.main_bg__jpg);
-    bg.scrollFactor.x=0;
-    bg.scrollFactor.y=0;
     add(bg);
+
+    var title = new FlxSprite().loadGraphic(AssetPaths.Title__png);
+    title.x = (FlxG.width-title.width)/2;
+    title.y = 50;
+    add(title);
 
     classicButton = new FlxButton(0,0,"Classic", onClassicClick);
     classicButton.x = (FlxG.width-classicButton.width)/2;
-    classicButton.y = 100;
+    classicButton.y = title.y + title.height + 50;
     add(classicButton);
+
+    SoundController.playClassicBackground();
   }
 
 

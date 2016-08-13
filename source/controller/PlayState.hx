@@ -343,10 +343,10 @@ class PlayState extends FlxState {
 
   private function arrowKeyPressed(keyCode : Int) {
     switch(keyCode) {
-      case FlxKey.LEFT:   shiftView(Point.LEFT);
-      case FlxKey.RIGHT:  shiftView(Point.RIGHT);
-      case FlxKey.UP:     shiftView(Point.UP);
-      case FlxKey.DOWN:   shiftView(Point.DOWN);
+      case FlxKey.LEFT:   shiftView(Point.RIGHT);
+      case FlxKey.RIGHT:  shiftView(Point.LEFT);
+      case FlxKey.UP:     shiftView(Point.DOWN);
+      case FlxKey.DOWN:   shiftView(Point.UP);
     }
   }
 
