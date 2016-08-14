@@ -7,6 +7,8 @@ import common.*;
 import controller.util.LevelUtils;
 import controller.util.InputThrottler;
 
+import flixel.math.FlxPoint;
+import flixel.FlxG;
 import flixel.input.keyboard.FlxKey;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -62,8 +64,10 @@ class PlayState extends FlxState {
   private static inline var INITIAL_BOARD_MARGIN_HORIZ = 90;
   private static inline var BOARD_SCROLL_DELTA = 30;
   private var boardModel : Board;
+  private var hexHighlight : FlxSprite;
   private var boardView : BoardView;
   private var hud : HUDView;
+  private var editor : EditorView;
   private var hasWon : Bool; //True after this person has won
   private var viewNeedsSync : Bool; //True when the model has changed, next update loop should update the view
   private var rotatingSprites : Array<RotatableHexSprite>; //All current rotating sprites
@@ -97,6 +101,10 @@ class PlayState extends FlxState {
     viewNeedsSync = true;
     currentRotator = null;
     hasWon = false;
+    boardModel = null;
+    boardView = null;
+    hud = null;
+    editor = null;
 
     //Prep the board, depending on the game type
     switch(gameType) {
@@ -112,6 +120,10 @@ class PlayState extends FlxState {
     bg.scrollFactor.y=0;
     add(bg);
 
+    //Add the highlight here so it will be underneath the board
+    hexHighlight = new FlxSprite().loadGraphic(AssetPaths.hex_highlight__png);
+    add(hexHighlight);
+
     //Tweak and add board view
     boardView.vertMargin = INITIAL_BOARD_MARGIN_VERT;
     boardView.horizMargin = INITIAL_BOARD_MARGIN_HORIZ;
@@ -119,6 +131,9 @@ class PlayState extends FlxState {
 
     //Add HUD and other menus
     add(hud);
+    if (gameType == GameType.EDIT) {
+      add(editor);
+    }
 
     //Set up Input
     inputThrottlers = [];
@@ -225,6 +240,7 @@ class PlayState extends FlxState {
     hud = new HUDView(gameType).withPauseHandler(pause)
                                .withLevelNameChangedHandler(setLevelName)
                                .withGoalChangedHandler(setGoal);
+    editor = new EditorView();
   }
 
   /** Pauses the game, opening the pause state. The substate is not persistant, it will be destroyed on close */
@@ -342,6 +358,13 @@ class PlayState extends FlxState {
 
   override public function update(elapsed : Float) : Void {
     super.update(elapsed);
+
+    var focusedPt : Point = boardView.getPointFromGraphicPosition(FlxG.mouse.getPosition(FlxPoint.weak()));
+    var h = boardView.getAt(focusedPt,true);
+    hexHighlight.angle = h != null ? h.angle : 0;
+    var pt = boardView.getGraphicPoisitionFromPoint(focusedPt);
+    hexHighlight.setPosition(pt.x - hexHighlight.width/2, pt.y-hexHighlight.height/2);
+    pt.putWeak();
 
     if(currentRotator != null) {
       for(sprite in currentRotator.getSprites()) {

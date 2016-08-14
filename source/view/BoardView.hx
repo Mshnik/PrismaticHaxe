@@ -1,4 +1,5 @@
 package view;
+import flixel.math.FlxPoint;
 import view.HexSprite;
 import common.Util;
 import common.Point;
@@ -52,6 +53,19 @@ class BoardView extends Array2D<HexSprite> {
         h.x = h.rotator.x + (Math.cos(angle) * ROW_HEIGHT) + (h.rotator.width - h.width)/2;
       }
     }
+  }
+
+  /** Returns the x/y graphic point of the center of the given row/col position */
+  public inline function getGraphicPoisitionFromPoint(p : Point) : FlxPoint {
+    return FlxPoint.weak(p.col * COL_WIDTH + horizMargin, (p.row + p.col.mod(2)/2) * ROW_HEIGHT + vertMargin);
+  }
+
+  /** Returns the row/col position of the given x/y mouse point. Useful for locating a hex position */
+  public inline function getPointFromGraphicPosition(pt : FlxPoint) : Point {
+    var col : Int = Std.int((pt.x - horizMargin)/COL_WIDTH + 0.5);
+    var row : Int = Std.int((pt.y - vertMargin)/ROW_HEIGHT - col.mod(2)/2 + 0.5);
+    pt.putWeak();
+    return Point.get(row, col);
   }
 
   public function set_vertMargin(margin : Int) : Int {

@@ -53,6 +53,8 @@ class HUDView extends FlxTypedGroup<FlxSprite>{
     }
     add(nameLabel);
 
+    withPauseHandler(null);
+
     if (gameType == GameType.EDIT) {
       scoreLabels = new Map<Color, FlxText>();
       for(c in ColorUtil.realColors()) {
@@ -70,8 +72,6 @@ class HUDView extends FlxTypedGroup<FlxSprite>{
           c => new FlxText(0,TOP_MARGIN,0,"0/0", SCORE_TEXT_SIZE)
       ];
     }
-
-    withPauseHandler(null);
 
     var xInc = 3 * SCORE_TEXT_SIZE;
     var xPos = pauseButton.x - 4 * xInc;
