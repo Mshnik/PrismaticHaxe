@@ -2,14 +2,14 @@ package view;
 
 import common.*;
 
-import flixel.addons.ui.FlxInputText;
-import flixel.util.FlxGradient;
-import flixel.ui.FlxButton;
-import flixel.util.FlxColor;
-import flixel.FlxG;
-import flixel.text.FlxText;
 import flixel.FlxSprite;
+import flixel.FlxG;
+import flixel.addons.ui.FlxInputText;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.text.FlxText;
+import flixel.ui.FlxButton;
+import flixel.util.FlxGradient;
+import flixel.util.FlxColor;
 
 class HUDView extends FlxTypedGroup<FlxSprite>{
 
@@ -23,10 +23,14 @@ class HUDView extends FlxTypedGroup<FlxSprite>{
   /** Font size of the text representing the score */
   private static inline var SCORE_TEXT_SIZE = 16;
 
+  /** The character in the score label representing the requirement for that color */
+  private static inline var SCORE_REQUIREMENT_INDEX = 2;
+
   private var gameType : GameType;
 
   private var nameLabel : FlxText;
   private var scoreLabels : Map<Color, FlxText>;
+  private var goalChangedHandler : Color -> Int -> Void;
   private var pauseButton : FlxButton;
 
   public function new(gameType : GameType) {
@@ -49,10 +53,23 @@ class HUDView extends FlxTypedGroup<FlxSprite>{
     }
     add(nameLabel);
 
-    scoreLabels = [
-      for(c in ColorUtil.realColors())
-        c => new FlxText(0,TOP_MARGIN,0,"0/0", SCORE_TEXT_SIZE)
-    ];
+    if (gameType == GameType.EDIT) {
+      scoreLabels = new Map<Color, FlxText>();
+      for(c in ColorUtil.realColors()) {
+        var x : FlxInputText = new FlxInputTextWithMinLength(SCORE_REQUIREMENT_INDEX,0,TOP_MARGIN,0,"0/0", SCORE_TEXT_SIZE);
+        x.lines = 1;
+        x.maxLength = 4;
+        x.backgroundColor = FlxColor.TRANSPARENT;
+        x.filterMode = FlxInputText.ONLY_NUMERIC;
+        x.callback = onGoalChanged;
+        scoreLabels[c] = x;
+      }
+    } else {
+      scoreLabels = [
+        for(c in ColorUtil.realColors())
+          c => new FlxText(0,TOP_MARGIN,0,"0/0", SCORE_TEXT_SIZE)
+      ];
+    }
 
     withPauseHandler(null);
 
@@ -98,6 +115,32 @@ class HUDView extends FlxTypedGroup<FlxSprite>{
     return this;
   }
 
+  private inline function onGoalChanged(newText : String, operator : String) : Void {
+    if (goalChangedHandler != null){
+      if (operator == "enter") {
+        for(c in ColorUtil.realColors()) {
+          goalChangedHandler(c, Std.parseInt(scoreLabels[c].text.substr(SCORE_REQUIREMENT_INDEX, 1)));
+        }
+      }
+    } else {
+      trace("Goal changed, but no handler; results not stored");
+    }
+  }
+
+  /** Sets the goal changed handler (only for Edit mode). Returns this */
+  public inline function withGoalChangedHandler(func : Color -> Int -> Void) : HUDView {
+    if (gameType != GameType.EDIT){
+      #if debug
+      throw "Can't set level name changed in game mode " + gameType;
+      #else
+      return this;
+      #end
+    }
+
+    goalChangedHandler = func;
+    return this;
+  }
+
   /** Returns the current level name */
   public inline function getLevelName() : String {
     return nameLabel.text;
@@ -117,6 +160,10 @@ class HUDView extends FlxTypedGroup<FlxSprite>{
     for(c in map.keys()) {
       scoreLabels.get(c).text = map.get(c).getFirst() + "/" + map.get(c).getSecond();
       scoreLabels.get(c).color = ColorUtil.toFlxColor(c, map.get(c).getFirst() > 0);
+      if (gameType == GameType.EDIT) {
+        var editableLabel : FlxInputText = cast(scoreLabels.get(c), FlxInputText);
+        editableLabel.caretColor = editableLabel.color;
+      }
     }
     return this;
   }

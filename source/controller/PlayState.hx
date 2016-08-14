@@ -8,11 +8,8 @@ import controller.util.LevelUtils;
 import controller.util.InputThrottler;
 
 import flixel.input.keyboard.FlxKey;
-import flixel.util.FlxColor;
-import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
-import flixel.math.FlxRect;
 
 using common.CollectionExtender;
 
@@ -225,23 +222,15 @@ class PlayState extends FlxState {
     boardModel = new Board();
     boardView = new BoardView();
 
-    hud = new HUDView(gameType).withPauseHandler(pause).withLevelNameChangedHandler(setLevelName);
+    hud = new HUDView(gameType).withPauseHandler(pause)
+                               .withLevelNameChangedHandler(setLevelName)
+                               .withGoalChangedHandler(setGoal);
   }
 
   /** Pauses the game, opening the pause state. The substate is not persistant, it will be destroyed on close */
   private function pause() : Void {
     var pauseState:PauseState = new PauseState(PAUSE_MENU_BASE_TINT);
     openSubState(pauseState);
-  }
-
-  /** Sets the name of the current level, for use in Edit mode. If the operation was enter, writes the board to file. */
-  private function setLevelName(name : String, operation : String) : Void {
-    source = LevelSelectState.DATA_PATH + name;
-    #if !flash
-    if (operation == "enter") {
-      XMLParser.write(source, boardModel);
-    }
-    #end
   }
 
   /** Helper function for when any sprites starts rotation callback. Called by more specific callbacks */
@@ -427,6 +416,39 @@ class PlayState extends FlxState {
       hasWon = true;
       trace("You win!");
     }
+  }
+
+  /******************************************************************************************************
+  *
+  *
+  *
+  *
+  *
+  *
+  *  LEVEL EDITING
+  *
+  *
+  *
+  *
+  *
+  *
+  ******************************************************************************************************/
+
+  /** Sets the name of the current level. If the operation was enter, writes the board to file. */
+  private function setLevelName(name : String, operation : String) : Void {
+    source = LevelSelectState.DATA_PATH + name;
+    #if !flash
+    if (operation == "enter") {
+      XMLParser.write(source, boardModel);
+      trace("Board written to mem at " + source);
+    }
+    #end
+  }
+
+  /** Sets the goal of the current level. */
+  private function setGoal(color : Color, goal : Int) : Void {
+    boardModel.getScore().setGoal(color, goal);
+    trace(color + " Goal updated");
   }
 
   /**
