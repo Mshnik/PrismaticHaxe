@@ -1,9 +1,6 @@
 package view;
 
-import common.ColorUtil;
-import common.Pair;
-import common.Color;
-import controller.util.GameType;
+import common.*;
 
 import flixel.addons.ui.FlxInputText;
 import flixel.util.FlxGradient;

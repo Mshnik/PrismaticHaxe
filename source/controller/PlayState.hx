@@ -1,13 +1,11 @@
 package controller;
 
-import controller.util.GameType;
 import input.InputSettings;
 import model.*;
 import view.*;
 import common.*;
 import controller.util.LevelUtils;
 import controller.util.InputThrottler;
-import controller.util.GameType;
 
 import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxColor;

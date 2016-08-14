@@ -1,4 +1,4 @@
-package controller.util;
+package common;
 
 enum GameType {
   CLASSIC;
