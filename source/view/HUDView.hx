@@ -1,13 +1,16 @@
 package view;
 
+import common.ColorUtil;
+import common.Pair;
+import common.Color;
+import controller.util.GameType;
+
+import flixel.addons.ui.FlxInputText;
 import flixel.util.FlxGradient;
 import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 import flixel.FlxG;
-import common.ColorUtil;
-import common.Pair;
 import flixel.text.FlxText;
-import common.Color;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
 
@@ -23,17 +26,30 @@ class HUDView extends FlxTypedGroup<FlxSprite>{
   /** Font size of the text representing the score */
   private static inline var SCORE_TEXT_SIZE = 16;
 
+  private var gameType : GameType;
+
   private var nameLabel : FlxText;
   private var scoreLabels : Map<Color, FlxText>;
   private var pauseButton : FlxButton;
 
-  public function new() {
+  public function new(gameType : GameType) {
     super();
+
+    this.gameType = gameType;
 
     var bg = FlxGradient.createGradientFlxSprite(FlxG.width, TOP_BAR_HEIGHT, [FlxColor.BLACK, FlxColor.TRANSPARENT]);
     add(bg);
 
-    nameLabel = new FlxText(TOP_MARGIN,TOP_MARGIN,0,"NEW LEVEL",LEVEL_NAME_SIZE);
+    if (gameType == GameType.EDIT) {
+      var nameLabel = new FlxInputText(TOP_MARGIN,TOP_MARGIN,0,"NEW LEVEL",LEVEL_NAME_SIZE);
+      nameLabel.lines = 1;
+      nameLabel.backgroundColor = FlxColor.TRANSPARENT;
+      nameLabel.caretColor = FlxColor.WHITE;
+      nameLabel.color = FlxColor.WHITE;
+      this.nameLabel = nameLabel;
+    } else {
+      nameLabel = new FlxText(TOP_MARGIN,TOP_MARGIN,0,"NEW LEVEL",LEVEL_NAME_SIZE);
+    }
     add(nameLabel);
 
     scoreLabels = [
@@ -67,6 +83,21 @@ class HUDView extends FlxTypedGroup<FlxSprite>{
     pauseButton.loadGraphic(AssetPaths.settings_icon__png);
     pauseButton.x = FlxG.width - pauseButton.width - TOP_MARGIN;
     add(pauseButton);
+    return this;
+  }
+
+  /** Sets the level name changed handler (only for Edit mode). Returns this */
+  public inline function withLevelNameChangedHandler(func : String -> String -> Void) : HUDView {
+    if (gameType != GameType.EDIT){
+      #if debug
+      throw "Can't set level name changed in game mode " + gameType;
+      #else
+      return this;
+      #end
+    }
+
+    var inputNameLabel : FlxInputText = cast(nameLabel, FlxInputText);
+    inputNameLabel.callback = func;
     return this;
   }
 

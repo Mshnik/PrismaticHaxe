@@ -10,6 +10,9 @@ class MainMenuState extends FlxState {
   /** Button moving to playing classic mode of the game */
   private var classicButton : FlxButton;
 
+  /** Button moving to playing edit (level design) mode of the game */
+  private var editButton : FlxButton;
+
   public override function create() {
     super.create();
 
@@ -27,6 +30,11 @@ class MainMenuState extends FlxState {
     classicButton.y = title.y + title.height + 50;
     add(classicButton);
 
+    editButton = new FlxButton(0,0,"Edit", onEditClick);
+    editButton.x = (FlxG.width-editButton.width)/2;
+    editButton.y = classicButton.y + classicButton.height + 50;
+    add(editButton);
+
     //SoundController.playClassicBackground();
   }
 
@@ -34,6 +42,11 @@ class MainMenuState extends FlxState {
   /** Function called when the 'classic' button is clicked */
   private function onClassicClick() {
     FlxG.switchState(new LevelSelectState());
+  }
+
+  /** Function called when the 'edit' button is clicked */
+  private function onEditClick() {
+    FlxG.switchState(PlayState.createEdit());
   }
 
   public override function destroy() {

@@ -25,7 +25,7 @@ class PlayState extends FlxState {
 
   /** In classic, the file path to the board to load.
    * In exploration, the seed for board creation.
-   * In edit, the file path to the board to load, and overwrite when this board is saved.
+   * In edit, the file path to the board to load, and overwrite when this board is saved, but initially null.
    **/
   private var source(default, default) : String;
 
@@ -38,10 +38,10 @@ class PlayState extends FlxState {
   }
 
   /** Creates and returns a new PlayState for edit mode */
-  public static inline function createEdit(path : String) : PlayState {
+  public static inline function createEdit() : PlayState {
     var p : PlayState = new PlayState();
     p.gameType = GameType.EDIT;
-    p.source = path;
+    p.source = null;
     return p;
   }
 
@@ -93,11 +93,6 @@ class PlayState extends FlxState {
    **/
   private static var PAUSE_MENU_BASE_TINT : Int = 0x99000000;
 
-  /** Helper function to make sure visuals are ready to go. Has to be here, not in Main. IDK why. */
-  public static inline function prepForVisuals() {
-    PrismSprite.initGeometry();
-  }
-
   /** Create function called when this state is created by inner Flixel logic */
   public override function create() : Void {
     super.create();
@@ -108,8 +103,12 @@ class PlayState extends FlxState {
     currentRotator = null;
     hasWon = false;
 
-    //Load board from sourceFile
-    loadFromFile();
+    //Prep the board, depending on the game type
+    switch(gameType) {
+      case GameType.CLASSIC: prepBoardFromFile();
+      case GameType.EXPLORATION: prepBoardFromSeed();
+      case GameType.EDIT: prepEmptyBoard();
+    }
 
     //Add background
     var bg = new FlxSprite();
@@ -124,10 +123,6 @@ class PlayState extends FlxState {
     add(boardView.spriteGroup);
 
     //Add HUD and other menus
-    hud = new HUDView().withPauseHandler(pause);
-    if (gameType == GameType.CLASSIC) {
-      hud = hud.withLevelName(LevelUtils.getLevelName(source));
-    }
     add(hud);
 
     //Set up Input
@@ -154,8 +149,16 @@ class PlayState extends FlxState {
     prepForVisuals();
   }
 
-  /** Reads this.sourceFile into memory. Also creates a boardView that matches the read model */
-  private function loadFromFile() {
+  /** Helper function to make sure visuals are ready to go. Has to be here, not in Main. IDK why. */
+  public static inline function prepForVisuals() {
+    PrismSprite.initGeometry();
+  }
+
+  /** Reads this.source into memory. Also creates a boardView that matches the read model.
+   **/
+  private inline function prepBoardFromFile() {
+    if (gameType == GameType.EXPLORATION) throw "Can't read board from file in Exploration mode";
+
     boardModel = XMLParser.read(source);
     boardModel.disableOnRotate = true;
 
@@ -205,6 +208,42 @@ class PlayState extends FlxState {
     }
 
     boardModel.disableOnRotate = false;
+
+    hud = new HUDView(gameType).withPauseHandler(pause).withLevelName(LevelUtils.getLevelName(source));
+  }
+
+  /** Creates a new exploration board from the seed */
+  private inline function prepBoardFromSeed() {
+    if (gameType != GameType.EXPLORATION) throw "Can't generate board from seed if not in Exploration mode";
+
+
+    hud = new HUDView(gameType).withPauseHandler(pause);
+  }
+
+  /** Creates a new empty board */
+  private inline function prepEmptyBoard() {
+    if (gameType != GameType.EDIT) throw "Can't prep empty board from seed if not in Edit mode";
+
+    boardModel = new Board();
+    boardView = new BoardView();
+
+    hud = new HUDView(gameType).withPauseHandler(pause).withLevelNameChangedHandler(setLevelName);
+  }
+
+  /** Pauses the game, opening the pause state. The substate is not persistant, it will be destroyed on close */
+  private function pause() : Void {
+    var pauseState:PauseState = new PauseState(PAUSE_MENU_BASE_TINT);
+    openSubState(pauseState);
+  }
+
+  /** Sets the name of the current level, for use in Edit mode. If the operation was enter, writes the board to file. */
+  private function setLevelName(name : String, operation : String) : Void {
+    source = LevelSelectState.DATA_PATH + name;
+    #if !flash
+    if (operation == "enter") {
+      XMLParser.write(source, boardModel);
+    }
+    #end
   }
 
   /** Helper function for when any sprites starts rotation callback. Called by more specific callbacks */
@@ -382,12 +421,6 @@ class PlayState extends FlxState {
   private inline function shiftView(direction : Point) {
     boardView.horizMargin += direction.col * BOARD_SCROLL_DELTA;
     boardView.vertMargin += direction.row * BOARD_SCROLL_DELTA;
-  }
-
-  /** Pauses the game, opening the pause state. The substate is not persistant, it will be destroyed on close */
-  public function pause() {
-    var pauseState:PauseState = new PauseState(PAUSE_MENU_BASE_TINT);
-    openSubState(pauseState);
   }
 
   /** Called when the person wins for the first time this play state. */

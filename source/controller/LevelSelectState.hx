@@ -11,7 +11,7 @@ import flixel.FlxState;
 class LevelSelectState extends FlxState {
 
   private static var LEVEL_PATHS : Array<String>;
-  private static var DATA_PATH : String;
+  public static var DATA_PATH(default, null) : String;
   private static var LEVEL_EXTENSION : String;
 
   /** Call to set up level paths for all classic levels. Subsequent calls won't do anything */
