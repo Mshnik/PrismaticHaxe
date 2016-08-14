@@ -56,7 +56,7 @@ class LevelSelectState extends FlxState {
 
   /** Helper called when a level button is clicked */
   private function onLevelButtonClicked(index : Int) : Void {
-    FlxG.switchState(new PlayState(LEVEL_PATHS[index], false));
+    FlxG.switchState(PlayState.createClassic(LEVEL_PATHS[index]));
   }
 
   override public function update(elapsed : Float) : Void {

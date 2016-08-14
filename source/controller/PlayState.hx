@@ -1,11 +1,13 @@
 package controller;
 
+import controller.util.GameType;
 import input.InputSettings;
 import model.*;
 import view.*;
 import common.*;
 import controller.util.LevelUtils;
 import controller.util.InputThrottler;
+import controller.util.GameType;
 
 import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxColor;
@@ -18,17 +20,40 @@ using common.CollectionExtender;
 
 class PlayState extends FlxState {
 
-  /** The file this PlayState is loaded from. This should be set before create() is called. */
-  public var sourceFile(default, default) : String;
+  /** The game type of this PlayState, one of the above enum values */
+  private var gameType : GameType;
 
-  /** True if this is exploration mode, false for original puzzle mode */
-  public var hideTilesUntilLit(default, default) : Bool;
+  /** In classic, the file path to the board to load.
+   * In exploration, the seed for board creation.
+   * In edit, the file path to the board to load, and overwrite when this board is saved.
+   **/
+  private var source(default, default) : String;
 
-  /** Constructor to set the few pre-create() fields */
-  public function new(sourceFile : Dynamic, hideTilesUntilLit : Bool) {
-    super();
-    this.sourceFile = Std.string(sourceFile);
-    this.hideTilesUntilLit = hideTilesUntilLit;
+  /** Creates and returns a new PlayState for classic mode */
+  public static inline function createClassic(source : String) : PlayState {
+    var p : PlayState = new PlayState();
+    p.gameType = GameType.CLASSIC;
+    p.source = source;
+    return p;
+  }
+
+  /** Creates and returns a new PlayState for edit mode */
+  public static inline function createEdit(path : String) : PlayState {
+    var p : PlayState = new PlayState();
+    p.gameType = GameType.EDIT;
+    p.source = path;
+    return p;
+  }
+
+  /** Creates and returns a new PlayState for exploration mode. If seed not given (or null), uses random seed. */
+  public static inline function createExploration(seed : Int = null) : PlayState {
+    var p : PlayState = new PlayState();
+    p.gameType = GameType.EXPLORATION;
+    if (seed == null){
+      seed = Std.int((1 << 30 - 1)*Math.random());
+    }
+    p.source = Std.string(seed);
+    return p;
   }
 
   /**
@@ -99,7 +124,10 @@ class PlayState extends FlxState {
     add(boardView.spriteGroup);
 
     //Add HUD and other menus
-    hud = new HUDView(pause,LevelUtils.getLevelName(sourceFile));
+    hud = new HUDView().withPauseHandler(pause);
+    if (gameType == GameType.CLASSIC) {
+      hud = hud.withLevelName(LevelUtils.getLevelName(source));
+    }
     add(hud);
 
     //Set up Input
@@ -128,11 +156,11 @@ class PlayState extends FlxState {
 
   /** Reads this.sourceFile into memory. Also creates a boardView that matches the read model */
   private function loadFromFile() {
-    boardModel = XMLParser.read(sourceFile);
+    boardModel = XMLParser.read(source);
     boardModel.disableOnRotate = true;
 
     //Create a view that matches the model
-    boardView = new BoardView(boardModel.getHeight(), boardModel.getWidth(), hideTilesUntilLit);
+    boardView = new BoardView(boardModel.getHeight(), boardModel.getWidth(), false);
 
     for(r in 0...boardModel.getHeight()) {
       for(c in 0...boardModel.getWidth()) {
@@ -300,11 +328,11 @@ class PlayState extends FlxState {
       var score : Score = boardModel.relight();
       boardView.spriteGroup.forEachOfType(PrismSprite, updatePrismSpriteLightings);
       boardView.spriteGroup.forEachOfType(SinkSprite, updateSinkSpriteLighting);
-      if (hideTilesUntilLit) {
+      if (gameType == GameType.EXPLORATION) {
         boardView.spriteGroup.forEach(revealLitTiles);
       }
       hud.setGoalValues(score.get());
-      if (score.isSatisfied()) {
+      if (gameType == GameType.CLASSIC && score.isSatisfied()) {
         onVictory();
       }
     }

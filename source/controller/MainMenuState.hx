@@ -27,7 +27,7 @@ class MainMenuState extends FlxState {
     classicButton.y = title.y + title.height + 50;
     add(classicButton);
 
-    SoundController.playClassicBackground();
+    //SoundController.playClassicBackground();
   }
 
 
