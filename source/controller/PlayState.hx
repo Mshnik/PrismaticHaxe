@@ -82,6 +82,7 @@ class PlayState extends FlxState {
    **/
   private var editor : EditorView;
   private var selectedPosition : Point;
+  private var mouseOOB : Bool; //True when the mouse is is hovering over the HUD or the Editor Toolbar
 
   /**
    *
@@ -102,21 +103,31 @@ class PlayState extends FlxState {
    **/
   private static var PAUSE_MENU_BASE_TINT : Int = 0x99000000;
 
+  /** Sets all fields to default empty/null/false vals. If forStart, sets to state for new, else sets
+   * to truly null.
+   **/
+  private inline function resetFields(forStart : Bool) : Void {
+    boardModel = null;
+    hexHighlight = null;
+    boardView = null;
+    hud = null;
+    hasWon = false;
+    viewNeedsSync = forStart;
+    rotatingSprites = forStart ? [] : null;
+    currentRotator = null;
+
+    editor = null;
+    selectedPosition = forStart ? Point.get(-1,-1) : null;
+    mouseOOB = false;
+
+    inputThrottlers = null;
+  }
+
   /** Create function called when this state is created by inner Flixel logic */
   public override function create() : Void {
     super.create();
 
-    //Set fields (some default will be later overidden in the course of this method)
-    rotatingSprites = [];
-    viewNeedsSync = true;
-    currentRotator = null;
-    hasWon = false;
-    boardModel = null;
-    boardView = null;
-    hud = null;
-    editor = null;
-    selectedPosition = Point.get(-1,-1);
-    hexHighlight = null;
+    resetFields(true);
 
     //Prep the board, depending on the game type
     switch(gameType) {
@@ -604,17 +615,10 @@ class PlayState extends FlxState {
   public override function destroy() {
     super.destroy();
 
-    boardModel = null;
-    boardView = null;
-    hud = null;
-    rotatingSprites = null;
-    currentRotator = null;
-    viewNeedsSync = false;
-    hasWon = false;
-
     for(inputThrottler in inputThrottlers) {
       inputThrottler.destroy();
     }
-    inputThrottlers = null;
+
+    resetFields(false);
   }
 }
