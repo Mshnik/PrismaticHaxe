@@ -167,4 +167,9 @@ class HUDView extends FlxTypedGroup<FlxSprite>{
     }
     return this;
   }
+
+  /** Returns true if the mouse is currently floating over this */
+  public inline function mousePresent() : Bool {
+    return FlxG.mouse.y < TOP_BAR_HEIGHT;
+  }
 }

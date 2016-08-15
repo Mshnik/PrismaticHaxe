@@ -1,4 +1,5 @@
 package view;
+import flixel.math.FlxPoint;
 import flixel.ui.FlxButton;
 import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.util.FlxColor;
@@ -10,6 +11,7 @@ using view.EditorView.BoardActionUtils;
 
 class EditorView extends FlxTypedGroup<FlxSprite> {
 
+  /** The Height of EditorViews, extending upwards from the bottom of the window */
   private static var HEIGHT : Int = 50;
 
   /** The action selector */
@@ -19,6 +21,8 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
 
   /** True if the highlight should stop moving with the mouse (when a hex is actively being edited) */
   public var highlightLocked(default, default) : Bool;
+  /** Function that returns whether the mouse is currently in a valid position on the board */
+  private var isMouseValid : Void -> Bool;
 
   private var createButtons : Array<FlxButton>;
   public var createButtonsAdded(default, null) : Bool;
@@ -37,6 +41,7 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
 
     highlightLocked = false;
     createButtonsAdded = false;
+    isMouseValid = null;
   }
 
   /** Event listener called when a new action is selected via mouse. Just passes control off to set_action */
@@ -78,10 +83,16 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
     return this;
   }
 
+  /** Sets the mouseValid handler. Returns this. */
+  public function withMouseValidHandler(isMouseValid : Void -> Bool) : EditorView {
+    this.isMouseValid = isMouseValid;
+    return this;
+  }
+
   public override function update(dt : Float) {
     super.update(dt);
 
-    if (FlxG.mouse.justPressed && action == BoardAction.CREATE && !createButtonsAdded) {
+    if (FlxG.mouse.justReleased && action == BoardAction.CREATE && !createButtonsAdded && isMouseValid()) {
       highlightLocked = true;
       createButtonsAdded = true;
 
@@ -106,6 +117,14 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
     }
     //If we made it here, just return to play mode
     action = BoardAction.PLAY;
+  }
+
+  /** Returns true if the mouse is currently hovering over a part of this */
+  public inline function mousePresent() : Bool {
+    var pt = FlxPoint.get();
+    var x = FlxG.mouse.y > FlxG.height - HEIGHT || actionSelector.overlapsPoint(FlxG.mouse.getPosition(pt));
+    pt.put();
+    return x;
   }
 }
 

@@ -65,6 +65,7 @@ class PlayState extends FlxState {
   private static inline var BOARD_SCROLL_DELTA = 30;
   private var boardModel : Board;
   private var hexHighlight : FlxSprite;
+  private var mouseOOB : Bool; //True when the mouse is is hovering over the HUD or the Editor Toolbar
   private var boardView : BoardView;
   private var hud : HUDView;
   private var hasWon : Bool; //True after this person has won
@@ -82,7 +83,6 @@ class PlayState extends FlxState {
    **/
   private var editor : EditorView;
   private var selectedPosition : Point;
-  private var mouseOOB : Bool; //True when the mouse is is hovering over the HUD or the Editor Toolbar
 
   /**
    *
@@ -109,6 +109,7 @@ class PlayState extends FlxState {
   private inline function resetFields(forStart : Bool) : Void {
     boardModel = null;
     hexHighlight = null;
+    mouseOOB = false;
     boardView = null;
     hud = null;
     hasWon = false;
@@ -118,7 +119,6 @@ class PlayState extends FlxState {
 
     editor = null;
     selectedPosition = forStart ? Point.get(-1,-1) : null;
-    mouseOOB = false;
 
     inputThrottlers = null;
   }
@@ -295,7 +295,7 @@ class PlayState extends FlxState {
       function(){createAndAddHex(HexType.SOURCE);},
       function(){createAndAddHex(HexType.SINK);},
       function(){createAndAddHex(HexType.ROTATOR);}
-    );
+    ).withMouseValidHandler(function(){return !mouseOOB;});
   }
 
   /** Pauses the game, opening the pause state. The substate is not persistant, it will be destroyed on close */
@@ -443,12 +443,20 @@ class PlayState extends FlxState {
 
     //Update Highlight
     if (editor == null || ! editor.highlightLocked){
-      selectedPosition = boardView.getPointFromGraphicPosition(FlxG.mouse.getPosition(FlxPoint.weak()));
-      var h = boardView.getAt(selectedPosition,true);
-      hexHighlight.angle = h != null ? h.angle : 0;
-      var pt = boardView.getGraphicPoisitionFromPoint(selectedPosition);
-      hexHighlight.setPosition(pt.x - hexHighlight.width/2, pt.y-hexHighlight.height/2);
-      pt.putWeak();
+      //Check mouseOOB
+      mouseOOB = hud.mousePresent() || editor != null && editor.mousePresent();
+
+      if (mouseOOB) {
+        selectedPosition = null;
+        hexHighlight.setPosition(-hexHighlight.width, -hexHighlight.height);
+      } else {
+        selectedPosition = boardView.getPointFromGraphicPosition(FlxG.mouse.getPosition(FlxPoint.weak()));
+        var h = boardView.getAt(selectedPosition,true);
+        hexHighlight.angle = h != null ? h.angle : 0;
+        var pt = boardView.getGraphicPoisitionFromPoint(selectedPosition);
+        hexHighlight.setPosition(pt.x - hexHighlight.width/2, pt.y-hexHighlight.height/2);
+        pt.putWeak();
+      }
     }
 
     //Update graphic positions of hexes being rotated
