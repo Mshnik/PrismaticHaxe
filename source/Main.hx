@@ -1,18 +1,18 @@
 package;
 
-import controller.SoundController;
-import input.InputSettings;
+
 import openfl.display.Sprite;
 import flixel.addons.plugin.FlxMouseControl;
 import flixel.FlxG;
 import flixel.FlxGame;
 
 import common.Point;
+import model.Hex;
+import view.BoardView;
 import controller.MainMenuState;
 import controller.LevelSelectState;
-import model.Hex;
-import view.PrismSprite;
-import view.BoardView;
+import controller.InputController;
+import controller.SoundController;
 
 #if flash
 import openfl.Lib;
@@ -39,7 +39,7 @@ class Main extends Sprite {
     SoundController.init();
 
     //Input
-    InputSettings.init();
+    InputController.init();
 
     //Final Asset Loading/Locating
     LevelSelectState.initLevelPaths();

@@ -1,7 +1,6 @@
 package controller;
 
 import view.EditorView.BoardAction;
-import input.InputSettings;
 import model.*;
 import view.*;
 import common.*;
@@ -150,10 +149,10 @@ class PlayState extends FlxState {
 
     //Set up Input
     inputThrottlers = [];
-    inputThrottlers.push(InputThrottler.onKey(InputSettings.LEFT, arrowKeyPressed, InputThrottler.EVERY_FRAME));
-    inputThrottlers.push(InputThrottler.onKey(InputSettings.RIGHT, arrowKeyPressed, InputThrottler.EVERY_FRAME));
-    inputThrottlers.push(InputThrottler.onKey(InputSettings.DOWN, arrowKeyPressed, InputThrottler.EVERY_FRAME));
-    inputThrottlers.push(InputThrottler.onKey(InputSettings.UP, arrowKeyPressed, InputThrottler.EVERY_FRAME));
+    inputThrottlers.push(InputThrottler.onKey(InputController.LEFT, arrowKeyPressed, InputThrottler.EVERY_FRAME));
+    inputThrottlers.push(InputThrottler.onKey(InputController.RIGHT, arrowKeyPressed, InputThrottler.EVERY_FRAME));
+    inputThrottlers.push(InputThrottler.onKey(InputController.DOWN, arrowKeyPressed, InputThrottler.EVERY_FRAME));
+    inputThrottlers.push(InputThrottler.onKey(InputController.UP, arrowKeyPressed, InputThrottler.EVERY_FRAME));
 
 //    mouseScrollRight = InputThrottler.onMouseInRect(FlxRect.get(0,0,MOUSE_SCROLL_BOX_SIZE,FlxG.height),
 //                                                    function() {shiftView(Point.LEFT);},
@@ -403,7 +402,7 @@ class PlayState extends FlxState {
     super.update(elapsed);
 
     //Check for editing dismissing
-    if (editor != null && InputSettings.CHECK_BACK()) {
+    if (editor != null && InputController.CHECK_BACK()) {
       if (editor.action == BoardAction.CREATE) {
         if (editor.createButtonsAdded) {
           editor.dismissCreateButtons();

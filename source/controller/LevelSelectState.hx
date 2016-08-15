@@ -1,12 +1,13 @@
 package controller;
 
-import flixel.FlxSprite;
-import controller.util.LevelUtils;
-import input.InputSettings;
-import flixel.FlxG;
-import controller.util.IndexedFlxButton;
 import openfl.Assets;
 import flixel.FlxState;
+import flixel.FlxSprite;
+import flixel.FlxG;
+
+import controller.util.IndexedFlxButton;
+import controller.util.LevelUtils;
+import controller.InputController;
 
 class LevelSelectState extends FlxState {
 
@@ -62,7 +63,7 @@ class LevelSelectState extends FlxState {
   override public function update(elapsed : Float) : Void {
     super.update(elapsed);
 
-    if (InputSettings.CHECK_BACK()) {
+    if (InputController.CHECK_BACK()) {
       FlxG.switchState(new MainMenuState());
     }
   }
