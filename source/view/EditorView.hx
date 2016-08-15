@@ -15,13 +15,13 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   /** The action selector */
   private var actionSelector : FlxUIDropDownMenu;
   /** The currently selected action by the action selector */
-  private var action : BoardAction;
+  public var action(default, null) : BoardAction;
 
   /** True if the highlight should stop moving with the mouse (when a hex is actively being edited) */
   public var highlightLocked(default, default) : Bool;
 
   private var createButtons : Array<FlxButton>;
-  private var createButtonsAdded : Bool;
+  public var createButtonsAdded(default, null) : Bool;
 
   public function new() {
     super();
@@ -31,9 +31,9 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
     var bg = new FlxSprite(0, y).makeGraphic(FlxG.width, HEIGHT, FlxColor.BLACK);
     add(bg);
 
-    actionSelector = new FlxUIDropDownMenu(0,y,FlxUIDropDownMenu.makeStrIdLabelArray(["Edit","Create","Delete","Move"]), onActionSelection);
+    actionSelector = new FlxUIDropDownMenu(0,y,FlxUIDropDownMenu.makeStrIdLabelArray(["Play","Edit","Create","Delete","Move"]), onActionSelection);
     add(actionSelector);
-    action = BoardAction.EDIT;
+    action = BoardAction.PLAY;
 
     highlightLocked = false;
     createButtonsAdded = false;
@@ -41,13 +41,21 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
 
   /** Programatically selects the current action from the drop down. Returns this */
   public function selectAction(action : BoardAction) : EditorView {
-    actionSelector.selectedLabel = action.toNiceString();
+    var str = action.toNiceString();
+    actionSelector.selectedLabel = str;
+    onActionSelection(str);
     if (action != BoardAction.CREATE && createButtonsAdded) {
-      for (btn in createButtons) {
-        remove(btn);
-      }
-      createButtonsAdded = false;
+      dismissCreateButtons();
     }
+    return this;
+  }
+
+  /** Dismisses the create buttons. Returns this */
+  public function dismissCreateButtons() : EditorView {
+    for (btn in createButtons) {
+      remove(btn);
+    }
+    createButtonsAdded = false;
     return this;
   }
 

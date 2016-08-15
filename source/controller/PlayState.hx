@@ -402,6 +402,19 @@ class PlayState extends FlxState {
   override public function update(elapsed : Float) : Void {
     super.update(elapsed);
 
+    //Check for editing dismissing
+    if (editor != null && InputSettings.CHECK_BACK()) {
+      if (editor.action == BoardAction.CREATE) {
+        if (editor.createButtonsAdded) {
+          editor.dismissCreateButtons();
+          editor.highlightLocked = false;
+        } else {
+          editor.selectAction(BoardAction.PLAY);
+        }
+      }
+    }
+
+    //Update Highlight
     if (editor == null || ! editor.highlightLocked){
       selectedPosition = boardView.getPointFromGraphicPosition(FlxG.mouse.getPosition(FlxPoint.weak()));
       var h = boardView.getAt(selectedPosition,true);
@@ -411,12 +424,14 @@ class PlayState extends FlxState {
       pt.putWeak();
     }
 
+    //Update graphic positions of hexes being rotated
     if(currentRotator != null) {
       for(sprite in currentRotator.getSprites()) {
         boardView.setGraphicPosition(sprite);
       }
     }
 
+    //Check for view sync, if needed perform that
     if(viewNeedsSync) {
       viewNeedsSync = false;
       var score : Score = boardModel.relight();
@@ -431,6 +446,7 @@ class PlayState extends FlxState {
       }
     }
 
+    //Update inputs
     for(inputThrottler in inputThrottlers) {
       inputThrottler.update(elapsed);
     }
@@ -525,6 +541,23 @@ class PlayState extends FlxState {
    **/
   private function createAndAddHex(hexType : HexType) {
     trace("Creating hex at " + selectedPosition + " of type " + hexType);
+    while(selectedPosition.row < 0) {
+      boardModel.addRowTop();
+      boardView.addRowTop();
+
+      boardView.vertMargin -= BoardView.ROW_HEIGHT;
+      selectedPosition = selectedPosition.add(Point.DOWN);
+    }
+    while(selectedPosition.col < 0) {
+      //Add cols in multiples of two
+      for(i in 0...2) {
+        boardModel.addColLeft();
+        boardView.addColLeft();
+        boardView.horizMargin -= BoardView.COL_WIDTH;
+        selectedPosition = selectedPosition.add(Point.RIGHT);
+      }
+    }
+
     boardModel.ensureSize(selectedPosition.row+1, selectedPosition.col+1);
     boardView.ensureSize(selectedPosition.row+1, selectedPosition.col+1);
 
@@ -545,7 +578,7 @@ class PlayState extends FlxState {
     });
 
     editor.highlightLocked = false;
-    editor.selectAction(BoardAction.EDIT);
+    editor.dismissCreateButtons();
   }
 
   /**

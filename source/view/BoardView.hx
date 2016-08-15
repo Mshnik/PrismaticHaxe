@@ -16,14 +16,14 @@ class BoardView extends Array2D<HexSprite> {
   }
 
   /** Graphic height of a row of hexes. Amount to shift when a row moves. */
-  private static var ROW_HEIGHT : Float;
+  public static var ROW_HEIGHT(default, null) : Float;
 
   /** Graphic width of a col of hexes. Amount to shift when a col moves. */
-  private static var COL_WIDTH : Float;
+  public static var COL_WIDTH(default, null) : Float;
 
   private var hideTilesUntilLit : Bool;
-  public var vertMargin(default, set) : Int;
-  public var horizMargin(default, set) : Int;
+  public var vertMargin(default, set) : Float;
+  public var horizMargin(default, set) : Float;
   @final public var spriteGroup(default, null) : FlxTypedSpriteGroup<HexSprite>;
 
   public function new(rows : Int = 0, cols : Int = 0, hideTilesUntilLit : Bool = false) {
@@ -62,20 +62,20 @@ class BoardView extends Array2D<HexSprite> {
 
   /** Returns the row/col position of the given x/y mouse point. Useful for locating a hex position */
   public inline function getPointFromGraphicPosition(pt : FlxPoint) : Point {
-    var col : Int = Std.int((pt.x - horizMargin)/COL_WIDTH + 0.5);
-    var row : Int = Std.int((pt.y - vertMargin)/ROW_HEIGHT - col.mod(2)/2 + 0.5);
+    var col : Int = Std.int((pt.x - horizMargin)/COL_WIDTH + (pt.x > horizMargin ? 0.5 : -0.5));
+    var row : Int = Std.int((pt.y - vertMargin)/ROW_HEIGHT - col.mod(2)/2 + (pt.y > vertMargin ? 0.5 : -0.5));
     pt.putWeak();
     return Point.get(row, col);
   }
 
-  public function set_vertMargin(margin : Int) : Int {
+  public function set_vertMargin(margin : Float) : Float {
     for(h in this) {
       h.y += (margin - vertMargin);
     }
     return vertMargin = margin;
   }
 
-  public function set_horizMargin(margin : Int) : Int {
+  public function set_horizMargin(margin : Float) : Float {
     for(h in this) {
       h.x += (margin - horizMargin);
     }
