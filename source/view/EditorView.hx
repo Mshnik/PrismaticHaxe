@@ -42,10 +42,13 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   /** Programatically selects the current action from the drop down. Returns this */
   public function selectAction(action : BoardAction) : EditorView {
     var str = action.toNiceString();
-    actionSelector.selectedLabel = str;
-    onActionSelection(str);
-    if (action != BoardAction.CREATE && createButtonsAdded) {
-      dismissCreateButtons();
+    if (actionSelector.selectedLabel != str) {
+      actionSelector.selectedLabel = str;
+      onActionSelection(str);
+      highlightLocked = false;
+      if (action != BoardAction.CREATE && createButtonsAdded) {
+        dismissCreateButtons();
+      }
     }
     return this;
   }

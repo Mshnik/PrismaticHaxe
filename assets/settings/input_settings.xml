@@ -5,5 +5,12 @@
         <RIGHT code="39"/>
         <UP code="38"/>
         <DOWN code="40"/>
+
+        <!--Level Editing Keys-->
+        <MODE_PLAY code="80"/>
+        <MODE_CREATE code="67"/>
+        <MODE_EDIT code="69"/>
+        <MODE_MOVE code="77"/>
+        <MODE_DELETE code="68"/>
     </keys>
 </settings>

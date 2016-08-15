@@ -401,15 +401,31 @@ class PlayState extends FlxState {
   override public function update(elapsed : Float) : Void {
     super.update(elapsed);
 
-    //Check for editing dismissing
-    if (editor != null && InputController.CHECK_BACK()) {
-      if (editor.action == BoardAction.CREATE) {
-        if (editor.createButtonsAdded) {
-          editor.dismissCreateButtons();
-          editor.highlightLocked = false;
-        } else {
-          editor.selectAction(BoardAction.PLAY);
+    //Check for editing hotkeys
+    if (editor != null) {
+      //Check Back (Esc) for menu dismissal
+      if (InputController.CHECK_BACK()) {
+        if (editor.action == BoardAction.CREATE) {
+          if (editor.createButtonsAdded) {
+            editor.dismissCreateButtons();
+            editor.highlightLocked = false;
+          } else {
+            editor.selectAction(BoardAction.PLAY);
+          }
         }
+      }
+
+      //Check for action quickselect
+      if (InputController.CHECK_MODE_PLAY()) {
+        editor.selectAction(BoardAction.PLAY);
+      } else if (InputController.CHECK_MODE_CREATE()) {
+        editor.selectAction(BoardAction.CREATE);
+      } else if (InputController.CHECK_MODE_EDIT()) {
+        editor.selectAction(BoardAction.EDIT);
+      } else if (InputController.CHECK_MODE_MOVE()) {
+        editor.selectAction(BoardAction.MOVE);
+      } else if (InputController.CHECK_MODE_DELETE()) {
+        editor.selectAction(BoardAction.DELETE);
       }
     }
 
