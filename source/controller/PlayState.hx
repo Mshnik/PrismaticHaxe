@@ -413,27 +413,20 @@ class PlayState extends FlxState {
     if (editor != null) {
       //Check Back (Esc) for menu dismissal
       if (InputController.CHECK_BACK()) {
-        if (editor.action == BoardAction.CREATE) {
-          if (editor.createButtonsAdded) {
-            editor.dismissCreateButtons();
-            editor.highlightLocked = false;
-          } else {
-            editor.selectAction(BoardAction.PLAY);
-          }
-        }
+        editor.goBack();
       }
 
       //Check for action quickselect
       if (InputController.CHECK_MODE_PLAY()) {
-        editor.selectAction(BoardAction.PLAY);
+        editor.action = BoardAction.PLAY;
       } else if (InputController.CHECK_MODE_CREATE()) {
-        editor.selectAction(BoardAction.CREATE);
+        editor.action = BoardAction.CREATE;
       } else if (InputController.CHECK_MODE_EDIT()) {
-        editor.selectAction(BoardAction.EDIT);
+        editor.action = BoardAction.EDIT;
       } else if (InputController.CHECK_MODE_MOVE()) {
-        editor.selectAction(BoardAction.MOVE);
+        editor.action = BoardAction.MOVE;
       } else if (InputController.CHECK_MODE_DELETE()) {
-        editor.selectAction(BoardAction.DELETE);
+        editor.action = BoardAction.DELETE;
       }
     }
 

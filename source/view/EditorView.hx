@@ -15,7 +15,7 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   /** The action selector */
   private var actionSelector : FlxUIDropDownMenu;
   /** The currently selected action by the action selector */
-  public var action(default, null) : BoardAction;
+  public var action(default, set) : BoardAction;
 
   /** True if the highlight should stop moving with the mouse (when a hex is actively being edited) */
   public var highlightLocked(default, default) : Bool;
@@ -39,14 +39,21 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
     createButtonsAdded = false;
   }
 
+  /** Event listener called when a new action is selected via mouse. Just passes control off to set_action */
+  private function onActionSelection(action : String) {
+    this.action = Type.createEnum(BoardAction, action.toUpperCase());
+  }
+
   /** Programatically selects the current action from the drop down. Returns this */
-  public function selectAction(action : BoardAction) : EditorView {
-    var str = action.toNiceString();
-    if (actionSelector.selectedLabel != str) {
-      actionSelector.selectedLabel = str;
-      onActionSelection(str);
+  public function set_action(action : BoardAction) : BoardAction {
+    if (this.action != action) {
+      actionSelector.selectedLabel = action.toNiceString();
+      highlightLocked = false;
+      if (this.action != BoardAction.CREATE && createButtonsAdded) {
+        dismissCreateButtons();
+      }
     }
-    return this;
+    return this.action = action;
   }
 
   /** Dismisses the create buttons. Returns this */
@@ -71,14 +78,6 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
     return this;
   }
 
-  private function onActionSelection(action : String) {
-   this.action = Type.createEnum(BoardAction, action.toUpperCase());
-    highlightLocked = false;
-    if (this.action != BoardAction.CREATE && createButtonsAdded) {
-      dismissCreateButtons();
-    }
-  }
-
   public override function update(dt : Float) {
     super.update(dt);
 
@@ -94,6 +93,19 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
         add(btn);
       }
     }
+  }
+
+  /** Moves one step back in editing */
+  public function goBack() {
+    if (action == BoardAction.CREATE) {
+      if (createButtonsAdded) {
+        dismissCreateButtons();
+        highlightLocked = false;
+        return;
+      }
+    }
+    //If we made it here, just return to play mode
+    action = BoardAction.PLAY;
   }
 }
 
