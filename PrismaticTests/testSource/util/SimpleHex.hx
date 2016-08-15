@@ -14,7 +14,7 @@ class SimpleHex extends Hex {
   public var rotations(default, null) : Int;
 
   public function new() {
-    super();
+    super(null);
     rotations = 0;
     rotationListener = function(h : Hex, i : Int) {
       var sH : SimpleHex = cast(h, SimpleHex);

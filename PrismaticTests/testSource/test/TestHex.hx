@@ -1,5 +1,6 @@
 package test;
 
+import common.HexType;
 import model.*;
 import common.Color;
 import common.Point;
@@ -238,6 +239,14 @@ class TestHex extends TestCase {
       h1.rotateCounterClockwise();
       h2.rotateCounterClockwise();
     }
+  }
+
+  public function testHexType() {
+    assertEquals(HexType.PRISM, new Prism().hexType);
+    assertEquals(HexType.SINK, new Sink().hexType);
+    assertEquals(HexType.SOURCE, new Source().hexType);
+    assertEquals(HexType.ROTATOR, new Rotator().hexType);
+    assertEquals(null, SimpleHex.create().hexType);
   }
 
 }

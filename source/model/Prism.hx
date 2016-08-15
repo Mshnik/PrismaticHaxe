@@ -15,7 +15,7 @@ class Prism extends Hex {
     connections = new Array2D<ColorConnector>().ensureSize(Util.HEX_SIDES, Util.HEX_SIDES);
     connectionArr = [];
 
-    super();
+    super(HexType.PRISM);
   }
 
   /** Returns the list of locations that this has a connector */

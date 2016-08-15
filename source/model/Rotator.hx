@@ -1,12 +1,12 @@
 package model;
 
-import common.Equitable;
+import common.HexType;
 import common.Color;
 
 class Rotator extends Hex {
 
   public function new() {
-    super();
+    super(HexType.ROTATOR);
   }
 
   /** Rotators don't output light - store lightIn and returns [] */

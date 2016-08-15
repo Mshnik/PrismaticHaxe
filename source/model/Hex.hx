@@ -24,6 +24,9 @@ using common.IntExtender;
   /** True once the id has been set, false until then */
   private var idSet : Bool;
 
+  /** The hex type of this hex. Set during construction */
+  public var hexType(default, null) : HexType;
+
   /** Current rotational orientation of this hex. Always in the range [0-(SIDES-1)].
    * Value is the side index currently point up.
    **/
@@ -63,7 +66,8 @@ using common.IntExtender;
   /** A listener to call when this rotates. Args are (this, oldOrientation) */
   public var rotationListener : Hex->Int->Void;
 
-  public function new() {
+  public function new(hexType : HexType = null) {
+    this.hexType = hexType;
     position = Point.get(-1,-1);
     orientation = 0;
     idSet = false;

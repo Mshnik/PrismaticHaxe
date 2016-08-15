@@ -11,7 +11,7 @@ class Source extends Hex {
   private var currentIndex(default, set) : Int;
 
   public function new() {
-    super();
+    super(HexType.SOURCE);
     availableColors = [Color.NONE];
     currentIndex = 0;
   }

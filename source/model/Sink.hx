@@ -1,6 +1,6 @@
 package model;
 
-import common.Equitable;
+import common.HexType;
 import common.Color;
 
 class Sink extends Hex {
@@ -8,7 +8,7 @@ class Sink extends Hex {
   private var currentColor : Color;
 
   public function new() {
-    super();
+    super(HexType.SINK);
     currentColor = Color.NONE;
   }
 
