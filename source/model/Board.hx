@@ -156,6 +156,13 @@ class Board extends Array2D<Hex> {
     return h;
   }
 
+  public override function remove(r : Int, c : Int) : Hex {
+    var h : Hex = super.remove(r,c);
+    if (h != null && h.isSource()) sources.remove(h.asSource());
+    if (h != null && h.isSink()) sinks.remove(h.asSink());
+    return h;
+  }
+
   /** In addition to calling super.swap, updates sources/sinks as necessary */
   public override function swap(p1 : Point, p2 : Point) : Board {
     super.swap(p1, p2);

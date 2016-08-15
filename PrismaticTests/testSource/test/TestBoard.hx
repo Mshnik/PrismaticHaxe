@@ -28,7 +28,7 @@ class TestBoard extends TestCase {
     assertArrayEquals([], b.getSinks());
     assertArrayEquals([source], b.getSources());
 
-    var sink = Std.instance(b.set(1,0,new Sink()), Sink);
+    var sink : Sink = Std.instance(b.set(1,0,new Sink()), Sink);
     assertArrayEquals([sink], b.getSinks());
     assertArrayEquals([source], b.getSources());
 
@@ -36,7 +36,7 @@ class TestBoard extends TestCase {
     assertArrayEquals([sink], b.getSinks());
     assertArrayEquals([source], b.getSources());
 
-    var source2 = Std.instance(b.set(0,1,new Source()), Source);
+    var source2 : Source = Std.instance(b.set(0,1,new Source()), Source);
     assertArrayEquals([sink], b.getSinks());
     assertArrayEquals([source, source2], b.getSources());
 
@@ -47,6 +47,18 @@ class TestBoard extends TestCase {
     b.swapManyForward([Point.get(0,0), Point.get(0,1), Point.get(1,1), Point.get(1,0)]);
     assertArrayEquals([sink2, sink], b.getSinks());
     assertArrayEquals([source2, source], b.getSources());
+
+    b.swapManyBackward([Point.get(0,0), Point.get(0,1), Point.get(1,1), Point.get(1,0)]);
+    b.remove(1,1);
+    assertArrayEquals([sink], b.getSinks());
+
+    b.removeAt(source2.position);
+    assertArrayEquals([sink], b.getSinks());
+    assertArrayEquals([source], b.getSources());
+
+    b.removeAt(sink.position);
+    assertArrayEquals([], b.getSinks());
+    assertArrayEquals([source], b.getSources());
   }
 
   public function testConnectionGroups() {
