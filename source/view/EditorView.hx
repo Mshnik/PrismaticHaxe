@@ -45,10 +45,6 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
     if (actionSelector.selectedLabel != str) {
       actionSelector.selectedLabel = str;
       onActionSelection(str);
-      highlightLocked = false;
-      if (action != BoardAction.CREATE && createButtonsAdded) {
-        dismissCreateButtons();
-      }
     }
     return this;
   }
@@ -77,6 +73,10 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
 
   private function onActionSelection(action : String) {
    this.action = Type.createEnum(BoardAction, action.toUpperCase());
+    highlightLocked = false;
+    if (this.action != BoardAction.CREATE && createButtonsAdded) {
+      dismissCreateButtons();
+    }
   }
 
   public override function update(dt : Float) {
