@@ -29,6 +29,7 @@
         <connector from="4" to="5" color="RED"/>
     </prism>
 
+    <rotator row="2" col="0" orientation="0"/>
     <rotator row="3" col="2" orientation="0"/>
 
 </board>

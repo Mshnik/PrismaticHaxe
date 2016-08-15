@@ -180,12 +180,14 @@ class PlayState extends FlxState {
   private inline function prepPrismSprite(prismSprite : PrismSprite) : PrismSprite {
     prismSprite.rotationStartListener = onPrismStartRotation;
     prismSprite.rotationEndListener = onPrismEndRotation;
+    prismSprite.rotationValidator = allowRotation;
     return prismSprite;
   }
 
   /** Helper function for initializing SourceSprites */
   private inline function prepSourceSprite(sourceSprite : SourceSprite) : SourceSprite {
     sourceSprite.colorSwitchListener = onSourceClick;
+    sourceSprite.colorSwitchValidator = allowSourceClick;
     return sourceSprite;
   }
 
@@ -198,7 +200,7 @@ class PlayState extends FlxState {
   private inline function prepRotatorSprite(rotatorSprite : RotatorSprite) : RotatorSprite {
     rotatorSprite.rotationStartListener = onRotatorStartRotation;
     rotatorSprite.rotationEndListener = onRotatorEndRotation;
-    rotatorSprite.rotationValidator = allowRotatorRotation;
+    rotatorSprite.rotationValidator = allowRotation;
     return rotatorSprite;
   }
 
@@ -291,6 +293,12 @@ class PlayState extends FlxState {
     openSubState(pauseState);
   }
 
+  /** Helper function for determining if a Sprite is allowed to acknowledge a rotation click */
+  private function allowRotation(h : RotatableHexSprite) : Bool {
+    var rotationOK = currentRotator == null || !h.isRotatorSprite() || currentRotator == h;
+    return rotationOK && (gameType == GameType.EDIT && editor.action == BoardAction.PLAY || gameType != GameType.EDIT);
+  }
+
   /** Helper function for when any sprites starts rotation callback. Called by more specific callbacks */
   private function onStartRotation(h : RotatableHexSprite) {
     if (! rotatingSprites.contains(h)){
@@ -326,6 +334,11 @@ class PlayState extends FlxState {
     onEndRotation(h);
   }
 
+  /** Helper function for validation when a Source is clicked. */
+  private function allowSourceClick(sprite : SourceSprite) : Bool {
+    return gameType != GameType.EDIT || (gameType == GameType.EDIT && editor.action == BoardAction.PLAY);
+  }
+
   /** Helper function for when a Source is clicked. Cycles to next/previous color */
   private function onSourceClick(sprite : SourceSprite) {
     var s : Source = boardModel.getAt(sprite.position).asSource();
@@ -336,11 +349,6 @@ class PlayState extends FlxState {
     }
     viewNeedsSync = true;
     sprite.litColor = s.getCurrentColor();
-  }
-
-  /** Helper function for determining if a RotatorSprite is allowed to acknowledge a click */
-  private function allowRotatorRotation(h : RotatableHexSprite) : Bool {
-    return currentRotator == null || currentRotator == h;
   }
 
   /** Helper function for RotatorSprite starting rotation callback */

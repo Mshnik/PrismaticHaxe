@@ -8,6 +8,11 @@ class SourceSprite extends HexSprite {
   /** The color this is currently lighted */
   public var litColor(default, set) : Color;
 
+  /** The validator for when this is clicked. Returns true if this is allowed to request the next color.
+   * Arg when called is this.
+   **/
+  public var colorSwitchValidator(default, default) : SourceSprite -> Bool;
+
   /** The listener for when this is clicked to request the next color. Arg when called is this */
   public var colorSwitchListener(default, default) : SourceSprite -> Void;
 
@@ -20,6 +25,7 @@ class SourceSprite extends HexSprite {
     litColor = Color.NONE;
     mouseReleasedCallback = onMouseRelease;
     colorSwitchListener = null;
+    colorSwitchValidator = null;
   }
 
   private override function loadTrueGraphic() {
@@ -27,7 +33,7 @@ class SourceSprite extends HexSprite {
   }
 
   private function onMouseRelease(f : FlxExtendedSprite, x : Int, y : Int) : Void {
-    if (colorSwitchListener != null) {
+    if (colorSwitchListener != null && (colorSwitchValidator == null || colorSwitchValidator(this))) {
       var h = getHitbox();
       var p = FlxG.mouse.getPosition();
       //Extra check that the mouse is still there
