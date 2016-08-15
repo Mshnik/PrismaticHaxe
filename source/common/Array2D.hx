@@ -97,6 +97,17 @@ using common.IntExtender;
     return this;
   }
 
+  /** Helper that refreshes the position of all Positionables within this */
+  private function refreshPositions() {
+    for(r in 0...getHeight()) {
+      for (c in 0...getWidth()) {
+        if (get(r,c) != null) {
+          get(r,c).position = Point.get(r,c);
+        }
+      }
+    }
+  }
+
   /** Adds an empty row (full of nulls) to the top of the Array2D.
    * Returns this.
   **/
@@ -106,6 +117,7 @@ using common.IntExtender;
       arr.push(null);
     }
     vals.unshift(arr);
+    refreshPositions();
     modCount++;
     return this;
   }
@@ -130,6 +142,7 @@ using common.IntExtender;
     for (arr in vals) {
       arr.unshift(null);
     }
+    refreshPositions();
     modCount++;
     return this;
   }
@@ -282,12 +295,7 @@ using common.IntExtender;
     }
 
     if (dCol != 0 && dRow != 0) {
-      var delta = Point.get(dRow, dCol);
-      var iter = new Array2DIterator<T>(this);
-      while (iter.hasNext()) {
-        var t : T = iter.next();
-        t.position = Point.get((t.position.row + delta.row).mod(getHeight()), (t.position.col + delta.col).mod(getWidth()));
-      }
+      refreshPositions();
     }
     return this;
   }

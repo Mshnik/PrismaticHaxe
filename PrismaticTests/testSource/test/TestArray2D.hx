@@ -98,6 +98,18 @@ class TestArray2D extends TestCase {
     assertTrue(b2.isInBounds(1,1));
     assertFalse(b2.isInBounds(2,1));
     assertArrayEquals([[null, null], [null, null]], b2.asNestedArrays());
+
+    b2.set(0,0, SimplePositionable.create(0));
+    assertEquals(0, b2.get(0,0).data);
+    assertEquals(Point.get(0,0), b2.get(0,0).position);
+
+    b2.addRowTop();
+    assertEquals(0, b2.get(1,0).data);
+    assertEquals(Point.get(1,0), b2.get(1,0).position);
+
+    b2.addColLeft();
+    assertEquals(0, b2.get(1,1).data);
+    assertEquals(Point.get(1,1), b2.get(1,1).position);
   }
 
   public function testSimplePositionableOnArray2D() {
@@ -412,7 +424,11 @@ class TestArray2D extends TestCase {
 
 class SimplePositionable extends Tile<Int>{
 
-  public static function create() {
-    return new SimplePositionable();
+  private function new(x : Int = 0) {
+    super(x);
+  }
+
+  public static function create(x : Int = 0) {
+    return new SimplePositionable(x);
   }
 }
