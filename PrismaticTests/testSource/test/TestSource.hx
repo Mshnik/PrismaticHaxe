@@ -51,6 +51,36 @@ class TestSource extends TestCase {
     assertEquals(Color.BLUE, s.getCurrentColor());
   }
 
+  public function testRemoveColors() {
+    var s = new Source();
+    assertEquals(Color.NONE, s.getCurrentColor());
+
+    s.addColor(Color.RED);
+    assertEquals(Color.RED, s.getCurrentColor());
+    assertArrayEquals([Color.RED], s.getAvailableColors());
+
+    s.removeColor(Color.RED);
+    assertEquals(Color.NONE, s.getCurrentColor());
+    assertArrayEquals([Color.NONE], s.getAvailableColors());
+
+    s.addColor(Color.RED);
+    s.addColor(Color.BLUE);
+    assertEquals(Color.RED, s.getCurrentColor());
+    assertArrayEquals([Color.RED, Color.BLUE], s.getAvailableColors());
+
+    s.removeColor(Color.GREEN);
+    assertEquals(Color.RED, s.getCurrentColor());
+    assertArrayEquals([Color.RED, Color.BLUE], s.getAvailableColors());
+
+    s.removeColor(Color.RED);
+    assertEquals(Color.BLUE, s.getCurrentColor());
+    assertArrayEquals([Color.BLUE], s.getAvailableColors());
+
+    s.removeColor(Color.RED);
+    assertEquals(Color.BLUE, s.getCurrentColor());
+    assertArrayEquals([Color.BLUE], s.getAvailableColors());
+  }
+
   public function testLightInOut() {
     var s = new Source();
 

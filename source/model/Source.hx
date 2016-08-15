@@ -17,7 +17,7 @@ class Source extends Hex {
   }
 
   /** Helper to make sure light out is consistent with current active color */
-  public function updateLightOut() {
+  public inline function updateLightOut() {
     for(i in 0...Util.HEX_SIDES) {
       lightOut[i] = getCurrentColor();
     }
@@ -38,7 +38,7 @@ class Source extends Hex {
    * If adding a duplicate, does nothing
    * Returns a reference to this for chaining
    **/
-  public function addColor(c : Color) : Source {
+  public inline function addColor(c : Color) : Source {
     if (c == Color.NONE){
       return this;
     }
@@ -56,14 +56,28 @@ class Source extends Hex {
     return this;
   }
 
+  /** Removes the given color from the array of available colors */
+  public inline function removeColor(c : Color) : Source {
+    if (c != Color.NONE) {
+      var removed = availableColors.remove(c);
+      if (availableColors.length == 0) {
+        availableColors = [Color.NONE];
+      }
+      if (removed) {
+        updateLightOut();
+      }
+    }
+    return this;
+  }
+
   /** Rotates to use the next available color */
-  public function useNextColor() : Source {
+  public inline function useNextColor() : Source {
     currentIndex++;
     return this;
   }
 
   /** Rotates to use the previous available color */
-  public function usePreviousColor() : Source {
+  public inline function usePreviousColor() : Source {
     currentIndex--;
     return this;
   }
@@ -77,7 +91,7 @@ class Source extends Hex {
     return availableColors.copy();
   }
 
-  public function set_currentIndex(i : Int) : Int {
+  public inline function set_currentIndex(i : Int) : Int {
       currentIndex = i.mod(availableColors.length);
       updateLightOut();
       return currentIndex;
