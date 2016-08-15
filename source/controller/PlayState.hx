@@ -294,7 +294,8 @@ class PlayState extends FlxState {
       function(){createAndAddHex(selectedPosition, HexType.PRISM);},
       function(){createAndAddHex(selectedPosition, HexType.SOURCE);},
       function(){createAndAddHex(selectedPosition, HexType.SINK);},
-      function(){createAndAddHex(selectedPosition, HexType.ROTATOR);}
+      function(){createAndAddHex(selectedPosition, HexType.ROTATOR);},
+      shouldShowRotatorCreateButton
     ).withMouseValidHandler(function(){return !mouseOOB;})
      .withDeleteHandler(function(){deleteHex(selectedPosition);});
   }
@@ -569,6 +570,15 @@ class PlayState extends FlxState {
   private function setGoal(color : Color, goal : Int) : Void {
     boardModel.getScore().setGoal(color, goal);
     trace(color + " Goal updated");
+  }
+
+  /** Returns true if the create rotator button should be shown for the current selected position.
+   * Checks all neighbor locations, to make sure no rotator is present.
+   **/
+  private inline function shouldShowRotatorCreateButton() : Bool {
+    return selectedPosition.getNeighbors().map(boardModel.getAtSafe)
+            .filter(function(h : Hex){return h != null && h.isRotator();})
+            .length == 0;
   }
 
   /** Creates a new hex of the given type at the given position

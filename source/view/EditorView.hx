@@ -27,6 +27,8 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
 
   /** Buttons added to create a new hex. */
   private var createButtons : Array<FlxButton>;
+  /** Function to call to check whether to display the rotator button */
+  private var shouldShowRotatorButton : Void -> Bool;
   /** True if the create buttons are currently added and positioned on the screen */
   public var createButtonsAdded(default, null) : Bool;
   /** True if one extra frame should be taken between adding the create buttons again */
@@ -84,7 +86,8 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
 
   /** Sets the handlers for the four create buttons. Returns this */
   public inline function withCreateHandlers(createPrism : Void -> Void, createSource : Void -> Void,
-                                     createSink : Void -> Void, createRotator : Void -> Void) : EditorView {
+                                     createSink : Void -> Void, createRotator : Void -> Void,
+                                     shouldShowRotatorButton : Void -> Bool) : EditorView {
     if (createButtons != null) {
       for(btn in createButtons) {
         remove(btn);
@@ -92,6 +95,7 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
     }
     createButtons = [new FlxButton(0,0,"Create Prism",createPrism), new FlxButton(0,0,"Create Source",createSource),
                      new FlxButton(0,0,"Create Sink",createSink), new FlxButton(0,0,"Create Rotator",createRotator)];
+    this.shouldShowRotatorButton = shouldShowRotatorButton;
     return this;
   }
 
@@ -119,7 +123,9 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
         btn.x = FlxG.mouse.x - btn.width/2;
         btn.y = FlxG.mouse.y - btn.height/2 + dy;
         dy += btn.height;
-        add(btn);
+        if (btn.text != "Create Rotator" || shouldShowRotatorButton()) {
+          add(btn);
+        }
       }
     } else if (action == BoardAction.DELETE && FlxG.mouse.pressed && deleteHandler != null && isMouseValid()) {
       deleteHandler();
