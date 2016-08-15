@@ -1,9 +1,13 @@
 package view;
+
+import common.ColorUtil;
+import common.HexType;
 import view.EditorView.BoardAction;
+
 import flixel.math.FlxPoint;
-import flixel.ui.FlxButton;
 import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.util.FlxColor;
+import flixel.ui.FlxButton;
 import flixel.FlxG;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxSprite;
@@ -34,6 +38,16 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   /** True if one extra frame should be taken between adding the create buttons again */
   private var createButtonsWaitFrame : Bool;
 
+  /** Function to call to check if the current tile can be edited */
+  private var canEdit : Void -> Bool;
+  /** Function to call to get the type of Hex being edited */
+  private var getEditedHexType : Void -> HexType;
+  /** The current hex edit type. Kept after creation so teardown can work correctly */
+  private var editedHexType : HexType;
+  /** Check boxes for colors when editing sources */
+  private var editSourceCheckBoxes : Array<FlxUICheckBoxWithFullCallback>;
+  /** Functions to call when each callback
+
   /** Function to call when the current action is delete */
   private var deleteHandler : Void -> Void;
 
@@ -54,6 +68,29 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
     createButtonsWaitFrame = false;
     isMouseValid = null;
 
+    canEdit = null;
+    getEditedHexType = null;
+    editedHexType = null;
+    editSourceCheckBoxes = [];
+    var sourceCheckboxX = actionSelector.x + actionSelector.width + 20;
+    for (c in ColorUtil.realColors()) {
+      var checkBox = new FlxUICheckBoxWithFullCallback(0,0,null,null,ColorUtil.toString(c));
+      checkBox.text = ColorUtil.toString(c);
+
+      checkBox.color = ColorUtil.toFlxColor(c, true);
+      checkBox.button.up_color = checkBox.color;
+      checkBox.button.down_color = checkBox.color;
+      checkBox.button.over_color = checkBox.color;
+      checkBox.button.up_toggle_color = checkBox.color;
+      checkBox.button.down_toggle_color = checkBox.color;
+      checkBox.button.over_toggle_color = checkBox.color;
+
+      checkBox.y = actionSelector.y;
+      checkBox.x = sourceCheckboxX;
+      sourceCheckboxX += checkBox.width + 20;
+      editSourceCheckBoxes.push(checkBox);
+    }
+
     deleteHandler = null;
   }
 
@@ -67,21 +104,13 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
     if (this.action != action) {
       actionSelector.selectedLabel = action.toNiceString();
       highlightLocked = false;
-      if (this.action != BoardAction.CREATE && createButtonsAdded) {
-        dismissCreateButtons();
+      if (action != BoardAction.CREATE) {
+        tearDownCreate();
+      } else if (action != BoardAction.EDIT) {
+        tearDownEdit();
       }
     }
     return this.action = action;
-  }
-
-  /** Dismisses the create buttons. Returns this */
-  public inline function dismissCreateButtons() : EditorView {
-    for (btn in createButtons) {
-      remove(btn);
-    }
-    createButtonsAdded = false;
-    createButtonsWaitFrame = true;
-    return this;
   }
 
   /** Sets the handlers for the four create buttons. Returns this */
@@ -105,6 +134,21 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
     return this;
   }
 
+  /** Sets the edit handlers. Returns this. */
+  public inline function withEditHandlers(validator : Void -> Bool, getEditingType : Void -> HexType) : EditorView {
+    this.canEdit = validator;
+    this.getEditedHexType = getEditingType;
+    return this;
+  }
+
+  /** Sets the handlers for source editing. Returns this. */
+  public inline function withSourceEditingHandler(checkboxFunc : String -> Bool -> Void) : EditorView {
+    for(chkbx in editSourceCheckBoxes) {
+      chkbx.fullCallback = checkboxFunc;
+    }
+    return this;
+  }
+
   /** Sets the delete handler. Returns this. */
   public inline function withDeleteHandler(func : Void -> Void) : EditorView {
     this.deleteHandler = func;
@@ -116,29 +160,86 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
 
     if (action == BoardAction.CREATE && FlxG.mouse.justReleased && !createButtonsWaitFrame && !createButtonsAdded && isMouseValid()) {
       highlightLocked = true;
-      createButtonsAdded = true;
-
-      var dy = createButtons[0].height * 1.5;
-      for(btn in createButtons) {
-        btn.x = FlxG.mouse.x - btn.width/2;
-        btn.y = FlxG.mouse.y - btn.height/2 + dy;
-        dy += btn.height;
-        if (btn.text != "Create Rotator" || shouldShowRotatorButton()) {
-          add(btn);
-        }
-      }
+      setUpCreate();
+    } else if (action == BoardAction.EDIT && FlxG.mouse.justReleased && canEdit()){
+      highlightLocked = true;
+      setUpEdit();
     } else if (action == BoardAction.DELETE && FlxG.mouse.pressed && deleteHandler != null && isMouseValid()) {
       deleteHandler();
     }
-
     createButtonsWaitFrame = false;
+  }
+
+  /** Sets up buttons for create */
+  private inline function setUpCreate() : EditorView {
+    var dy = createButtons[0].height * 1.5;
+    for(btn in createButtons) {
+      btn.x = FlxG.mouse.x - btn.width/2;
+      btn.y = FlxG.mouse.y - btn.height/2 + dy;
+      dy += btn.height;
+      if (btn.text != "Create Rotator" || shouldShowRotatorButton()) {
+        add(btn);
+      }
+    }
+    createButtonsAdded = true;
+    return this;
+  }
+
+  /** Dismisses the create buttons. Returns this */
+  public inline function tearDownCreate() : EditorView {
+    if (createButtonsAdded) {
+      for (btn in createButtons) {
+        remove(btn);
+      }
+      createButtonsAdded = false;
+      createButtonsWaitFrame = true;
+    }
+    return this;
+  }
+
+  /** Sets up the menu for edit. First tears down if the new edited hex type is different than the old */
+  private inline function setUpEdit() : EditorView {
+    var newHexType : HexType = getEditedHexType();
+    if (newHexType != editedHexType) {
+      tearDownEdit();
+      editedHexType = newHexType;
+      if (newHexType == HexType.PRISM) {
+
+      } else if (newHexType == HexType.SOURCE) {
+        for(chkbx in editSourceCheckBoxes) {
+          add(chkbx);
+        }
+      }
+    }
+    return this;
+  }
+
+  /** Tears down the menu for edit. Does nothing if already removed. */
+  private inline function tearDownEdit() : EditorView {
+    if (editedHexType != null) {
+      if (editedHexType == HexType.PRISM) {
+
+      } else if (editedHexType == HexType.SOURCE) {
+        for(chkbx in editSourceCheckBoxes) {
+          remove(chkbx);
+        }
+      }
+      editedHexType = null;
+    }
+    return this;
   }
 
   /** Moves one step back in editing */
   public function goBack() {
     if (action == BoardAction.CREATE) {
       if (createButtonsAdded) {
-        dismissCreateButtons();
+        tearDownCreate();
+        highlightLocked = false;
+        return;
+      }
+    } else if (action == BoardAction.EDIT) {
+      if (highlightLocked) {
+        tearDownEdit();
         highlightLocked = false;
         return;
       }

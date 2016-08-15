@@ -295,9 +295,12 @@ class PlayState extends FlxState {
       function(){createAndAddHex(selectedPosition, HexType.SOURCE);},
       function(){createAndAddHex(selectedPosition, HexType.SINK);},
       function(){createAndAddHex(selectedPosition, HexType.ROTATOR);},
-      shouldShowRotatorCreateButton
-    ).withMouseValidHandler(function(){return !mouseOOB;})
-     .withDeleteHandler(function(){deleteHex(selectedPosition);});
+      shouldShowRotatorCreateButton)
+    .withMouseValidHandler(function(){return !mouseOOB;})
+    .withEditHandlers(
+      function(){return selectedPosition != null && boardModel.getAt(selectedPosition, true) != null;},
+      function(){return boardModel.getAt(selectedPosition).hexType;})
+    .withDeleteHandler(function(){deleteHex(selectedPosition);});
   }
 
   /** Pauses the game, opening the pause state. The substate is not persistant, it will be destroyed on close */
@@ -623,8 +626,10 @@ class PlayState extends FlxState {
       case HexType.ROTATOR: prepRotatorSprite(new RotatorSprite());
     });
 
-    editor.highlightLocked = false;
-    editor.dismissCreateButtons();
+    if (editor != null) {
+      editor.highlightLocked = false;
+      editor.tearDownCreate();
+    }
 
     viewNeedsSync = true;
   }
