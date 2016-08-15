@@ -1,5 +1,6 @@
 package controller;
 
+import view.EditorView.BoardAction;
 import input.InputSettings;
 import model.*;
 import view.*;
@@ -67,11 +68,21 @@ class PlayState extends FlxState {
   private var hexHighlight : FlxSprite;
   private var boardView : BoardView;
   private var hud : HUDView;
-  private var editor : EditorView;
   private var hasWon : Bool; //True after this person has won
   private var viewNeedsSync : Bool; //True when the model has changed, next update loop should update the view
   private var rotatingSprites : Array<RotatableHexSprite>; //All current rotating sprites
   private var currentRotator : RotatorSprite; //Rotator currently rotating hexes
+
+  /**
+   *
+   *
+   *  Level Editing Vars
+   *  (only used in Edit)
+   *
+   *
+   **/
+  private var editor : EditorView;
+  private var selectedPosition : Point;
 
   /**
    *
@@ -96,7 +107,7 @@ class PlayState extends FlxState {
   public override function create() : Void {
     super.create();
 
-    //Set fields
+    //Set fields (some default will be later overidden in the course of this method)
     rotatingSprites = [];
     viewNeedsSync = true;
     currentRotator = null;
@@ -105,6 +116,8 @@ class PlayState extends FlxState {
     boardView = null;
     hud = null;
     editor = null;
+    selectedPosition = Point.get(-1,-1);
+    hexHighlight = null;
 
     //Prep the board, depending on the game type
     switch(gameType) {
@@ -164,6 +177,32 @@ class PlayState extends FlxState {
     PrismSprite.initGeometry();
   }
 
+  /** Helper function for initializing PrismSprites */
+  private inline function prepPrismSprite(prismSprite : PrismSprite) : PrismSprite {
+    prismSprite.rotationStartListener = onPrismStartRotation;
+    prismSprite.rotationEndListener = onPrismEndRotation;
+    return prismSprite;
+  }
+
+  /** Helper function for initializing SourceSprites */
+  private inline function prepSourceSprite(sourceSprite : SourceSprite) : SourceSprite {
+    sourceSprite.colorSwitchListener = onSourceClick;
+    return sourceSprite;
+  }
+
+  /** Helper function for initializing SinkSprites */
+  private inline function prepSinkSprite(sinkSprite : SinkSprite) : SinkSprite {
+    return sinkSprite;
+  }
+
+  /** Helper function for initializing RotatorSprites */
+  private inline function prepRotatorSprite(rotatorSprite : RotatorSprite) : RotatorSprite {
+    rotatorSprite.rotationStartListener = onRotatorStartRotation;
+    rotatorSprite.rotationEndListener = onRotatorEndRotation;
+    rotatorSprite.rotationValidator = allowRotatorRotation;
+    return rotatorSprite;
+  }
+
   /** Reads this.source into memory. Also creates a boardView that matches the read model.
    **/
   private inline function prepBoardFromFile() {
@@ -189,25 +228,24 @@ class PlayState extends FlxState {
             }
             prismModel.orientation = orientation;
             prismSprite.addRotation(orientation);
-            prismSprite.rotationStartListener = onPrismStartRotation;
-            prismSprite.rotationEndListener = onPrismEndRotation;
+            prepPrismSprite(prismSprite);
             boardView.set(r,c,prismSprite);
           }
           else if (h.isSource()) {
             var sourceSprite = new SourceSprite();
             sourceSprite.litColor = h.asSource().getCurrentColor();
-            sourceSprite.colorSwitchListener = onSourceClick;
+            prepSourceSprite(sourceSprite);
             boardView.set(r,c,sourceSprite);
           }
           else if (h.isSink()) {
-            boardView.set(r,c,new SinkSprite());
+            var sinkSprite = new SinkSprite();
+            prepSinkSprite(sinkSprite);
+            boardView.set(r,c,sinkSprite);
           }
           else if (h.isRotator()){
             var rotatorSprite = new RotatorSprite();
             rotatorSprite.addRotation(h.orientation);
-            rotatorSprite.rotationStartListener = onRotatorStartRotation;
-            rotatorSprite.rotationEndListener = onRotatorEndRotation;
-            rotatorSprite.rotationValidator = allowRotatorRotation;
+            prepRotatorSprite(rotatorSprite);
             boardView.set(r,c,rotatorSprite);
           }
           else {
@@ -240,7 +278,12 @@ class PlayState extends FlxState {
     hud = new HUDView(gameType).withPauseHandler(pause)
                                .withLevelNameChangedHandler(setLevelName)
                                .withGoalChangedHandler(setGoal);
-    editor = new EditorView();
+    editor = new EditorView().withCreateHandlers(
+      function(){createAndAddHex(HexType.PRISM);},
+      function(){createAndAddHex(HexType.SOURCE);},
+      function(){createAndAddHex(HexType.SINK);},
+      function(){createAndAddHex(HexType.ROTATOR);}
+    );
   }
 
   /** Pauses the game, opening the pause state. The substate is not persistant, it will be destroyed on close */
@@ -359,12 +402,14 @@ class PlayState extends FlxState {
   override public function update(elapsed : Float) : Void {
     super.update(elapsed);
 
-    var focusedPt : Point = boardView.getPointFromGraphicPosition(FlxG.mouse.getPosition(FlxPoint.weak()));
-    var h = boardView.getAt(focusedPt,true);
-    hexHighlight.angle = h != null ? h.angle : 0;
-    var pt = boardView.getGraphicPoisitionFromPoint(focusedPt);
-    hexHighlight.setPosition(pt.x - hexHighlight.width/2, pt.y-hexHighlight.height/2);
-    pt.putWeak();
+    if (editor == null || ! editor.highlightLocked){
+      selectedPosition = boardView.getPointFromGraphicPosition(FlxG.mouse.getPosition(FlxPoint.weak()));
+      var h = boardView.getAt(selectedPosition,true);
+      hexHighlight.angle = h != null ? h.angle : 0;
+      var pt = boardView.getGraphicPoisitionFromPoint(selectedPosition);
+      hexHighlight.setPosition(pt.x - hexHighlight.width/2, pt.y-hexHighlight.height/2);
+      pt.putWeak();
+    }
 
     if(currentRotator != null) {
       for(sprite in currentRotator.getSprites()) {
@@ -472,6 +517,35 @@ class PlayState extends FlxState {
   private function setGoal(color : Color, goal : Int) : Void {
     boardModel.getScore().setGoal(color, goal);
     trace(color + " Goal updated");
+  }
+
+  /** Creates a new hex of the given type at the current selectedPosition.
+   *  Position remains selected and switches the editing mode to edit afterwards.
+   *  Does nothing if the current position isn't empty
+   **/
+  private function createAndAddHex(hexType : HexType) {
+    trace("Creating hex at " + selectedPosition + " of type " + hexType);
+    boardModel.ensureSize(selectedPosition.row+1, selectedPosition.col+1);
+    boardView.ensureSize(selectedPosition.row+1, selectedPosition.col+1);
+
+    if (boardModel.getAt(selectedPosition) != null) return;
+
+    boardModel.setAt(selectedPosition, switch(hexType) {
+      case HexType.PRISM: new Prism();
+      case HexType.SOURCE: new Source();
+      case HexType.SINK: new Sink();
+      case HexType.ROTATOR: new Rotator();
+    });
+
+    boardView.setAt(selectedPosition, switch(hexType){
+      case HexType.PRISM: prepPrismSprite(new PrismSprite());
+      case HexType.SOURCE: prepSourceSprite(new SourceSprite());
+      case HexType.SINK: prepSinkSprite(new SinkSprite());
+      case HexType.ROTATOR: prepRotatorSprite(new RotatorSprite());
+    });
+
+    editor.highlightLocked = false;
+    editor.selectAction(BoardAction.EDIT);
   }
 
   /**
