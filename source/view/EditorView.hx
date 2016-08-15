@@ -1,4 +1,5 @@
 package view;
+import view.EditorView.BoardAction;
 import flixel.math.FlxPoint;
 import flixel.ui.FlxButton;
 import flixel.addons.ui.FlxUIDropDownMenu;
@@ -24,8 +25,15 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   /** Function that returns whether the mouse is currently in a valid position on the board */
   private var isMouseValid : Void -> Bool;
 
+  /** Buttons added to create a new hex. */
   private var createButtons : Array<FlxButton>;
+  /** True if the create buttons are currently added and positioned on the screen */
   public var createButtonsAdded(default, null) : Bool;
+  /** True if one extra frame should be taken between adding the create buttons again */
+  private var createButtonsWaitFrame : Bool;
+
+  /** Function to call when the current action is delete */
+  private var deleteHandler : Void -> Void;
 
   public function new() {
     super();
@@ -41,16 +49,19 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
 
     highlightLocked = false;
     createButtonsAdded = false;
+    createButtonsWaitFrame = false;
     isMouseValid = null;
+
+    deleteHandler = null;
   }
 
   /** Event listener called when a new action is selected via mouse. Just passes control off to set_action */
-  private function onActionSelection(action : String) {
+  private inline function onActionSelection(action : String) {
     this.action = Type.createEnum(BoardAction, action.toUpperCase());
   }
 
   /** Programatically selects the current action from the drop down. Returns this */
-  public function set_action(action : BoardAction) : BoardAction {
+  public inline function set_action(action : BoardAction) : BoardAction {
     if (this.action != action) {
       actionSelector.selectedLabel = action.toNiceString();
       highlightLocked = false;
@@ -62,16 +73,17 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   }
 
   /** Dismisses the create buttons. Returns this */
-  public function dismissCreateButtons() : EditorView {
+  public inline function dismissCreateButtons() : EditorView {
     for (btn in createButtons) {
       remove(btn);
     }
     createButtonsAdded = false;
+    createButtonsWaitFrame = true;
     return this;
   }
 
   /** Sets the handlers for the four create buttons. Returns this */
-  public function withCreateHandlers(createPrism : Void -> Void, createSource : Void -> Void,
+  public inline function withCreateHandlers(createPrism : Void -> Void, createSource : Void -> Void,
                                      createSink : Void -> Void, createRotator : Void -> Void) : EditorView {
     if (createButtons != null) {
       for(btn in createButtons) {
@@ -84,15 +96,21 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   }
 
   /** Sets the mouseValid handler. Returns this. */
-  public function withMouseValidHandler(isMouseValid : Void -> Bool) : EditorView {
+  public inline function withMouseValidHandler(isMouseValid : Void -> Bool) : EditorView {
     this.isMouseValid = isMouseValid;
+    return this;
+  }
+
+  /** Sets the delete handler. Returns this. */
+  public inline function withDeleteHandler(func : Void -> Void) : EditorView {
+    this.deleteHandler = func;
     return this;
   }
 
   public override function update(dt : Float) {
     super.update(dt);
 
-    if (FlxG.mouse.justReleased && action == BoardAction.CREATE && !createButtonsAdded && isMouseValid()) {
+    if (action == BoardAction.CREATE && FlxG.mouse.justReleased && !createButtonsWaitFrame && !createButtonsAdded && isMouseValid()) {
       highlightLocked = true;
       createButtonsAdded = true;
 
@@ -103,7 +121,11 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
         dy += btn.height;
         add(btn);
       }
+    } else if (action == BoardAction.DELETE && FlxG.mouse.pressed && deleteHandler != null && isMouseValid()) {
+      deleteHandler();
     }
+
+    createButtonsWaitFrame = false;
   }
 
   /** Moves one step back in editing */

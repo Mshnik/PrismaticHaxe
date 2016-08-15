@@ -291,11 +291,12 @@ class PlayState extends FlxState {
                                .withLevelNameChangedHandler(setLevelName)
                                .withGoalChangedHandler(setGoal);
     editor = new EditorView().withCreateHandlers(
-      function(){createAndAddHex(HexType.PRISM);},
-      function(){createAndAddHex(HexType.SOURCE);},
-      function(){createAndAddHex(HexType.SINK);},
-      function(){createAndAddHex(HexType.ROTATOR);}
-    ).withMouseValidHandler(function(){return !mouseOOB;});
+      function(){createAndAddHex(selectedPosition, HexType.PRISM);},
+      function(){createAndAddHex(selectedPosition, HexType.SOURCE);},
+      function(){createAndAddHex(selectedPosition, HexType.SINK);},
+      function(){createAndAddHex(selectedPosition, HexType.ROTATOR);}
+    ).withMouseValidHandler(function(){return !mouseOOB;})
+     .withDeleteHandler(function(){deleteHex(selectedPosition);});
   }
 
   /** Pauses the game, opening the pause state. The substate is not persistant, it will be destroyed on close */
@@ -570,42 +571,42 @@ class PlayState extends FlxState {
     trace(color + " Goal updated");
   }
 
-  /** Creates a new hex of the given type at the current selectedPosition.
+  /** Creates a new hex of the given type at the given position
    *  Position remains selected and switches the editing mode to edit afterwards.
    *  Does nothing if the current position isn't empty
    **/
-  private function createAndAddHex(hexType : HexType) {
-    trace("Creating hex at " + selectedPosition + " of type " + hexType);
-    while(selectedPosition.row < 0) {
+  private function createAndAddHex(position : Point, hexType : HexType) {
+    trace("Creating hex at " + position + " of type " + hexType);
+    while(position.row < 0) {
       boardModel.addRowTop();
       boardView.addRowTop();
 
       boardView.vertMargin -= BoardView.ROW_HEIGHT;
-      selectedPosition = selectedPosition.add(Point.DOWN);
+      position = position.add(Point.DOWN);
     }
-    while(selectedPosition.col < 0) {
+    while(position.col < 0) {
       //Add cols in multiples of two
       for(i in 0...2) {
         boardModel.addColLeft();
         boardView.addColLeft();
         boardView.horizMargin -= BoardView.COL_WIDTH;
-        selectedPosition = selectedPosition.add(Point.RIGHT);
+        position = position.add(Point.RIGHT);
       }
     }
 
-    boardModel.ensureSize(selectedPosition.row+1, selectedPosition.col+1);
-    boardView.ensureSize(selectedPosition.row+1, selectedPosition.col+1);
+    boardModel.ensureSize(position.row+1, position.col+1);
+    boardView.ensureSize(position.row+1, position.col+1);
 
-    if (boardModel.getAt(selectedPosition) != null) return;
+    if (boardModel.getAt(position) != null) return;
 
-    boardModel.setAt(selectedPosition, switch(hexType) {
+    boardModel.setAt(position, switch(hexType) {
       case HexType.PRISM: new Prism();
       case HexType.SOURCE: new Source();
       case HexType.SINK: new Sink();
       case HexType.ROTATOR: new Rotator();
     });
 
-    boardView.setAt(selectedPosition, switch(hexType){
+    boardView.setAt(position, switch(hexType){
       case HexType.PRISM: prepPrismSprite(new PrismSprite());
       case HexType.SOURCE: prepSourceSprite(new SourceSprite());
       case HexType.SINK: prepSinkSprite(new SinkSprite());
@@ -614,6 +615,20 @@ class PlayState extends FlxState {
 
     editor.highlightLocked = false;
     editor.dismissCreateButtons();
+
+    viewNeedsSync = true;
+  }
+
+  /** Deletes the hex at the given position, if any */
+  private function deleteHex(position : Point) : Void {
+    if (position == null){
+      return; //mouse is OOB, nothing to do
+    } else if (boardModel.getAt(position, true) != null){
+      boardModel.removeAt(position);
+      boardView.removeAt(position);
+      trace("Hex at " + position +" deleted");
+      viewNeedsSync = true;
+    }
   }
 
   /**
