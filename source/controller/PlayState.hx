@@ -300,6 +300,9 @@ class PlayState extends FlxState {
     .withEditHandlers(
       function(){return selectedPosition != null && boardModel.getAt(selectedPosition, true) != null;},
       function(){return boardModel.getAt(selectedPosition).hexType;})
+    .withSourceEditingHandler(
+      function(){return boardModel.getAt(selectedPosition).asSource().getAvailableColors();},
+      function(str : String, b : Bool){return setColorOnSource(selectedPosition, Type.createEnum(Color, str), b);})
     .withDeleteHandler(function(){deleteHex(selectedPosition);});
   }
 
@@ -634,8 +637,26 @@ class PlayState extends FlxState {
     viewNeedsSync = true;
   }
 
+  /** Sets the presence of the given color for the source at the given location */
+  private inline function setColorOnSource(position : Point, color : Color, present : Bool) : Void {
+    var sourceModel : Source = boardModel.getAt(position).asSource();
+    var sourceSprite : SourceSprite = boardView.getAt(position).asSourceSprite();
+
+    if (present) {
+      sourceModel.addColor(color);
+      sourceSprite.litColor = sourceModel.getCurrentColor();
+      trace("Added " + color + " to Source at " + position);
+    } else {
+      sourceModel.removeColor(color);
+      sourceSprite.litColor = sourceModel.getCurrentColor();
+      trace("Removed " + color + " from Source at " + position);
+    }
+
+    viewNeedsSync = true;
+  }
+
   /** Deletes the hex at the given position, if any */
-  private function deleteHex(position : Point) : Void {
+  private inline function deleteHex(position : Point) : Void {
     if (position == null){
       return; //mouse is OOB, nothing to do
     } else if (boardModel.getAt(position, true) != null){

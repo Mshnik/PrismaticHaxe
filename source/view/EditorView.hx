@@ -1,5 +1,6 @@
 package view;
 
+import common.Color;
 import common.ColorUtil;
 import common.HexType;
 import view.EditorView.BoardAction;
@@ -13,6 +14,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxSprite;
 
 using view.EditorView.BoardActionUtils;
+using common.CollectionExtender;
 
 class EditorView extends FlxTypedGroup<FlxSprite> {
 
@@ -44,8 +46,10 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   private var getEditedHexType : Void -> HexType;
   /** The current hex edit type. Kept after creation so teardown can work correctly */
   private var editedHexType : HexType;
+  /** Function that resets the checkboxes when starting to edit a source */
+  private var resetSourceCheckBoxes : Void -> Array<Color>;
   /** Check boxes for colors when editing sources */
-  private var editSourceCheckBoxes : Array<FlxUICheckBoxWithFullCallback>;
+  private var editSourceCheckBoxes : Map<Color,FlxUICheckBoxWithFullCallback>;
   /** Functions to call when each callback
 
   /** Function to call when the current action is delete */
@@ -71,7 +75,8 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
     canEdit = null;
     getEditedHexType = null;
     editedHexType = null;
-    editSourceCheckBoxes = [];
+    resetSourceCheckBoxes = null;
+    editSourceCheckBoxes = new Map<Color, FlxUICheckBoxWithFullCallback>();
     var sourceCheckboxX = actionSelector.x + actionSelector.width + 20;
     for (c in ColorUtil.realColors()) {
       var checkBox = new FlxUICheckBoxWithFullCallback(0,0,null,null,ColorUtil.toString(c));
@@ -88,7 +93,7 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
       checkBox.y = actionSelector.y;
       checkBox.x = sourceCheckboxX;
       sourceCheckboxX += checkBox.width + 20;
-      editSourceCheckBoxes.push(checkBox);
+      editSourceCheckBoxes[c] = checkBox;
     }
 
     deleteHandler = null;
@@ -142,8 +147,9 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   }
 
   /** Sets the handlers for source editing. Returns this. */
-  public inline function withSourceEditingHandler(checkboxFunc : String -> Bool -> Void) : EditorView {
-    for(chkbx in editSourceCheckBoxes) {
+  public inline function withSourceEditingHandler(resetFunc : Void -> Array<Color>, checkboxFunc : String -> Bool -> Void) : EditorView {
+    this.resetSourceCheckBoxes = resetFunc;
+    for(chkbx in editSourceCheckBoxes.iterator()) {
       chkbx.fullCallback = checkboxFunc;
     }
     return this;
@@ -206,8 +212,10 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
       if (newHexType == HexType.PRISM) {
 
       } else if (newHexType == HexType.SOURCE) {
-        for(chkbx in editSourceCheckBoxes) {
-          add(chkbx);
+        var arr : Array<Color> = resetSourceCheckBoxes();
+        for(color in editSourceCheckBoxes.keys()) {
+          add(editSourceCheckBoxes[color]);
+          editSourceCheckBoxes[color].checked = arr.contains(color);
         }
       }
     }
