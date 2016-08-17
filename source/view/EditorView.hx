@@ -1,5 +1,6 @@
 package view;
 
+import common.Point;
 import controller.InputController;
 import common.Color;
 import common.ColorUtil;
@@ -54,10 +55,19 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   private var getEditedHexType : Void -> HexType;
   /** The current hex edit type. Kept after creation so teardown can work correctly */
   private var editedHexType : HexType;
+
   /** Function that resets the checkboxes when starting to edit a source */
   private var resetSourceCheckBoxes : Void -> Array<Color>;
   /** Check boxes for colors when editing sources */
   private var editSourceCheckBoxes : Map<Color,FlxUICheckBoxWithFullCallback>;
+
+  /** Function that resets the prism editing tools when starting to edit a prism */
+  private var resetPrismSelectorAndSample : Void -> Map<Point, Color>;
+  /** Selector for color for putting connectors on a prism. */
+  private var editPrismColorSelector : FlxUIDropDownMenu;
+  /** The current color for editing prisms */
+  public var editPrismColor(default, set) : Color;
+
   /** Function to call when the current action is delete */
   private var deleteHandler : Void -> Void;
 
@@ -102,6 +112,11 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
       editSourceCheckBoxes[c] = checkBox;
     }
 
+    resetPrismSelectorAndSample = null;
+    editPrismColorSelector = new FlxUIDropDownMenu(0,0,FlxUIDropDownMenu.makeStrIdLabelArray(Type.allEnums(Color).map(ColorUtil.toString)), onPrismColorSelection);
+    editPrismColorSelector.x = MARGIN;
+    editPrismColorSelector.y = FlxG.height - (editPrismColorSelector.header.height + MARGIN);
+    editPrismColorSelector.dropDirection = FlxUIDropDownMenuDropDirection.Up;
     deleteHandler = null;
 
     add(background);
@@ -184,7 +199,7 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
       deleteHandler();
     }
 
-    if (action == BoardAction.EDIT && highlightLocked) {
+    if (action == BoardAction.EDIT && editedHexType == HexType.SOURCE) {
       if (InputController.CHECK_ONE()) editSourceCheckBoxes[Color.GREEN].toggle();
       if (InputController.CHECK_TWO()) editSourceCheckBoxes[Color.BLUE].toggle();
       if (InputController.CHECK_THREE()) editSourceCheckBoxes[Color.YELLOW].toggle();
@@ -236,24 +251,24 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   private inline function setUpEdit() : EditorView {
     var newHexType : HexType = getEditedHexType();
     if (newHexType != editedHexType) {
-      remove(actionSelector,true);
       tearDownEdit();
       editedHexType = newHexType;
       if (newHexType == HexType.PRISM) {
-
+        add(editPrismColorSelector);
+        actionSelector.y -= (editPrismColorSelector.header.height + MARGIN);
+        background.height += (editPrismColorSelector.header.height + MARGIN);
       } else if (newHexType == HexType.SOURCE) {
         var arr : Array<Color> = resetSourceCheckBoxes();
         for(color in editSourceCheckBoxes.keys()) {
           add(editSourceCheckBoxes[color]);
           editSourceCheckBoxes[color].checked = arr.contains(color);
           editSourceCheckBoxes[color].y = actionSelector.y;
-          actionSelector.y -= editSourceCheckBoxes[color].height + MARGIN;
-          background.height += editSourceCheckBoxes[color].height + MARGIN;
+          actionSelector.y -= (editSourceCheckBoxes[color].height + MARGIN);
+          background.height += (editSourceCheckBoxes[color].height + MARGIN);
         }
       }
       background.makeGraphic(Std.int(background.width), Std.int(background.height), BACKGROUND_COLOR);
       background.y = FlxG.height - background.height;
-      add(actionSelector);
     }
     return this;
   }
@@ -262,7 +277,7 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   private inline function tearDownEdit() : EditorView {
     if (editedHexType != null) {
       if (editedHexType == HexType.PRISM) {
-
+        remove(editPrismColorSelector);
       } else if (editedHexType == HexType.SOURCE) {
         for(chkbx in editSourceCheckBoxes) {
           remove(chkbx);
@@ -273,6 +288,16 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
       resetBackgroundAndSelectorToBase();
     }
     return this;
+  }
+
+  /** Event called when the prism color selector changes selection. */
+  private inline function onPrismColorSelection(c : String) {
+    editPrismColor = Type.createEnum(Color, c);
+  }
+
+  /** Sets the current prism editing color */
+  private inline function set_editPrismColor(c : Color) : Color {
+    return this.editPrismColor = c;
   }
 
   /** Moves one step back in editing */
