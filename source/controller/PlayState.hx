@@ -1,11 +1,11 @@
 package controller;
 
-import view.EditorView.BoardAction;
 import model.*;
 import view.*;
 import common.*;
 import controller.util.LevelUtils;
 import controller.util.InputThrottler;
+import controller.util.BoardAction;
 
 import flixel.math.FlxPoint;
 import flixel.FlxG;
@@ -81,7 +81,7 @@ class PlayState extends FlxState {
    *
    *
    **/
-  private var editor : EditorView;
+  private var editor : EditorController;
   private var selectedPosition : Point;
 
   /**
@@ -290,7 +290,7 @@ class PlayState extends FlxState {
     hud = new HUDView(gameType).withPauseHandler(pause)
                                .withLevelNameChangedHandler(setLevelName)
                                .withGoalChangedHandler(setGoal);
-    editor = new EditorView().withCreateHandlers(
+    editor = new EditorController().withCreateHandlers(
       function(){createAndAddHex(selectedPosition, HexType.PRISM);},
       function(){createAndAddHex(selectedPosition, HexType.SOURCE);},
       function(){createAndAddHex(selectedPosition, HexType.SINK);},
@@ -427,27 +427,6 @@ class PlayState extends FlxState {
 
   override public function update(elapsed : Float) : Void {
     super.update(elapsed);
-
-    //Check for editing hotkeys
-    if (editor != null) {
-      //Check Back (Esc) for menu dismissal
-      if (InputController.CHECK_BACK()) {
-        editor.goBack();
-      }
-
-      //Check for action quickselect
-      if (InputController.CHECK_MODE_PLAY()) {
-        editor.action = BoardAction.PLAY;
-      } else if (InputController.CHECK_MODE_CREATE()) {
-        editor.action = BoardAction.CREATE;
-      } else if (InputController.CHECK_MODE_EDIT()) {
-        editor.action = BoardAction.EDIT;
-      } else if (InputController.CHECK_MODE_MOVE()) {
-        editor.action = BoardAction.MOVE;
-      } else if (InputController.CHECK_MODE_DELETE()) {
-        editor.action = BoardAction.DELETE;
-      }
-    }
 
     //Update Highlight
     if (editor == null || ! editor.highlightLocked){

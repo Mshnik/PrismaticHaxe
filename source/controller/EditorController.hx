@@ -1,11 +1,11 @@
-package view;
+package controller;
 
 import common.Point;
-import controller.InputController;
 import common.Color;
 import common.ColorUtil;
 import common.HexType;
-import view.EditorView.BoardAction;
+import controller.util.BoardAction;
+import view.FlxUICheckBoxWithFullCallback;
 
 import flixel.math.FlxPoint;
 import flixel.addons.ui.FlxUIDropDownMenu;
@@ -15,10 +15,10 @@ import flixel.FlxG;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxSprite;
 
-using view.EditorView.BoardActionUtils;
+using controller.util.BoardAction.BoardActionUtils;
 using common.CollectionExtender;
 
-class EditorView extends FlxTypedGroup<FlxSprite> {
+class EditorController extends FlxTypedGroup<FlxSprite> {
 
   private static inline var MARGIN : Int = 10;
 
@@ -146,7 +146,7 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   /** Sets the handlers for the four create buttons. Returns this */
   public inline function withCreateHandlers(createPrism : Void -> Void, createSource : Void -> Void,
                                      createSink : Void -> Void, createRotator : Void -> Void,
-                                     shouldShowRotatorButton : Void -> Bool) : EditorView {
+                                     shouldShowRotatorButton : Void -> Bool) : EditorController {
     if (createButtons != null) {
       for(btn in createButtons) {
         remove(btn);
@@ -159,20 +159,20 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   }
 
   /** Sets the mouseValid handler. Returns this. */
-  public inline function withMouseValidHandler(isMouseValid : Void -> Bool) : EditorView {
+  public inline function withMouseValidHandler(isMouseValid : Void -> Bool) : EditorController {
     this.isMouseValid = isMouseValid;
     return this;
   }
 
   /** Sets the edit handlers. Returns this. */
-  public inline function withEditHandlers(validator : Void -> Bool, getEditingType : Void -> HexType) : EditorView {
+  public inline function withEditHandlers(validator : Void -> Bool, getEditingType : Void -> HexType) : EditorController {
     this.canEdit = validator;
     this.getEditedHexType = getEditingType;
     return this;
   }
 
   /** Sets the handlers for source editing. Returns this. */
-  public inline function withSourceEditingHandler(resetFunc : Void -> Array<Color>, checkboxFunc : String -> Bool -> Void) : EditorView {
+  public inline function withSourceEditingHandler(resetFunc : Void -> Array<Color>, checkboxFunc : String -> Bool -> Void) : EditorController {
     this.resetSourceCheckBoxes = resetFunc;
     for(chkbx in editSourceCheckBoxes.iterator()) {
       chkbx.fullCallback = checkboxFunc;
@@ -181,7 +181,7 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   }
 
   /** Sets the delete handler. Returns this. */
-  public inline function withDeleteHandler(func : Void -> Void) : EditorView {
+  public inline function withDeleteHandler(func : Void -> Void) : EditorController {
     this.deleteHandler = func;
     return this;
   }
@@ -189,6 +189,33 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   public override function update(dt : Float) {
     super.update(dt);
 
+    //Check Back (Esc) for menu dismissal
+    if (InputController.CHECK_BACK()) {
+      goBack();
+    }
+
+    //Check for action quickselect
+    if (InputController.CHECK_MODE_PLAY()) {
+      action = BoardAction.PLAY;
+    } else if (InputController.CHECK_MODE_CREATE()) {
+      action = BoardAction.CREATE;
+    } else if (InputController.CHECK_MODE_EDIT()) {
+      action = BoardAction.EDIT;
+    } else if (InputController.CHECK_MODE_MOVE()) {
+      action = BoardAction.MOVE;
+    } else if (InputController.CHECK_MODE_DELETE()) {
+      action = BoardAction.DELETE;
+    }
+
+    //Check quickselect for edit menu
+    if (action == BoardAction.EDIT && editedHexType == HexType.SOURCE) {
+      if (InputController.CHECK_ONE()) editSourceCheckBoxes[Color.GREEN].toggle();
+      if (InputController.CHECK_TWO()) editSourceCheckBoxes[Color.BLUE].toggle();
+      if (InputController.CHECK_THREE()) editSourceCheckBoxes[Color.YELLOW].toggle();
+      if (InputController.CHECK_FOUR()) editSourceCheckBoxes[Color.RED].toggle();
+    }
+
+    //Check state changes to update menu
     if (action == BoardAction.CREATE && FlxG.mouse.justReleased && !createButtonsWaitFrame && !createButtonsAdded && isMouseValid()) {
       highlightLocked = true;
       setUpCreate();
@@ -197,13 +224,6 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
       setUpEdit();
     } else if (action == BoardAction.DELETE && FlxG.mouse.pressed && deleteHandler != null && isMouseValid()) {
       deleteHandler();
-    }
-
-    if (action == BoardAction.EDIT && editedHexType == HexType.SOURCE) {
-      if (InputController.CHECK_ONE()) editSourceCheckBoxes[Color.GREEN].toggle();
-      if (InputController.CHECK_TWO()) editSourceCheckBoxes[Color.BLUE].toggle();
-      if (InputController.CHECK_THREE()) editSourceCheckBoxes[Color.YELLOW].toggle();
-      if (InputController.CHECK_FOUR()) editSourceCheckBoxes[Color.RED].toggle();
     }
 
     createButtonsWaitFrame = false;
@@ -221,7 +241,7 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   }
 
   /** Sets up buttons for create */
-  private inline function setUpCreate() : EditorView {
+  private inline function setUpCreate() : EditorController {
     var dy = createButtons[0].height * 1.5;
     for(btn in createButtons) {
       btn.x = FlxG.mouse.x - btn.width/2;
@@ -236,7 +256,7 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   }
 
   /** Dismisses the create buttons. Returns this */
-  public inline function tearDownCreate() : EditorView {
+  public inline function tearDownCreate() : EditorController {
     if (createButtonsAdded) {
       for (btn in createButtons) {
         remove(btn);
@@ -248,7 +268,7 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   }
 
   /** Sets up the menu for edit. First tears down if the new edited hex type is different than the old */
-  private inline function setUpEdit() : EditorView {
+  private inline function setUpEdit() : EditorController {
     var newHexType : HexType = getEditedHexType();
     if (newHexType != editedHexType) {
       tearDownEdit();
@@ -274,7 +294,7 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   }
 
   /** Tears down the menu for edit. Does nothing if already removed. */
-  private inline function tearDownEdit() : EditorView {
+  private inline function tearDownEdit() : EditorController {
     if (editedHexType != null) {
       if (editedHexType == HexType.PRISM) {
         remove(editPrismColorSelector);
@@ -326,21 +346,42 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
     pt.put();
     return x;
   }
-}
 
-enum BoardAction {
-  PLAY;
-  EDIT;
-  CREATE;
-  DELETE;
-  MOVE;
-}
+  public override function destroy() {
+    //Remove all optional stuff and destroy it here to make sure nothing is missed
+    for(btn in createButtons) {
+      remove(btn);
+      btn.destroy();
+    }
+    createButtons = null;
+    createButtonsAdded = false;
+    for(chkbx in editSourceCheckBoxes.iterator()) {
+      remove(chkbx);
+      chkbx.destroy();
+    }
+    editSourceCheckBoxes = null;
+    remove(editPrismColorSelector);
+    editPrismColorSelector.destroy();
+    editPrismColorSelector = null;
 
-class BoardActionUtils {
+    super.destroy();
 
-  public static inline function toNiceString(action : BoardAction) : String {
-    var str = Std.string(action);
-    return str.charAt(0) + str.substring(1, str.length).toLowerCase();
+    background = null;
+    actionSelector = null;
+
+    //Put and nullify points
+    backgroundBaseSize.put();
+    backgroundBaseSize = null;
+    actionSelectorBasePosition.put();
+    actionSelectorBasePosition = null;
+
+    //Nullify functional references
+    isMouseValid = null;
+    shouldShowRotatorButton = null;
+    canEdit = null;
+    getEditedHexType = null;
+    resetSourceCheckBoxes = null;
+    resetPrismSelectorAndSample = null;
+    deleteHandler = null;
   }
-
 }
