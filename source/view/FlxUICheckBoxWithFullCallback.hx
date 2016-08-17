@@ -1,4 +1,5 @@
 package view;
+import flixel.addons.ui.FlxUI;
 import flixel.addons.ui.FlxUICheckBox;
 
 class FlxUICheckBoxWithFullCallback extends FlxUICheckBox {
@@ -13,6 +14,16 @@ class FlxUICheckBoxWithFullCallback extends FlxUICheckBox {
   private inline function callbackExt() {
     if (fullCallback != null) {
       fullCallback(text, checked);
+    }
+  }
+
+  public function toggle() {
+    checked = !checked;
+    if (callback != null) {
+      callback();
+    }
+    if (broadcastToFlxUI) {
+      FlxUI.event(FlxUICheckBox.CLICK_EVENT, this, checked, params);
     }
   }
 }

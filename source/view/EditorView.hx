@@ -1,5 +1,6 @@
 package view;
 
+import controller.InputController;
 import common.Color;
 import common.ColorUtil;
 import common.HexType;
@@ -182,6 +183,14 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
     } else if (action == BoardAction.DELETE && FlxG.mouse.pressed && deleteHandler != null && isMouseValid()) {
       deleteHandler();
     }
+
+    if (action == BoardAction.EDIT && highlightLocked) {
+      if (InputController.CHECK_ONE()) editSourceCheckBoxes[Color.GREEN].toggle();
+      if (InputController.CHECK_TWO()) editSourceCheckBoxes[Color.BLUE].toggle();
+      if (InputController.CHECK_THREE()) editSourceCheckBoxes[Color.YELLOW].toggle();
+      if (InputController.CHECK_FOUR()) editSourceCheckBoxes[Color.RED].toggle();
+    }
+
     createButtonsWaitFrame = false;
   }
 

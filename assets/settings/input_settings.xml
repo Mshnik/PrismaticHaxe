@@ -6,6 +6,11 @@
         <UP code="38"/>
         <DOWN code="40"/>
 
+        <ONE code="49"/>
+        <TWO code="50"/>
+        <THREE code="51"/>
+        <FOUR code="52"/>
+
         <!--Level Editing Keys-->
         <MODE_PLAY code="80"/>
         <MODE_CREATE code="67"/>

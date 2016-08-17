@@ -28,6 +28,11 @@ class InputController {
     UP = getCodeForKey(keys, "UP");
     DOWN = getCodeForKey(keys, "DOWN");
 
+    ONE = getCodeForKey(keys, "ONE");
+    TWO = getCodeForKey(keys, "TWO");
+    THREE = getCodeForKey(keys, "THREE");
+    FOUR = getCodeForKey(keys, "FOUR");
+
     MODE_PLAY = getCodeForKey(keys, "MODE_PLAY");
     MODE_CREATE = getCodeForKey(keys, "MODE_CREATE");
     MODE_EDIT = getCodeForKey(keys, "MODE_EDIT");
@@ -41,6 +46,12 @@ class InputController {
   public static var RIGHT : Int;
   public static var UP : Int;
   public static var DOWN : Int;
+
+  public static var ONE : Int;
+  public static var TWO : Int;
+  public static var THREE : Int;
+  public static var FOUR : Int;
+
 
   //Keys only used in Editing
   public static var MODE_PLAY : Int;
@@ -67,6 +78,19 @@ class InputController {
   }
   public static inline function CHECK_UP() : Bool {
     return check(UP);
+  }
+
+  public static inline function CHECK_ONE() : Bool {
+    return check(ONE);
+  }
+  public static inline function CHECK_TWO() : Bool {
+    return check(TWO);
+  }
+  public static inline function CHECK_THREE() : Bool {
+    return check(THREE);
+  }
+  public static inline function CHECK_FOUR() : Bool {
+    return check(FOUR);
   }
 
   public static inline function CHECK_MODE_PLAY() : Bool {
