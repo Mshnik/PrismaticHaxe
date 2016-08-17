@@ -18,13 +18,20 @@ using common.CollectionExtender;
 
 class EditorView extends FlxTypedGroup<FlxSprite> {
 
-  /** The Height of EditorViews, extending upwards from the bottom of the window */
-  private static var HEIGHT : Int = 50;
+  private static inline var MARGIN : Int = 10;
+
+  private static inline var BACKGROUND_COLOR : FlxColor =  0x99000000;
+  /** The background image. Also used to check for mouse presence */
+  private var background : FlxSprite;
+  /** Background size when there are no other items in menu */
+  private var backgroundBaseSize :FlxPoint;
 
   /** The action selector */
   private var actionSelector : FlxUIDropDownMenu;
   /** The currently selected action by the action selector */
   public var action(default, set) : BoardAction;
+  /** The action selector's position when there aren't any other items in menu */
+  private var actionSelectorBasePosition : FlxPoint;
 
   /** True if the highlight should stop moving with the mouse (when a hex is actively being edited) */
   public var highlightLocked(default, default) : Bool;
@@ -50,22 +57,23 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   private var resetSourceCheckBoxes : Void -> Array<Color>;
   /** Check boxes for colors when editing sources */
   private var editSourceCheckBoxes : Map<Color,FlxUICheckBoxWithFullCallback>;
-  /** Functions to call when each callback
-
   /** Function to call when the current action is delete */
   private var deleteHandler : Void -> Void;
 
   public function new() {
     super();
 
-    var y : Int = FlxG.height - HEIGHT;
-
-    var bg = new FlxSprite(0, y).makeGraphic(FlxG.width, HEIGHT, FlxColor.BLACK);
-    add(bg);
-
-    actionSelector = new FlxUIDropDownMenu(0,y,FlxUIDropDownMenu.makeStrIdLabelArray(["Play","Edit","Create","Delete","Move"]), onActionSelection);
-    add(actionSelector);
+    actionSelector = new FlxUIDropDownMenu(0,0,FlxUIDropDownMenu.makeStrIdLabelArray(["Play","Edit","Create","Delete","Move"]), onActionSelection);
+    actionSelector.x = MARGIN;
+    actionSelector.y = FlxG.height - (actionSelector.header.height + MARGIN);
+    actionSelectorBasePosition = FlxPoint.get(actionSelector.x, actionSelector.y);
+    actionSelector.dropDirection = FlxUIDropDownMenuDropDirection.Up;
     action = BoardAction.PLAY;
+
+    background = new FlxSprite(0, 0)
+                  .makeGraphic(Std.int(actionSelector.width + MARGIN * 2), Std.int(actionSelector.header.height + MARGIN*2), BACKGROUND_COLOR);
+    background.y = FlxG.height - background.height;
+    backgroundBaseSize = FlxPoint.get(background.width, background.height);
 
     highlightLocked = false;
     createButtonsAdded = false;
@@ -77,7 +85,6 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
     editedHexType = null;
     resetSourceCheckBoxes = null;
     editSourceCheckBoxes = new Map<Color, FlxUICheckBoxWithFullCallback>();
-    var sourceCheckboxX = actionSelector.x + actionSelector.width + 20;
     for (c in ColorUtil.realColors()) {
       var checkBox = new FlxUICheckBoxWithFullCallback(0,0,null,null,ColorUtil.toString(c));
       checkBox.text = ColorUtil.toString(c);
@@ -90,13 +97,14 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
       checkBox.button.down_toggle_color = checkBox.color;
       checkBox.button.over_toggle_color = checkBox.color;
 
-      checkBox.y = actionSelector.y;
-      checkBox.x = sourceCheckboxX;
-      sourceCheckboxX += checkBox.width + 20;
+      checkBox.x = MARGIN;
       editSourceCheckBoxes[c] = checkBox;
     }
 
     deleteHandler = null;
+
+    add(background);
+    add(actionSelector);
   }
 
   /** Event listener called when a new action is selected via mouse. Just passes control off to set_action */
@@ -111,7 +119,8 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
       highlightLocked = false;
       if (action != BoardAction.CREATE) {
         tearDownCreate();
-      } else if (action != BoardAction.EDIT) {
+      }
+      if (action != BoardAction.EDIT) {
         tearDownEdit();
       }
     }
@@ -176,6 +185,17 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
     createButtonsWaitFrame = false;
   }
 
+  /** Resets the background image and action selector to their base sizes and positions.
+   * Should be called when transitioning out of a mode with a fuller menu
+   **/
+  private inline function resetBackgroundAndSelectorToBase() {
+    actionSelector.x = actionSelectorBasePosition.x;
+    actionSelector.y = actionSelectorBasePosition.y;
+    background.width = backgroundBaseSize.x;
+    background.height = backgroundBaseSize.y;
+    background.y = FlxG.height - background.height;
+  }
+
   /** Sets up buttons for create */
   private inline function setUpCreate() : EditorView {
     var dy = createButtons[0].height * 1.5;
@@ -207,6 +227,7 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
   private inline function setUpEdit() : EditorView {
     var newHexType : HexType = getEditedHexType();
     if (newHexType != editedHexType) {
+      remove(actionSelector,true);
       tearDownEdit();
       editedHexType = newHexType;
       if (newHexType == HexType.PRISM) {
@@ -216,8 +237,14 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
         for(color in editSourceCheckBoxes.keys()) {
           add(editSourceCheckBoxes[color]);
           editSourceCheckBoxes[color].checked = arr.contains(color);
+          editSourceCheckBoxes[color].y = actionSelector.y;
+          actionSelector.y -= editSourceCheckBoxes[color].height + MARGIN;
+          background.height += editSourceCheckBoxes[color].height + MARGIN;
         }
       }
+      background.makeGraphic(Std.int(background.width), Std.int(background.height), BACKGROUND_COLOR);
+      background.y = FlxG.height - background.height;
+      add(actionSelector);
     }
     return this;
   }
@@ -233,6 +260,8 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
         }
       }
       editedHexType = null;
+
+      resetBackgroundAndSelectorToBase();
     }
     return this;
   }
@@ -258,8 +287,8 @@ class EditorView extends FlxTypedGroup<FlxSprite> {
 
   /** Returns true if the mouse is currently hovering over a part of this */
   public inline function mousePresent() : Bool {
-    var pt = FlxPoint.get();
-    var x = FlxG.mouse.y > FlxG.height - HEIGHT || actionSelector.overlapsPoint(FlxG.mouse.getPosition(pt));
+    var pt = FlxG.mouse.getPosition();
+    var x = background.overlapsPoint(pt) || actionSelector.overlapsPoint(pt);
     pt.put();
     return x;
   }

@@ -50,5 +50,16 @@
         </SOURCES>
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library name="haxelib|flixel-ui">
+        <CLASSES>
+          <root url="/usr/local/lib/haxe/lib/flixel-ui/2,1,0/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="/usr/local/lib/haxe/lib/flixel-ui/2,1,0/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>
