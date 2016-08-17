@@ -42,6 +42,8 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
 
   /** Buttons added to create a new hex. */
   private var createButtons : Array<FlxButton>;
+  /** Action handlers for the create buttons */
+  private var createHandlers : Array<Void -> Void>;
   /** Function to call to check whether to display the rotator button */
   private var shouldShowRotatorButton : Void -> Bool;
   /** True if the create buttons are currently added and positioned on the screen */
@@ -152,6 +154,7 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
         remove(btn);
       }
     }
+    createHandlers = [createPrism, createSource, createSink, createRotator];
     createButtons = [new FlxButton(0,0,"Create Prism",createPrism), new FlxButton(0,0,"Create Source",createSource),
                      new FlxButton(0,0,"Create Sink",createSink), new FlxButton(0,0,"Create Rotator",createRotator)];
     this.shouldShowRotatorButton = shouldShowRotatorButton;
@@ -205,6 +208,14 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
       action = BoardAction.MOVE;
     } else if (InputController.CHECK_MODE_DELETE()) {
       action = BoardAction.DELETE;
+    }
+
+    //Check quickselect for create menu
+    if (action == BoardAction.CREATE && highlightLocked) {
+      if (InputController.CHECK_ONE()) createHandlers[0]();
+      if (InputController.CHECK_TWO()) createHandlers[1]();
+      if (InputController.CHECK_THREE()) createHandlers[2]();
+      if (InputController.CHECK_FOUR() && shouldShowRotatorButton()) createHandlers[3]();
     }
 
     //Check quickselect for edit menu
@@ -376,6 +387,7 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
     actionSelectorBasePosition = null;
 
     //Nullify functional references
+    createHandlers = null;
     isMouseValid = null;
     shouldShowRotatorButton = null;
     canEdit = null;
