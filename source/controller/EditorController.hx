@@ -198,7 +198,7 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
     createHandlers = [function(){createButtonsWaitFrame = true; createPrism();},
                       function(){createButtonsWaitFrame = true; createSource();},
                       function(){createButtonsWaitFrame = true; createSink();},
-                      function(){createButtonsWaitFrame = true; createPrism();}];
+                      function(){createButtonsWaitFrame = true; createRotator();}];
     createButtons = [new FlxButton(0,0,"Create Prism",createHandlers[0]), new FlxButton(0,0,"Create Source",createHandlers[1]),
                      new FlxButton(0,0,"Create Sink",createHandlers[2]), new FlxButton(0,0,"Create Rotator",createHandlers[3])];
     this.shouldShowRotatorButton = shouldShowRotatorButton;
