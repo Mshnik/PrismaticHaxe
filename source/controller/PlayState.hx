@@ -300,9 +300,10 @@ class PlayState extends FlxState {
     .withEditHandlers(
       function(){return selectedPosition != null && boardModel.getAt(selectedPosition, true) != null;},
       function(){return boardModel.getAt(selectedPosition).hexType;})
-    .withSourceEditingHandler(
+    .withSourceEditingHandlers(
       function(){return boardModel.getAt(selectedPosition).asSource().getAvailableColors();},
       function(str : String, b : Bool){return setColorOnSource(selectedPosition, Type.createEnum(Color, str), b);})
+    .withPrismEditingHandler(function(from : Int, to : Int, color : Color){setConnectorOnPrism(selectedPosition, from, to , color);})
     .withDeleteHandler(function(){deleteHex(selectedPosition);});
   }
 
@@ -629,6 +630,24 @@ class PlayState extends FlxState {
       sourceModel.removeColor(color);
       sourceSprite.litColor = sourceModel.getCurrentColor();
       trace("Removed " + color + " from Source at " + position);
+    }
+
+    viewNeedsSync = true;
+  }
+
+  /** Sets the connector (and its inverse) on the prism at the given location */
+  private inline function setConnectorOnPrism(position : Point, from : Int, to : Int, color : Color) : Void {
+    var prismModel : Prism = boardModel.getAt(position).asPrism();
+    var prismSprite : PrismSprite = boardView.getAt(position).asPrismSprite();
+
+    if (color != null && color != Color.NONE) {
+      prismModel.addConnector(from, to, color);
+      prismModel.addConnector(to, from, color);
+      prismSprite.addConnection(color, to, from, true);
+    } else {
+      prismModel.removeConnector(from,to);
+      prismModel.removeConnector(to,from);
+      prismSprite.removeConnection(from, to, true);
     }
 
     viewNeedsSync = true;

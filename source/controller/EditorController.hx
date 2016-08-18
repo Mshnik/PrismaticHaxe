@@ -63,12 +63,22 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
   /** Check boxes for colors when editing sources */
   private var editSourceCheckBoxes : Map<Color,FlxUICheckBoxWithFullCallback>;
 
-  /** Function that resets the prism editing tools when starting to edit a prism */
-  private var resetPrismSelectorAndSample : Void -> Map<Point, Color>;
   /** Selector for color for putting connectors on a prism. */
   private var editPrismColorSelector : FlxUIDropDownMenu;
   /** The current color for editing prisms */
   public var editPrismColor(default, set) : Color;
+  /** Selector for from side for connectors on a prism. */
+  private var editPrismFromSideSelector : FlxUIDropDownMenu;
+  /** The current from side for editing prisms */
+  private var editPrismFromSide(default, null) : Int;
+  /** Selector for to side for connectors on a prism. */
+  private var editPrismToSideSelector : FlxUIDropDownMenu;
+  /** The current to side for editing prisms */
+  private var editPrismToSide(default, null) : Int;
+  /** Button that applies the current prism editing settings to the selected prism */
+  private var editPrismButton : FlxButton;
+  /** Function to call to edit the current prism */
+  private var editPrismFunc : Int -> Int -> Color -> Void;
 
   /** Function to call when the current action is delete */
   private var deleteHandler : Void -> Void;
@@ -76,26 +86,30 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
   public function new() {
     super();
 
+    //Init base contents of editor
     actionSelector = new FlxUIDropDownMenu(0,0,FlxUIDropDownMenu.makeStrIdLabelArray(["Play","Edit","Create","Delete","Move"]), onActionSelection);
     actionSelector.x = MARGIN;
     actionSelector.y = FlxG.height - (actionSelector.header.height + MARGIN);
     actionSelectorBasePosition = FlxPoint.get(actionSelector.x, actionSelector.y);
     actionSelector.dropDirection = FlxUIDropDownMenuDropDirection.Up;
     action = BoardAction.PLAY;
-
     background = new FlxSprite(0, 0)
                   .makeGraphic(Std.int(actionSelector.width + MARGIN * 2), Std.int(actionSelector.header.height + MARGIN*2), BACKGROUND_COLOR);
     background.y = FlxG.height - background.height;
     backgroundBaseSize = FlxPoint.get(background.width, background.height);
 
+    //Init Hex Creation
     highlightLocked = false;
     createButtonsAdded = false;
     createButtonsWaitFrame = false;
     isMouseValid = null;
-
     canEdit = null;
+
+    //Init Editing
     getEditedHexType = null;
     editedHexType = null;
+
+    //Init Source Editing
     resetSourceCheckBoxes = null;
     editSourceCheckBoxes = new Map<Color, FlxUICheckBoxWithFullCallback>();
     for (c in ColorUtil.realColors()) {
@@ -114,13 +128,30 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
       editSourceCheckBoxes[c] = checkBox;
     }
 
-    resetPrismSelectorAndSample = null;
-    editPrismColorSelector = new FlxUIDropDownMenu(0,0,FlxUIDropDownMenu.makeStrIdLabelArray(Type.allEnums(Color).map(ColorUtil.toString)), onPrismColorSelection);
-    editPrismColorSelector.x = MARGIN;
-    editPrismColorSelector.y = FlxG.height - (editPrismColorSelector.header.height + MARGIN);
+    //Init Prism Editing
+    var sidesArr : Array<String> = ["0","1","2","3","4","5"];
+    editPrismToSideSelector = new FlxUIDropDownMenu(MARGIN,0,FlxUIDropDownMenu.makeStrIdLabelArray(sidesArr), onPrismToSideSelection);
+    editPrismFromSideSelector = new FlxUIDropDownMenu(MARGIN,0,FlxUIDropDownMenu.makeStrIdLabelArray(sidesArr), onPrismFromSideSelection);
+    editPrismColorSelector = new FlxUIDropDownMenu(MARGIN,0,FlxUIDropDownMenu.makeStrIdLabelArray(Type.allEnums(Color).map(ColorUtil.toString)), onPrismColorSelection);
+    editPrismButton = new FlxButton(MARGIN,0,"Apply",editPrism);
+
+    editPrismButton.y = FlxG.height - (editPrismButton.height + MARGIN);
+    editPrismToSideSelector.y = editPrismButton.y - (editPrismColorSelector.header.height + MARGIN);
+    editPrismFromSideSelector.y = editPrismToSideSelector.y - (editPrismColorSelector.header.height + MARGIN);
+    editPrismColorSelector.y = editPrismFromSideSelector.y - (editPrismColorSelector.header.height + MARGIN);
+
+    editPrismToSideSelector.dropDirection = FlxUIDropDownMenuDropDirection.Up;
+    editPrismFromSideSelector.dropDirection = FlxUIDropDownMenuDropDirection.Up;
     editPrismColorSelector.dropDirection = FlxUIDropDownMenuDropDirection.Up;
+
+    editPrismFromSide = 0;
+    editPrismToSide = 0;
+    editPrismColor = Color.ANY;
+
+    //Init Other Functions
     deleteHandler = null;
 
+    //Add base contents
     add(background);
     add(actionSelector);
   }
@@ -175,11 +206,17 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
   }
 
   /** Sets the handlers for source editing. Returns this. */
-  public inline function withSourceEditingHandler(resetFunc : Void -> Array<Color>, checkboxFunc : String -> Bool -> Void) : EditorController {
+  public inline function withSourceEditingHandlers(resetFunc : Void -> Array<Color>, checkboxFunc : String -> Bool -> Void) : EditorController {
     this.resetSourceCheckBoxes = resetFunc;
     for(chkbx in editSourceCheckBoxes.iterator()) {
       chkbx.fullCallback = checkboxFunc;
     }
+    return this;
+  }
+
+  /** Sets the handlers for prism editing. Returns this. */
+  public inline function withPrismEditingHandler(editFunc : Int -> Int -> Color -> Void) : EditorController {
+    editPrismFunc = editFunc;
     return this;
   }
 
@@ -286,8 +323,12 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
       editedHexType = newHexType;
       if (newHexType == HexType.PRISM) {
         add(editPrismColorSelector);
-        actionSelector.y -= (editPrismColorSelector.header.height + MARGIN);
-        background.height += (editPrismColorSelector.header.height + MARGIN);
+        add(editPrismFromSideSelector);
+        add(editPrismToSideSelector);
+        add(editPrismButton);
+        actionSelector.y = editPrismColorSelector.y - (editPrismColorSelector.header.height + MARGIN);
+        background.height += (editPrismColorSelector.header.height + editPrismFromSideSelector.header.height
+                              +  editPrismToSideSelector.header.height + editPrismButton.height + 4*MARGIN);
       } else if (newHexType == HexType.SOURCE) {
         var arr : Array<Color> = resetSourceCheckBoxes();
         for(color in editSourceCheckBoxes.keys()) {
@@ -309,6 +350,9 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
     if (editedHexType != null) {
       if (editedHexType == HexType.PRISM) {
         remove(editPrismColorSelector);
+        remove(editPrismFromSideSelector);
+        remove(editPrismToSideSelector);
+        remove(editPrismButton);
       } else if (editedHexType == HexType.SOURCE) {
         for(chkbx in editSourceCheckBoxes) {
           remove(chkbx);
@@ -329,6 +373,23 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
   /** Sets the current prism editing color */
   private inline function set_editPrismColor(c : Color) : Color {
     return this.editPrismColor = c;
+  }
+
+  /** Event called when the prism from side selector changes selection. */
+  private inline function onPrismFromSideSelection(s : String) {
+    editPrismFromSide = Std.parseInt(s);
+  }
+
+  /** Event called when the prism to side selector changes selection. */
+  private inline function onPrismToSideSelection(s : String) {
+    editPrismToSide = Std.parseInt(s);
+  }
+
+  /** Helper for editing the currently selected prism, as a buttonable callback */
+  private inline function editPrism() {
+    if (editPrismFunc != null) {
+      editPrismFunc(editPrismFromSide, editPrismToSide, editPrismColor);
+    }
   }
 
   /** Moves one step back in editing */
@@ -366,14 +427,25 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
     }
     createButtons = null;
     createButtonsAdded = false;
+
     for(chkbx in editSourceCheckBoxes.iterator()) {
       remove(chkbx);
       chkbx.destroy();
     }
     editSourceCheckBoxes = null;
+
     remove(editPrismColorSelector);
     editPrismColorSelector.destroy();
     editPrismColorSelector = null;
+    remove(editPrismToSideSelector);
+    editPrismToSideSelector.destroy();
+    editPrismToSideSelector = null;
+    remove(editPrismFromSideSelector);
+    editPrismFromSideSelector.destroy();
+    editPrismFromSideSelector = null;
+    remove(editPrismButton);
+    editPrismButton.destroy();
+    editPrismButton = null;
 
     super.destroy();
 
@@ -393,7 +465,7 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
     canEdit = null;
     getEditedHexType = null;
     resetSourceCheckBoxes = null;
-    resetPrismSelectorAndSample = null;
+    editPrismFunc = null;
     deleteHandler = null;
   }
 }

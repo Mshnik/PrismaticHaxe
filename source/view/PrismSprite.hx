@@ -111,6 +111,8 @@ class PrismSprite extends RotatableHexSprite {
   }
 
   public function addConnection(color : Color, from : Int, to : Int, bidirectional : Bool = true) : PrismSprite {
+    from = correctForOrientation(from);
+    to = correctForOrientation(to);
     colorArr[from][to] = color;
     if (bidirectional) {
       colorArr[to][from] = color;
@@ -119,6 +121,20 @@ class PrismSprite extends RotatableHexSprite {
       hasConnector.remove(Point.get(to,from));
     }
     hasConnector.push(Point.get(from, to));
+    return this;
+  }
+
+  public function removeConnection(from : Int, to : Int, bidirectional : Bool = true) : PrismSprite {
+    from = correctForOrientation(from);
+    to = correctForOrientation(to);
+    colorArr[from][to] = Color.NONE;
+    if (bidirectional) {
+      colorArr[to][from] = Color.NONE;
+    }
+    hasConnector.remove(Point.get(from,to));
+    if (bidirectional) {
+      hasConnector.remove(Point.get(to,from));
+    }
     return this;
   }
 
