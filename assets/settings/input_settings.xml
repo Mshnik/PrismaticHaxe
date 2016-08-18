@@ -10,6 +10,10 @@
         <TWO code="50"/>
         <THREE code="51"/>
         <FOUR code="52"/>
+        <FIVE code="53"/>
+        <SIX code="54"/>
+
+        <ENTER code="13"/>
 
         <!--Level Editing Keys-->
         <MODE_PLAY code="80"/>
@@ -17,5 +21,7 @@
         <MODE_EDIT code="69"/>
         <MODE_MOVE code="77"/>
         <MODE_DELETE code="68"/>
+
+        <NEXT code="9"/>
     </keys>
 </settings>

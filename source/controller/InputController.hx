@@ -1,8 +1,10 @@
 package controller;
 
+import controller.InputController;
 import openfl.Assets;
 import haxe.xml.Fast;
 import flixel.FlxG;
+import flixel.input.keyboard.FlxKey;
 
 /** Container class for key and mouse bindings across the game. Can be modified mid game. */
 class InputController {
@@ -22,26 +24,19 @@ class InputController {
     var content = new Fast(Xml.parse(Assets.getText(AssetPaths.input_settings__xml)).firstElement());
 
     var keys : Fast = content.nodes.resolve(KEYS).first();
-    BACK = getCodeForKey(keys, "BACK");
-    LEFT = getCodeForKey(keys, "LEFT");
-    RIGHT = getCodeForKey(keys, "RIGHT");
-    UP = getCodeForKey(keys, "UP");
-    DOWN = getCodeForKey(keys, "DOWN");
 
-    ONE = getCodeForKey(keys, "ONE");
-    TWO = getCodeForKey(keys, "TWO");
-    THREE = getCodeForKey(keys, "THREE");
-    FOUR = getCodeForKey(keys, "FOUR");
-
-    MODE_PLAY = getCodeForKey(keys, "MODE_PLAY");
-    MODE_CREATE = getCodeForKey(keys, "MODE_CREATE");
-    MODE_EDIT = getCodeForKey(keys, "MODE_EDIT");
-    MODE_MOVE = getCodeForKey(keys, "MODE_MOVE");
-    MODE_DELETE = getCodeForKey(keys, "MODE_DELETE");
+    for (str in Type.getClassFields(InputController)) {
+      var field : Dynamic = Reflect.field(InputController, str);
+      if (! Reflect.isFunction(field) && 0 == field) {
+        Reflect.setField(InputController, str, getCodeForKey(keys, str));
+      }
+    }
   }
 
   //General purpose keys
   public static var BACK : Int;
+  public static var ENTER : Int;
+
   public static var LEFT : Int;
   public static var RIGHT : Int;
   public static var UP : Int;
@@ -51,7 +46,8 @@ class InputController {
   public static var TWO : Int;
   public static var THREE : Int;
   public static var FOUR : Int;
-
+  public static var FIVE : Int;
+  public static var SIX : Int;
 
   //Keys only used in Editing
   public static var MODE_PLAY : Int;
@@ -59,6 +55,7 @@ class InputController {
   public static var MODE_EDIT : Int;
   public static var MODE_MOVE : Int;
   public static var MODE_DELETE : Int;
+  public static var NEXT : Int;
 
   private static inline function check(k : Int) : Bool {
     return FlxG.keys.anyJustPressed([k]);
@@ -66,6 +63,9 @@ class InputController {
 
   public static inline function CHECK_BACK() : Bool {
     return check(BACK);
+  }
+  public static inline function CHECK_ENTER() : Bool {
+    return check(ENTER);
   }
   public static inline function CHECK_LEFT() : Bool {
     return check(LEFT);
@@ -92,6 +92,12 @@ class InputController {
   public static inline function CHECK_FOUR() : Bool {
     return check(FOUR);
   }
+  public static inline function CHECK_FIVE() : Bool {
+    return check(FIVE);
+  }
+  public static inline function CHECK_SIX() : Bool {
+    return check(SIX);
+  }
 
   public static inline function CHECK_MODE_PLAY() : Bool {
     return check(MODE_PLAY);
@@ -108,4 +114,9 @@ class InputController {
   public static inline function CHECK_MODE_DELETE() : Bool {
     return check(MODE_DELETE);
   }
+  public static inline function CHECK_NEXT() : Bool {
+    return check(NEXT);
+  }
+
+  public static var CHECK_NUMBERS : Array<Dynamic> = [CHECK_ONE, CHECK_TWO, CHECK_THREE, CHECK_FOUR, CHECK_FIVE, CHECK_SIX];
 }

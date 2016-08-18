@@ -79,6 +79,10 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
   private var editPrismButton : FlxButton;
   /** Function to call to edit the current prism */
   private var editPrismFunc : Int -> Int -> Color -> Void;
+  /** Array of selector references, to cycle between */
+  private var editPrismSelectorsArr : Array<FlxUIDropDownMenu>;
+  /** Current index in selectors for quick select */
+  private var editPrismQuickSelectIndex : Int;
 
   /** Function to call when the current action is delete */
   private var deleteHandler : Void -> Void;
@@ -143,6 +147,9 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
     editPrismToSideSelector.dropDirection = FlxUIDropDownMenuDropDirection.Up;
     editPrismFromSideSelector.dropDirection = FlxUIDropDownMenuDropDirection.Up;
     editPrismColorSelector.dropDirection = FlxUIDropDownMenuDropDirection.Up;
+
+    editPrismQuickSelectIndex = 0;
+    editPrismSelectorsArr = [editPrismColorSelector, editPrismFromSideSelector, editPrismToSideSelector];
 
     editPrismFromSide = 0;
     editPrismToSide = 0;
@@ -255,12 +262,26 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
       if (InputController.CHECK_FOUR() && shouldShowRotatorButton()) createHandlers[3]();
     }
 
-    //Check quickselect for edit menu
+    //Check quickselect for edit menu for sources
     if (action == BoardAction.EDIT && editedHexType == HexType.SOURCE) {
       if (InputController.CHECK_ONE()) editSourceCheckBoxes[Color.GREEN].toggle();
       if (InputController.CHECK_TWO()) editSourceCheckBoxes[Color.BLUE].toggle();
       if (InputController.CHECK_THREE()) editSourceCheckBoxes[Color.YELLOW].toggle();
       if (InputController.CHECK_FOUR()) editSourceCheckBoxes[Color.RED].toggle();
+    }
+
+    //Check quickselect for edit menu for prisms
+    if (action == BoardAction.EDIT && editedHexType == HexType.PRISM) {
+      if (InputController.CHECK_NEXT()) editPrismQuickSelectIndex = (editPrismQuickSelectIndex+1)%editPrismSelectorsArr.length;
+      if (InputController.CHECK_ENTER()) editPrism();
+      var arr = InputController.CHECK_NUMBERS;
+      for (i in 0...arr.length) {
+        if (arr[i]()){
+          var str = editPrismSelectorsArr[editPrismQuickSelectIndex].getBtnByIndex(i).getLabel().text;
+          editPrismSelectorsArr[editPrismQuickSelectIndex].selectedLabel = str;
+          editPrismSelectorsArr[editPrismQuickSelectIndex].callback(str);
+        }
+      }
     }
 
     //Check state changes to update menu
@@ -353,6 +374,7 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
         remove(editPrismFromSideSelector);
         remove(editPrismToSideSelector);
         remove(editPrismButton);
+        editPrismQuickSelectIndex = 0;
       } else if (editedHexType == HexType.SOURCE) {
         for(chkbx in editSourceCheckBoxes) {
           remove(chkbx);
@@ -446,6 +468,7 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
     remove(editPrismButton);
     editPrismButton.destroy();
     editPrismButton = null;
+    editPrismSelectorsArr = null;
 
     super.destroy();
 
