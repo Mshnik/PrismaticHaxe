@@ -66,6 +66,20 @@ class Prism extends Hex {
   }
 
   /**
+   * Removes a color connector connecting from to to.
+   * Removes from,to from list.
+   * Also resets lighting status.
+   * Returns a reference to this.
+   **/
+  public inline function removeConnector(from : Int, to : Int) : Prism {
+    var p = Point.get(correctForOrientation(from), correctForOrientation(to));
+    connections.remove(p.row, p.col);
+    connectionArr.remove(p);
+    resetLight();
+    return this;
+  }
+
+  /**
    * Adds light in on the targeted side of the given color.
    * Returns the array of sides of this Prism newly outputting color.
    * If the given side is already lit up a non-NONE color, does nothing (returns [])

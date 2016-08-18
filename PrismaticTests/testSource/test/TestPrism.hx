@@ -153,6 +153,32 @@ class TestPrism extends TestCase {
     assertFalse(p.getConnector(1,2).isLit());
   }
 
+  public function testRemoveConnector(){
+    var p : Prism = new Prism();
+    p.addConnector(0,1,Color.RED);
+    assertEquals(Color.RED, p.getConnector(0,1).baseColor);
+    assertTrue(p.getConnectionLocations().contains(Point.get(0,1)));
+
+    p.removeConnector(0,1);
+    assertEquals(null, p.getConnector(0,1));
+    assertFalse(p.getConnectionLocations().contains(Point.get(0,1)));
+
+    p.removeConnector(0,1);
+    assertEquals(null, p.getConnector(0,1));
+    assertFalse(p.getConnectionLocations().contains(Point.get(0,1)));
+
+    p.addConnector(0,1,Color.RED);
+    assertEquals(Color.RED, p.getConnector(0,1).baseColor);
+    assertTrue(p.getConnectionLocations().contains(Point.get(0,1)));
+
+    p.rotateClockwise();
+    p.removeConnector(1,2);
+    assertEquals(null, p.getConnector(0,1));
+    assertEquals(null, p.getConnector(1,2));
+    assertFalse(p.getConnectionLocations().contains(Point.get(0,1)));
+    assertFalse(p.getConnectionLocations().contains(Point.get(1,2)));
+  }
+
   /** Helper that checks if the lighting status of p matches the given arrays */
   private inline function checkLight(p : Prism, expectedLightIn : Array<Color>,
                                      expectedLightOut : Array<Color>, expectedLit : Array<Array<Color>>) {
