@@ -125,6 +125,9 @@ class PlayState extends FlxState {
 
   /** Create function called when this state is created by inner Flixel logic */
   public override function create() : Void {
+    //Make sure this happens first.... weird shit. Should work in main, but it doesn't...
+    prepForVisuals();
+
     super.create();
 
     resetFields(true);
@@ -178,8 +181,6 @@ class PlayState extends FlxState {
 //                                                   function() {shiftView(Point.UP);},
 //                                                   InputThrottler.SLOW_DECAY);
 
-    //Misc prep
-    prepForVisuals();
   }
 
   /** Helper function to make sure visuals are ready to go. Has to be here, not in Main. IDK why. */
@@ -296,7 +297,7 @@ class PlayState extends FlxState {
       function(){createAndAddHex(selectedPosition, HexType.SINK);},
       function(){createAndAddHex(selectedPosition, HexType.ROTATOR);},
       shouldShowRotatorCreateButton)
-    .withMouseValidHandler(function(){return !mouseOOB;})
+    .withMouseValidHandlers(function(){return !mouseOOB;}, function(){return boardView.getGraphicPoisitionFromPoint(selectedPosition);})
     .withEditHandlers(
       function(){return selectedPosition != null && boardModel.getAt(selectedPosition, true) != null;},
       function(){return boardModel.getAt(selectedPosition).hexType;})

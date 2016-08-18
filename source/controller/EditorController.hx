@@ -1,5 +1,6 @@
 package controller;
 
+import view.PrismSprite;
 import common.Point;
 import common.Color;
 import common.ColorUtil;
@@ -39,6 +40,8 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
   public var highlightLocked(default, default) : Bool;
   /** Function that returns whether the mouse is currently in a valid position on the board */
   private var isMouseValid : Void -> Bool;
+  /** Function that returns the current x/y of the selected location on the board. Results should be put() after use. */
+  private var getHighlightPosition : Void -> FlxPoint;
 
   /** Buttons added to create a new hex. */
   private var createButtons : Array<FlxButton>;
@@ -83,6 +86,10 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
   private var editPrismSelectorsArr : Array<FlxUIDropDownMenu>;
   /** Current index in selectors for quick select */
   private var editPrismQuickSelectIndex : Int;
+  /** True if the demo connector is added, false otherwise */
+  private var editPrismDemoAdded : Bool;
+  /** Demo of connector that would be added by hitting apply now. Updates with selector updates */
+  private var editPrismDemoConnector : FlxSprite;
 
   /** Function to call when the current action is delete */
   private var deleteHandler : Void -> Void;
@@ -151,9 +158,11 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
     editPrismQuickSelectIndex = 0;
     editPrismSelectorsArr = [editPrismColorSelector, editPrismFromSideSelector, editPrismToSideSelector];
 
+    editPrismDemoAdded = false;
     editPrismFromSide = 0;
     editPrismToSide = 0;
     editPrismColor = Color.ANY;
+    updatePrismDemoConnector(); //Fetches basic demo connector, so it's not null.
 
     //Init Other Functions
     deleteHandler = null;
@@ -197,8 +206,9 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
   }
 
   /** Sets the mouseValid handler. Returns this. */
-  public inline function withMouseValidHandler(isMouseValid : Void -> Bool) : EditorController {
+  public inline function withMouseValidHandlers(isMouseValid : Void -> Bool, getHighlightPosition : Void -> FlxPoint) : EditorController {
     this.isMouseValid = isMouseValid;
+    this.getHighlightPosition = getHighlightPosition;
     return this;
   }
 
@@ -351,6 +361,14 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
         add(editPrismFromSideSelector);
         add(editPrismToSideSelector);
         add(editPrismButton);
+
+        editPrismDemoAdded = true;
+        updatePrismDemoConnector();
+        var pt = getHighlightPosition();
+        editPrismDemoConnector.x = pt.x - editPrismDemoConnector.width/2;
+        editPrismDemoConnector.y = pt.y - editPrismDemoConnector.height/2;
+        pt.put();
+
         actionSelector.y = editPrismColorSelector.y - (editPrismColorSelector.header.height + MARGIN);
         background.height += (editPrismColorSelector.header.height + editPrismFromSideSelector.header.height
                               +  editPrismToSideSelector.header.height + editPrismButton.height + 4*MARGIN);
@@ -379,6 +397,8 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
         remove(editPrismFromSideSelector);
         remove(editPrismToSideSelector);
         remove(editPrismButton);
+        remove(editPrismDemoConnector);
+        editPrismDemoAdded = false;
         editPrismSelectorsArr[editPrismQuickSelectIndex].header.background.color = FlxColor.WHITE;
         editPrismQuickSelectIndex = 0;
       } else if (editedHexType == HexType.SOURCE) {
@@ -400,17 +420,21 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
 
   /** Sets the current prism editing color */
   private inline function set_editPrismColor(c : Color) : Color {
-    return this.editPrismColor = c;
+    var c = this.editPrismColor = c;
+    updatePrismDemoConnector();
+    return c;
   }
 
   /** Event called when the prism from side selector changes selection. */
   private inline function onPrismFromSideSelection(s : String) {
     editPrismFromSide = Std.parseInt(s);
+    updatePrismDemoConnector();
   }
 
   /** Event called when the prism to side selector changes selection. */
   private inline function onPrismToSideSelection(s : String) {
     editPrismToSide = Std.parseInt(s);
+    updatePrismDemoConnector();
   }
 
   /** Helper for editing the currently selected prism, as a buttonable callback */
@@ -418,6 +442,25 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
     if (editPrismFunc != null) {
       editPrismFunc(editPrismFromSide, editPrismToSide, editPrismColor);
     }
+  }
+
+  /** Updates the prism demo connector for the current selector settings. Returns the new sprite to use. */
+  private inline function updatePrismDemoConnector() : FlxSprite {
+    var x = 0.0;
+    var y = 0.0;
+    if (editPrismDemoAdded) {
+      remove(editPrismDemoConnector);
+      x = editPrismDemoConnector.x;
+      y = editPrismDemoConnector.y;
+    }
+    editPrismDemoConnector = PrismSprite.getConnectorSprite(editPrismFromSide, editPrismToSide);
+    editPrismDemoConnector.color = ColorUtil.toFlxColor(editPrismColor, true);
+    if (editPrismDemoAdded) {
+      editPrismDemoConnector.x = x;
+      editPrismDemoConnector.y = y;
+      add(editPrismDemoConnector);
+    }
+    return editPrismDemoConnector;
   }
 
   /** Moves one step back in editing */
@@ -475,6 +518,9 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
     editPrismButton.destroy();
     editPrismButton = null;
     editPrismSelectorsArr = null;
+    remove(editPrismDemoConnector);
+    //dont destroy editPrismDemoConnector - reference gotten from elsewhere.
+    editPrismDemoConnector = null;
 
     super.destroy();
 
@@ -490,6 +536,7 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
     //Nullify functional references
     createHandlers = null;
     isMouseValid = null;
+    getHighlightPosition = null;
     shouldShowRotatorButton = null;
     canEdit = null;
     getEditedHexType = null;

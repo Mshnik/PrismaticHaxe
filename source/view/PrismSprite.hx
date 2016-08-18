@@ -28,6 +28,11 @@ class PrismSprite extends RotatableHexSprite {
   private static var CONNECTOR_LINE_STYLE : LineStyle;
   private static var connectorSprites : Array<Array<FlxSprite>>;
 
+  /** Returns the connector that connects from,to. For editing demo purposes */
+  public static inline function getConnectorSprite(from : Int, to : Int) : FlxSprite {
+    return connectorSprites[from][to];
+  }
+
   public static function initGeometry() {
     HEX_MIDPOINTS = [
       FlxPoint.get(HexSprite.HEX_SIDE_LENGTH, 0),
