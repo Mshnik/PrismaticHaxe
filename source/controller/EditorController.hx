@@ -170,16 +170,10 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
 
   /** Programatically selects the current action from the drop down. Returns this */
   public inline function set_action(action : BoardAction) : BoardAction {
-    if (this.action != action) {
-      actionSelector.selectedLabel = action.toNiceString();
       highlightLocked = false;
-      if (action != BoardAction.CREATE) {
+      actionSelector.selectedLabel = action.toNiceString();
         tearDownCreate();
-      }
-      if (action != BoardAction.EDIT) {
         tearDownEdit();
-      }
-    }
     return this.action = action;
   }
 
@@ -192,9 +186,12 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
         remove(btn);
       }
     }
-    createHandlers = [createPrism, createSource, createSink, createRotator];
-    createButtons = [new FlxButton(0,0,"Create Prism",createPrism), new FlxButton(0,0,"Create Source",createSource),
-                     new FlxButton(0,0,"Create Sink",createSink), new FlxButton(0,0,"Create Rotator",createRotator)];
+    createHandlers = [function(){createButtonsWaitFrame = true; createPrism();},
+                      function(){createButtonsWaitFrame = true; createSource();},
+                      function(){createButtonsWaitFrame = true; createSink();},
+                      function(){createButtonsWaitFrame = true; createPrism();}];
+    createButtons = [new FlxButton(0,0,"Create Prism",createHandlers[0]), new FlxButton(0,0,"Create Source",createHandlers[1]),
+                     new FlxButton(0,0,"Create Sink",createHandlers[2]), new FlxButton(0,0,"Create Rotator",createHandlers[3])];
     this.shouldShowRotatorButton = shouldShowRotatorButton;
     return this;
   }
@@ -292,10 +289,13 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
     if (action == BoardAction.CREATE && FlxG.mouse.justReleased && !createButtonsWaitFrame && !createButtonsAdded && isMouseValid()) {
       highlightLocked = true;
       setUpCreate();
-    } else if (action == BoardAction.EDIT && FlxG.mouse.justReleased && canEdit()){
+    }
+    if (FlxG.mouse.justReleased && (action == BoardAction.EDIT || action == BoardAction.CREATE && !createButtonsWaitFrame) && canEdit()){
+      action = BoardAction.EDIT;
       highlightLocked = true;
       setUpEdit();
-    } else if (action == BoardAction.DELETE && FlxG.mouse.pressed && deleteHandler != null && isMouseValid()) {
+    }
+    if (action == BoardAction.DELETE && FlxG.mouse.pressed && deleteHandler != null && isMouseValid()) {
       deleteHandler();
     }
 
