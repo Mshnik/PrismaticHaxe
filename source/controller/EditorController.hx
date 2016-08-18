@@ -272,7 +272,11 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
 
     //Check quickselect for edit menu for prisms
     if (action == BoardAction.EDIT && editedHexType == HexType.PRISM) {
-      if (InputController.CHECK_NEXT()) editPrismQuickSelectIndex = (editPrismQuickSelectIndex+1)%editPrismSelectorsArr.length;
+      if (InputController.CHECK_NEXT()){
+        editPrismSelectorsArr[editPrismQuickSelectIndex].header.background.color = FlxColor.WHITE;
+        editPrismQuickSelectIndex = (editPrismQuickSelectIndex+1)%editPrismSelectorsArr.length;
+        editPrismSelectorsArr[editPrismQuickSelectIndex].header.background.color = FlxColor.YELLOW;
+      }
       if (InputController.CHECK_ENTER()) editPrism();
       var arr = InputController.CHECK_NUMBERS;
       for (i in 0...arr.length) {
@@ -350,6 +354,7 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
         actionSelector.y = editPrismColorSelector.y - (editPrismColorSelector.header.height + MARGIN);
         background.height += (editPrismColorSelector.header.height + editPrismFromSideSelector.header.height
                               +  editPrismToSideSelector.header.height + editPrismButton.height + 4*MARGIN);
+        editPrismSelectorsArr[editPrismQuickSelectIndex].header.background.color = FlxColor.YELLOW;
       } else if (newHexType == HexType.SOURCE) {
         var arr : Array<Color> = resetSourceCheckBoxes();
         for(color in editSourceCheckBoxes.keys()) {
@@ -374,6 +379,7 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
         remove(editPrismFromSideSelector);
         remove(editPrismToSideSelector);
         remove(editPrismButton);
+        editPrismSelectorsArr[editPrismQuickSelectIndex].header.background.color = FlxColor.WHITE;
         editPrismQuickSelectIndex = 0;
       } else if (editedHexType == HexType.SOURCE) {
         for(chkbx in editSourceCheckBoxes) {
