@@ -288,9 +288,6 @@ class PlayState extends FlxState {
     boardModel = new Board();
     boardView = new BoardView();
 
-    hud = new HUDView(gameType).withPauseHandler(pause)
-                               .withLevelNameChangedHandler(setLevelName)
-                               .withGoalChangedHandler(setGoal);
     editor = new EditorController().withCreateHandlers(
       function(){createAndAddHex(selectedPosition, HexType.PRISM);},
       function(){createAndAddHex(selectedPosition, HexType.SOURCE);},
@@ -306,6 +303,11 @@ class PlayState extends FlxState {
       function(str : String, b : Bool){return setColorOnSource(selectedPosition, Type.createEnum(Color, str), b);})
     .withPrismEditingHandler(function(from : Int, to : Int, color : Color){setConnectorOnPrism(selectedPosition, from, to , color);})
     .withDeleteHandler(function(){deleteHex(selectedPosition);});
+
+    hud = new HUDView(gameType).withPauseHandler(pause)
+    .withLevelNameChangedHandler(setLevelName)
+    .withGoalChangedHandler(setGoal)
+    .shiftNameLabel(editor.getLoadButtonOffset());
   }
 
   /** Pauses the game, opening the pause state. The substate is not persistant, it will be destroyed on close */

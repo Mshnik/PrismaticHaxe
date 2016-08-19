@@ -1,5 +1,6 @@
 package controller;
 
+import view.HUDView;
 import view.PrismSprite;
 import common.Point;
 import common.Color;
@@ -28,6 +29,9 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
   private var background : FlxSprite;
   /** Background size when there are no other items in menu */
   private var backgroundBaseSize :FlxPoint;
+
+  /** Button that prompts for loading a board */
+  private var loadBoardButton : FlxButton;
 
   /** The action selector */
   private var actionSelector : FlxUIDropDownMenu;
@@ -108,6 +112,7 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
                   .makeGraphic(Std.int(actionSelector.width + MARGIN * 2), Std.int(actionSelector.header.height + MARGIN*2), BACKGROUND_COLOR);
     background.y = FlxG.height - background.height;
     backgroundBaseSize = FlxPoint.get(background.width, background.height);
+    loadBoardButton = new FlxButton(HUDView.TOP_MARGIN, HUDView.TOP_MARGIN, "Load Board");
 
     //Init Hex Creation
     highlightLocked = false;
@@ -170,6 +175,12 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
     //Add base contents
     add(background);
     add(actionSelector);
+    add(loadBoardButton);
+  }
+
+  /** Returns the width of the load button. Used to shift the HUD */
+  public inline function getLoadButtonOffset() : Float {
+    return loadBoardButton.x + loadBoardButton.width;
   }
 
   /** Event listener called when a new action is selected via mouse. Just passes control off to set_action */
@@ -526,6 +537,7 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
 
     background = null;
     actionSelector = null;
+    loadBoardButton = null;
 
     //Put and nullify points
     backgroundBaseSize.put();

@@ -14,7 +14,7 @@ import flixel.util.FlxColor;
 class HUDView extends FlxTypedGroup<FlxSprite>{
 
   /** Margin between top of screen and elements placed at the top of the hud */
-  private static inline var TOP_MARGIN = 5;
+  public static inline var TOP_MARGIN = 5;
   /** Height of the translucent top hud bar */
   private static inline var TOP_BAR_HEIGHT = 50;
 
@@ -85,6 +85,12 @@ class HUDView extends FlxTypedGroup<FlxSprite>{
   /** Sets the level name. Adds a level name label if it doesn't yet exist. Returns this */
   public inline function withLevelName(levelName : String) : HUDView {
     nameLabel.text = levelName;
+    return this;
+  }
+
+  /** Shifts the levelName label's x. Returns this */
+  public inline function shiftNameLabel(deltaX : Float) : HUDView {
+    nameLabel.x += deltaX;
     return this;
   }
 
