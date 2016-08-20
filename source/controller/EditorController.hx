@@ -31,8 +31,6 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
 
   /** Button that prompts for loading a board */
   private var loadBoardButton : FlxButton;
-  /** The Filepicker that handles file selection. */
-  private var filePicker : FilePicker;
   /** The function to call when the filePicker chooses a file. */
   private var onFilePicked : String -> Void;
 
@@ -188,7 +186,7 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
 
   /** Allows the user to select a board to load */
   private inline function selectBoardToLoad() : Void {
-    if (filePicker != null) filePicker.pickFile();
+    FilePicker.pickFile(onFilePicked);
   }
 
   /** Event listener called when a new action is selected via mouse. Just passes control off to set_action */
@@ -198,17 +196,16 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
 
   /** Programatically selects the current action from the drop down. Returns this */
   public inline function set_action(action : BoardAction) : BoardAction {
-      highlightLocked = false;
-      actionSelector.selectedLabel = action.toNiceString();
-        tearDownCreate();
-        tearDownEdit();
+    highlightLocked = false;
+    actionSelector.selectedLabel = action.toNiceString();
+    tearDownCreate();
+    tearDownEdit();
     return this.action = action;
   }
 
   /** Sets the handler for file picking. Returns this */
   public inline function withFilePickingHandler(onFilePicked : String -> Void) : EditorController {
     this.onFilePicked = onFilePicked;
-    filePicker = new FilePicker(this.onFilePicked);
     return this;
   }
 
@@ -553,7 +550,6 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
     background = null;
     actionSelector = null;
     loadBoardButton = null;
-    filePicker = null;
 
     //Put and nullify points
     backgroundBaseSize.put();

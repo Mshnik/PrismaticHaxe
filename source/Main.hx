@@ -10,9 +10,9 @@ import common.Point;
 import model.Hex;
 import view.BoardView;
 import controller.MainMenuState;
-import controller.LevelSelectState;
 import controller.InputController;
 import controller.SoundController;
+import controller.util.ProjectPaths;
 
 #if flash
 import openfl.Lib;
@@ -42,7 +42,7 @@ class Main extends Sprite {
     InputController.init();
 
     //Final Asset Loading/Locating
-    LevelSelectState.initLevelPaths();
+    ProjectPaths.init();
   }
 
   function runGame() {

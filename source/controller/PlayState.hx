@@ -1,5 +1,6 @@
 package controller;
 
+import controller.util.ProjectPaths;
 import model.*;
 import view.*;
 import common.*;
@@ -138,6 +139,12 @@ class PlayState extends FlxState {
       case GameType.EDIT: if (source != null) prepBoardFromFile(); else prepEmptyBoard();
     }
 
+    //Prep the other screen elements
+    prepHUD();
+    if (gameType == GameType.EDIT) {
+      prepEditor();
+    }
+
     //Add background
     var bg = new FlxSprite();
     bg.loadGraphic(AssetPaths.main_bg__jpg);
@@ -228,7 +235,7 @@ class PlayState extends FlxState {
     if (gameType != GameType.EDIT) throw "Can't init editor not in Edit mode";
 
     editor = new EditorController()
-    .withFilePickingHandler(function(fName : String){resetGame(LevelSelectState.DATA_PATH + fName);})
+    .withFilePickingHandler(function(fName : String){resetGame(ProjectPaths.DATA_PATH + fName);})
     .withCreateHandlers(
       function(){createAndAddHex(selectedPosition, HexType.PRISM);},
       function(){createAndAddHex(selectedPosition, HexType.SOURCE);},
@@ -304,17 +311,11 @@ class PlayState extends FlxState {
 
     boardModel.disableOnRotate = false;
 
-    prepHUD();
-    if (gameType == GameType.EDIT) {
-      prepEditor();
-    }
   }
 
   /** Creates a new exploration board from the seed */
   private inline function prepBoardFromSeed() {
     if (gameType != GameType.EXPLORATION) throw "Can't generate board from seed if not in Exploration mode";
-
-    prepHUD();
   }
 
   /** Creates a new empty board */
@@ -323,9 +324,6 @@ class PlayState extends FlxState {
 
     boardModel = new Board();
     boardView = new BoardView();
-
-    prepHUD();
-    prepEditor();
   }
 
   /** Pauses the game, opening the pause state. The substate is not persistant, it will be destroyed on close */
@@ -564,13 +562,11 @@ class PlayState extends FlxState {
 
   /** Sets the name of the current level. If the operation was enter, writes the board to file. */
   private function setLevelName(name : String, operation : String) : Void {
-    source = LevelSelectState.DATA_PATH + name;
-    #if !flash
+    source = ProjectPaths.DATA_PATH + name;
     if (operation == "enter") {
       XMLParser.write(source, boardModel);
       trace("Board written to mem at " + source);
     }
-    #end
   }
 
   /** Sets the goal of the current level. */

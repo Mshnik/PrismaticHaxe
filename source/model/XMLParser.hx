@@ -1,5 +1,7 @@
 package model;
 
+import haxe.ui.dialogs.files.FileDetails;
+import haxe.ui.dialogs.files.FlashFileSaver;
 import common.ColorUtil;
 import model.Prism.ColorConnector;
 import common.Color;
@@ -123,10 +125,6 @@ class XMLParser {
   /** Writing **/
 
   public inline static function write(p : Dynamic, b : Board) : Void {
-    #if flash
-    throw "Can't perform file writing using flash.";
-    #else
-
     b.disableOnRotate = true;
 
     var xml = Xml.createElement(BOARD);
@@ -161,11 +159,18 @@ class XMLParser {
     }
 
     b.disableOnRotate = false;
-    sys.io.File.saveContent(p,xml.toString());
+    #if flash
+      var fileDetails = new FileDetails();
+      var str = Std.string(p);
+      fileDetails.filePath = p;
+      fileDetails.name = str.substr(str.lastIndexOf("/")+1, str.length) + ".xml";
+      fileDetails.contents = xml.toString();
+      new FlashFileSaver(fileDetails, null);
+    #else
+      sys.io.File.saveContent(p,xml.toString());
     #end
   }
 
-  #if !flash
 
   /** Helper that adds the color attribute.
    * Returns the data passed in with the newly added attribute.
@@ -269,6 +274,4 @@ class XMLParser {
     data.addChild(s);
     return data;
   }
-
-  #end
 }
