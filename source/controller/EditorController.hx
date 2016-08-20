@@ -2,12 +2,11 @@ package controller;
 
 import view.HUDView;
 import view.PrismSprite;
-import common.Point;
+import view.FlxUICheckBoxWithFullCallback;
 import common.Color;
 import common.ColorUtil;
 import common.HexType;
 import controller.util.BoardAction;
-import view.FlxUICheckBoxWithFullCallback;
 
 import flixel.math.FlxPoint;
 import flixel.addons.ui.FlxUIDropDownMenu;
@@ -32,6 +31,10 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
 
   /** Button that prompts for loading a board */
   private var loadBoardButton : FlxButton;
+  /** The Filepicker that handles file selection. */
+  private var filePicker : FilePicker;
+  /** The function to call when the filePicker chooses a file. */
+  private var onFilePicked : String -> Void;
 
   /** The action selector */
   private var actionSelector : FlxUIDropDownMenu;
@@ -112,7 +115,7 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
                   .makeGraphic(Std.int(actionSelector.width + MARGIN * 2), Std.int(actionSelector.header.height + MARGIN*2), BACKGROUND_COLOR);
     background.y = FlxG.height - background.height;
     backgroundBaseSize = FlxPoint.get(background.width, background.height);
-    loadBoardButton = new FlxButton(HUDView.TOP_MARGIN, HUDView.TOP_MARGIN, "Load Board");
+    loadBoardButton = new FlxButton(HUDView.TOP_MARGIN, HUDView.TOP_MARGIN, "Load Board", selectBoardToLoad);
 
     //Init Hex Creation
     highlightLocked = false;
@@ -183,6 +186,11 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
     return loadBoardButton.x + loadBoardButton.width;
   }
 
+  /** Allows the user to select a board to load */
+  private inline function selectBoardToLoad() : Void {
+    if (filePicker != null) filePicker.pickFile();
+  }
+
   /** Event listener called when a new action is selected via mouse. Just passes control off to set_action */
   private inline function onActionSelection(action : String) {
     this.action = Type.createEnum(BoardAction, action.toUpperCase());
@@ -195,6 +203,13 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
         tearDownCreate();
         tearDownEdit();
     return this.action = action;
+  }
+
+  /** Sets the handler for file picking. Returns this */
+  public inline function withFilePickingHandler(onFilePicked : String -> Void) : EditorController {
+    this.onFilePicked = onFilePicked;
+    filePicker = new FilePicker(this.onFilePicked);
+    return this;
   }
 
   /** Sets the handlers for the four create buttons. Returns this */
@@ -538,6 +553,7 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
     background = null;
     actionSelector = null;
     loadBoardButton = null;
+    filePicker = null;
 
     //Put and nullify points
     backgroundBaseSize.put();
@@ -546,6 +562,7 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
     actionSelectorBasePosition = null;
 
     //Nullify functional references
+    onFilePicked = null;
     createHandlers = null;
     isMouseValid = null;
     getHighlightPosition = null;

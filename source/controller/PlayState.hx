@@ -26,31 +26,30 @@ class PlayState extends FlxState {
    **/
   private var source(default, default) : String;
 
-  /** Creates and returns a new PlayState for classic mode */
-  public static inline function createClassic(source : String) : PlayState {
-    var p : PlayState = new PlayState();
-    p.gameType = GameType.CLASSIC;
-    p.source = source;
-    return p;
+  /** Private constructor for PlayState. Fields default to null */
+  private function new(gameType : GameType, source : String) {
+    super();
+    this.gameType = gameType;
+    this.source = source;
   }
 
-  /** Creates and returns a new PlayState for edit mode */
-  public static inline function createEdit() : PlayState {
-    var p : PlayState = new PlayState();
-    p.gameType = GameType.EDIT;
-    p.source = null;
-    return p;
+  /** Creates and returns a new PlayState for classic mode */
+  public static inline function createClassic(source : String) : PlayState {
+    if (source == null) throw "Can't create classic game on null source";
+    return new PlayState(GameType.CLASSIC, source);
+  }
+
+  /** Creates and returns a new PlayState for edit mode. if source is null, start with empty board. */
+  public static inline function createEdit(source : String = null) : PlayState {
+    return new PlayState(GameType.EDIT, source);
   }
 
   /** Creates and returns a new PlayState for exploration mode. If seed not given (or null), uses random seed. */
   public static inline function createExploration(seed : Int = null) : PlayState {
-    var p : PlayState = new PlayState();
-    p.gameType = GameType.EXPLORATION;
     if (seed == null){
       seed = Std.int((1 << 30 - 1)*Math.random());
     }
-    p.source = Std.string(seed);
-    return p;
+    return new PlayState(GameType.EXPLORATION, Std.string(seed));
   }
 
   /**
@@ -136,7 +135,7 @@ class PlayState extends FlxState {
     switch(gameType) {
       case GameType.CLASSIC: prepBoardFromFile();
       case GameType.EXPLORATION: prepBoardFromSeed();
-      case GameType.EDIT: prepEmptyBoard();
+      case GameType.EDIT: if (source != null) prepBoardFromFile(); else prepEmptyBoard();
     }
 
     //Add background
@@ -216,6 +215,41 @@ class PlayState extends FlxState {
     return rotatorSprite;
   }
 
+  /** Preps the HUD. */
+  private inline function prepHUD() {
+    hud = new HUDView(gameType).withPauseHandler(pause);
+    if (source != null) {
+      hud = hud.withLevelName(LevelUtils.getLevelName(source));
+    }
+  }
+
+  /** Preps the editor for edit mode. Also alters the HUD for editing. */
+  private inline function prepEditor() {
+    if (gameType != GameType.EDIT) throw "Can't init editor not in Edit mode";
+
+    editor = new EditorController()
+    .withFilePickingHandler(function(fName : String){resetGame(LevelSelectState.DATA_PATH + fName);})
+    .withCreateHandlers(
+      function(){createAndAddHex(selectedPosition, HexType.PRISM);},
+      function(){createAndAddHex(selectedPosition, HexType.SOURCE);},
+      function(){createAndAddHex(selectedPosition, HexType.SINK);},
+      function(){createAndAddHex(selectedPosition, HexType.ROTATOR);},
+      shouldShowRotatorCreateButton)
+    .withMouseValidHandlers(function(){return !mouseOOB;}, function(){return boardView.getGraphicPoisitionFromPoint(selectedPosition);})
+    .withEditHandlers(
+      function(){return selectedPosition != null && boardModel.getAt(selectedPosition, true) != null;},
+      function(){return boardModel.getAt(selectedPosition).hexType;})
+    .withSourceEditingHandlers(
+      function(){return boardModel.getAt(selectedPosition).asSource().getAvailableColors();},
+      function(str : String, b : Bool){return setColorOnSource(selectedPosition, Type.createEnum(Color, str), b);})
+    .withPrismEditingHandler(function(from : Int, to : Int, color : Color){setConnectorOnPrism(selectedPosition, from, to , color);})
+    .withDeleteHandler(function(){deleteHex(selectedPosition);});
+
+    hud = hud.withLevelNameChangedHandler(setLevelName)
+    .withGoalChangedHandler(setGoal)
+    .shiftNameLabel(editor.getLoadButtonOffset());
+  }
+
   /** Reads this.source into memory. Also creates a boardView that matches the read model.
    **/
   private inline function prepBoardFromFile() {
@@ -270,15 +304,17 @@ class PlayState extends FlxState {
 
     boardModel.disableOnRotate = false;
 
-    hud = new HUDView(gameType).withPauseHandler(pause).withLevelName(LevelUtils.getLevelName(source));
+    prepHUD();
+    if (gameType == GameType.EDIT) {
+      prepEditor();
+    }
   }
 
   /** Creates a new exploration board from the seed */
   private inline function prepBoardFromSeed() {
     if (gameType != GameType.EXPLORATION) throw "Can't generate board from seed if not in Exploration mode";
 
-
-    hud = new HUDView(gameType).withPauseHandler(pause);
+    prepHUD();
   }
 
   /** Creates a new empty board */
@@ -288,26 +324,8 @@ class PlayState extends FlxState {
     boardModel = new Board();
     boardView = new BoardView();
 
-    editor = new EditorController().withCreateHandlers(
-      function(){createAndAddHex(selectedPosition, HexType.PRISM);},
-      function(){createAndAddHex(selectedPosition, HexType.SOURCE);},
-      function(){createAndAddHex(selectedPosition, HexType.SINK);},
-      function(){createAndAddHex(selectedPosition, HexType.ROTATOR);},
-      shouldShowRotatorCreateButton)
-    .withMouseValidHandlers(function(){return !mouseOOB;}, function(){return boardView.getGraphicPoisitionFromPoint(selectedPosition);})
-    .withEditHandlers(
-      function(){return selectedPosition != null && boardModel.getAt(selectedPosition, true) != null;},
-      function(){return boardModel.getAt(selectedPosition).hexType;})
-    .withSourceEditingHandlers(
-      function(){return boardModel.getAt(selectedPosition).asSource().getAvailableColors();},
-      function(str : String, b : Bool){return setColorOnSource(selectedPosition, Type.createEnum(Color, str), b);})
-    .withPrismEditingHandler(function(from : Int, to : Int, color : Color){setConnectorOnPrism(selectedPosition, from, to , color);})
-    .withDeleteHandler(function(){deleteHex(selectedPosition);});
-
-    hud = new HUDView(gameType).withPauseHandler(pause)
-    .withLevelNameChangedHandler(setLevelName)
-    .withGoalChangedHandler(setGoal)
-    .shiftNameLabel(editor.getLoadButtonOffset());
+    prepHUD();
+    prepEditor();
   }
 
   /** Pauses the game, opening the pause state. The substate is not persistant, it will be destroyed on close */
@@ -666,6 +684,14 @@ class PlayState extends FlxState {
       trace("Hex at " + position +" deleted");
       viewNeedsSync = true;
     }
+  }
+
+  /** Resets the state to a new instance of PlayState with the given gameType and source.
+   * Uses this' game type, but allows for changing the source. If source is null, uses this' source.
+   **/
+  public inline function resetGame(source : String = null) {
+    if (source == null) source = this.source;
+    FlxG.switchState(new PlayState(gameType, source));
   }
 
   /**
