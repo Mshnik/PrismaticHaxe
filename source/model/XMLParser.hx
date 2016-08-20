@@ -1,13 +1,16 @@
 package model;
 
-import haxe.ui.dialogs.files.FileDetails;
-import haxe.ui.dialogs.files.FlashFileSaver;
 import common.ColorUtil;
 import model.Prism.ColorConnector;
 import common.Color;
 import common.Point;
 import haxe.xml.Fast;
 import openfl.Assets;
+
+#if flash
+import haxe.ui.dialogs.files.FileDetails;
+import haxe.ui.dialogs.files.FlashFileSaver;
+#end
 
 using model.XMLParser;
 using common.IntExtender;
