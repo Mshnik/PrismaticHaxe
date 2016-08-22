@@ -1,5 +1,6 @@
 package controller;
 
+import view.FlxUIDropDownMenuWithIndex;
 import view.HUDView;
 import view.PrismSprite;
 import view.FlxUICheckBoxWithFullCallback;
@@ -72,15 +73,15 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
   private var editSourceCheckBoxes : Map<Color,FlxUICheckBoxWithFullCallback>;
 
   /** Selector for color for putting connectors on a prism. */
-  private var editPrismColorSelector : FlxUIDropDownMenu;
+  private var editPrismColorSelector : FlxUIDropDownMenuWithIndex;
   /** The current color for editing prisms */
   public var editPrismColor(default, set) : Color;
   /** Selector for from side for connectors on a prism. */
-  private var editPrismFromSideSelector : FlxUIDropDownMenu;
+  private var editPrismFromSideSelector : FlxUIDropDownMenuWithIndex;
   /** The current from side for editing prisms */
   private var editPrismFromSide(default, null) : Int;
   /** Selector for to side for connectors on a prism. */
-  private var editPrismToSideSelector : FlxUIDropDownMenu;
+  private var editPrismToSideSelector : FlxUIDropDownMenuWithIndex;
   /** The current to side for editing prisms */
   private var editPrismToSide(default, null) : Int;
   /** Button that applies the current prism editing settings to the selected prism */
@@ -88,7 +89,7 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
   /** Function to call to edit the current prism */
   private var editPrismFunc : Int -> Int -> Color -> Void;
   /** Array of selector references, to cycle between */
-  private var editPrismSelectorsArr : Array<FlxUIDropDownMenu>;
+  private var editPrismSelectorsArr : Array<FlxUIDropDownMenuWithIndex>;
   /** Current index in selectors for quick select */
   private var editPrismQuickSelectIndex : Int;
   /** True if the demo connector is added, false otherwise */
@@ -147,9 +148,9 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
 
     //Init Prism Editing
     var sidesArr : Array<String> = ["0","1","2","3","4","5"];
-    editPrismToSideSelector = new FlxUIDropDownMenu(MARGIN,0,FlxUIDropDownMenu.makeStrIdLabelArray(sidesArr), onPrismToSideSelection);
-    editPrismFromSideSelector = new FlxUIDropDownMenu(MARGIN,0,FlxUIDropDownMenu.makeStrIdLabelArray(sidesArr), onPrismFromSideSelection);
-    editPrismColorSelector = new FlxUIDropDownMenu(MARGIN,0,FlxUIDropDownMenu.makeStrIdLabelArray(Type.allEnums(Color).map(ColorUtil.toString)), onPrismColorSelection);
+    editPrismToSideSelector = new FlxUIDropDownMenuWithIndex(MARGIN,0,FlxUIDropDownMenu.makeStrIdLabelArray(sidesArr), onPrismToSideSelection);
+    editPrismFromSideSelector = new FlxUIDropDownMenuWithIndex(MARGIN,0,FlxUIDropDownMenu.makeStrIdLabelArray(sidesArr), onPrismFromSideSelection);
+    editPrismColorSelector = new FlxUIDropDownMenuWithIndex(MARGIN,0,FlxUIDropDownMenu.makeStrIdLabelArray(Type.allEnums(Color).map(ColorUtil.toString)), onPrismColorSelection);
     editPrismButton = new FlxButton(MARGIN,0,"Apply",editPrism);
 
     editPrismButton.y = FlxG.height - (editPrismButton.height + MARGIN);
@@ -302,19 +303,19 @@ class EditorController extends FlxTypedGroup<FlxSprite> {
 
     //Check quickselect for edit menu for prisms
     if (action == BoardAction.EDIT && editedHexType == HexType.PRISM) {
+      var currentSelector = editPrismSelectorsArr[editPrismQuickSelectIndex];
       if (InputController.CHECK_NEXT()){
-        editPrismSelectorsArr[editPrismQuickSelectIndex].header.background.color = FlxColor.WHITE;
+        currentSelector.header.background.color = FlxColor.WHITE;
         editPrismQuickSelectIndex = (editPrismQuickSelectIndex+1)%editPrismSelectorsArr.length;
-        editPrismSelectorsArr[editPrismQuickSelectIndex].header.background.color = FlxColor.YELLOW;
+        currentSelector = editPrismSelectorsArr[editPrismQuickSelectIndex];
+        currentSelector.header.background.color = FlxColor.YELLOW;
       }
       if (InputController.CHECK_ENTER()) editPrism();
-      var arr = InputController.CHECK_NUMBERS;
-      for (i in 0...arr.length) {
-        if (arr[i]()){
-          var str = editPrismSelectorsArr[editPrismQuickSelectIndex].getBtnByIndex(i).getLabel().text;
-          editPrismSelectorsArr[editPrismQuickSelectIndex].selectedLabel = str;
-          editPrismSelectorsArr[editPrismQuickSelectIndex].callback(str);
-        }
+      if (InputController.CHECK_ONE()) {
+        currentSelector.selectedIndex--;
+      }
+      if (InputController.CHECK_TWO()) {
+        currentSelector.selectedIndex++;
       }
     }
 

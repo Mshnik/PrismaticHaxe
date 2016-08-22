@@ -19,46 +19,35 @@
     <orderEntry type="library" name="Haxelib 1.8.7" level="application" />
     <orderEntry type="jdk" jdkName="Haxe 3.3.0" jdkType="Haxe toolkit" />
     <orderEntry type="module-library">
-      <library name="haxelib|/usr/local/lib/haxe/lib/openfl/3,6,1">
+      <library name="haxelib|openfl">
         <CLASSES>
-          <root url="file:///usr/local/lib/haxe/lib/openfl/3,6,1" />
+          <root url="/usr/local/lib/haxe/lib/openfl/3,6,1/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="file:///usr/local/lib/haxe/lib/openfl/3,6,1" />
+          <root url="/usr/local/lib/haxe/lib/openfl/3,6,1/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="haxelib|/usr/local/lib/haxe/lib/flixel/4,1,1">
+      <library name="haxelib|flixel">
         <CLASSES>
-          <root url="file:///usr/local/lib/haxe/lib/flixel/4,1,1" />
+          <root url="/usr/local/lib/haxe/lib/flixel/4,1,1/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="file:///usr/local/lib/haxe/lib/flixel/4,1,1" />
+          <root url="/usr/local/lib/haxe/lib/flixel/4,1,1/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="haxelib|/usr/local/lib/haxe/lib/lime/2,9,1">
+      <library name="haxelib|flixel-addons">
         <CLASSES>
-          <root url="file:///usr/local/lib/haxe/lib/lime/2,9,1" />
+          <root url="/usr/local/lib/haxe/lib/flixel-addons/2,1,0/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="file:///usr/local/lib/haxe/lib/lime/2,9,1" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="haxelib|/usr/local/lib/haxe/lib/flixel-addons/2,1,0">
-        <CLASSES>
-          <root url="file:///usr/local/lib/haxe/lib/flixel-addons/2,1,0" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file:///usr/local/lib/haxe/lib/flixel-addons/2,1,0" />
+          <root url="/usr/local/lib/haxe/lib/flixel-addons/2,1,0/" />
         </SOURCES>
       </library>
     </orderEntry>
