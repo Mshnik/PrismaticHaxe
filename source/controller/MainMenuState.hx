@@ -10,6 +10,9 @@ class MainMenuState extends FlxState {
   /** Button moving to playing classic mode of the game */
   private var classicButton : FlxButton;
 
+  /** Button moving to playing exploration mode of the game */
+  private var explorationButton : FlxButton;
+
   /** Button moving to playing edit (level design) mode of the game */
   private var editButton : FlxButton;
 
@@ -30,9 +33,14 @@ class MainMenuState extends FlxState {
     classicButton.y = title.y + title.height + 50;
     add(classicButton);
 
+    explorationButton = new FlxButton(0,0,"Exploration", onExplorationClick);
+    explorationButton.x = (FlxG.width-explorationButton.width)/2;
+    explorationButton.y = classicButton.y + classicButton.height + 50;
+    add(explorationButton);
+
     editButton = new FlxButton(0,0,"Edit", onEditClick);
     editButton.x = (FlxG.width-editButton.width)/2;
-    editButton.y = classicButton.y + classicButton.height + 50;
+    editButton.y = explorationButton.y + explorationButton.height + 50;
     add(editButton);
 
     //SoundController.playClassicBackground();
@@ -44,6 +52,11 @@ class MainMenuState extends FlxState {
     FlxG.switchState(new LevelSelectState());
   }
 
+  /** Function called when the 'exploration' button is clicked */
+  private function onExplorationClick() {
+    FlxG.switchState(PlayState.createExploration());
+  }
+
   /** Function called when the 'edit' button is clicked */
   private function onEditClick() {
     FlxG.switchState(PlayState.createEdit());
@@ -53,5 +66,7 @@ class MainMenuState extends FlxState {
     super.destroy();
 
     classicButton = null;
+    explorationButton = null;
+    editButton = null;
   }
 }

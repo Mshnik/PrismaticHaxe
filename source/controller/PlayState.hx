@@ -1,5 +1,6 @@
 package controller;
 
+import flixel.math.FlxRandom;
 import controller.util.ProjectPaths;
 import model.*;
 import view.*;
@@ -76,6 +77,21 @@ class PlayState extends FlxState {
   /**
    *
    *
+   *
+   *  Generation Vars
+   *  (Only used in Exploration)
+   *
+   *
+   *
+   **/
+  private static var HEX_TYPE_CHANCES : Array<Float> = [75.0,5.0,15.0,5.0]; //Prism, source, sink, rotator
+  private static var SOURCE_COUNT_CHANCES : Array<Float> = [40.0,30.0,20.0,10.0]; //Single, double, triple, quad
+  private static inline var PRISM_CONNECTOR_PRESENCE_CHANCE = 25.0;
+  private var random : FlxRandom;
+
+  /**
+   *
+   *
    *  Level Editing Vars
    *  (only used in Edit)
    *
@@ -116,6 +132,8 @@ class PlayState extends FlxState {
     viewNeedsSync = forStart;
     rotatingSprites = forStart ? [] : null;
     currentRotator = null;
+
+    random = null;
 
     editor = null;
     selectedPosition = forStart ? Point.get(-1,-1) : null;
@@ -313,9 +331,35 @@ class PlayState extends FlxState {
 
   }
 
-  /** Creates a new exploration board from the seed */
+  /** Creates a new exploration board from the seed stored in source */
   private inline function prepBoardFromSeed() {
     if (gameType != GameType.EXPLORATION) throw "Can't generate board from seed if not in Exploration mode";
+
+    random = new FlxRandom(Std.parseInt(source));
+
+    var initialSize = 20;
+
+    boardModel = new Board(initialSize, initialSize);
+    boardView = new BoardView(initialSize, initialSize, true);
+    boardModel.disableOnRotate = true;
+
+    var centerPt = Point.get(Std.int(initialSize/2), Std.int(initialSize/2));
+    createAndAddHex(centerPt, HexType.SOURCE);
+    for (c in ColorUtil.realColors()) {
+      setColorOnSource(centerPt, c);
+    }
+    boardView.getAt(centerPt).isHidden = false;
+
+    for(r in 0...boardModel.getHeight()) {
+      for(c in 0...boardModel.getWidth()) {
+        createRandomHex(Point.get(r,c));
+      }
+    }
+
+    boardView.horizMargin += BoardView.COL_WIDTH * initialSize/4;
+    boardView.vertMargin += BoardView.ROW_HEIGHT * initialSize/4;
+
+    boardModel.disableOnRotate = false;
   }
 
   /** Creates a new empty board */
@@ -572,7 +616,7 @@ class PlayState extends FlxState {
   /** Sets the goal of the current level. */
   private function setGoal(color : Color, goal : Int) : Void {
     boardModel.getScore().setGoal(color, goal);
-    trace(color + " Goal updated");
+    if (gameType == GameType.EDIT) trace(color + " Goal updated");
   }
 
   /** Returns true if the create rotator button should be shown for the current selected position.
@@ -584,12 +628,51 @@ class PlayState extends FlxState {
             .length == 0;
   }
 
+  /** Creates a random hex at the given point. Used in exploration.
+   * If the point is already occupied, does nothing, returns false.
+   **/
+  private function createRandomHex(position : Point) : Bool {
+    if (gameType != GameType.EXPLORATION) throw "Can't use random functions outside of Exploration";
+
+    if (boardModel.getAt(position, true) != null) {
+      return false;
+    }
+
+    var colors = ColorUtil.realColors();
+    switch(random.weightedPick(HEX_TYPE_CHANCES)) {
+      case 0: createAndAddHex(position, HexType.PRISM);
+        for(from in 0...Util.HEX_SIDES) {
+          for(to in from...Util.HEX_SIDES) {
+            if (random.bool(PRISM_CONNECTOR_PRESENCE_CHANCE)) {
+              setConnectorOnPrism(position, from, to, random.getObject(colors));
+            }
+          }
+        }
+      case 1:
+        createAndAddHex(position, HexType.SOURCE);
+        var count = random.weightedPick(SOURCE_COUNT_CHANCES) + 1;
+        var colorArr = random.shuffleArray(colors, colors.length * 3);
+        for(i in 0...count) {
+          setColorOnSource(position, colorArr[i], true);
+        }
+      case 2: createAndAddHex(position, HexType.SINK);
+      case 3:
+        try{
+          createAndAddHex(position, HexType.ROTATOR);
+        } catch(ex : String) {
+          createRandomHex(position);
+          return true;
+        }
+    }
+    return true;
+  }
+
   /** Creates a new hex of the given type at the given position
    *  Position remains selected and switches the editing mode to edit afterwards.
    *  Does nothing if the current position isn't empty
    **/
   private function createAndAddHex(position : Point, hexType : HexType) {
-    trace("Creating hex at " + position + " of type " + hexType);
+    if (gameType == GameType.EDIT) trace("Creating hex at " + position + " of type " + hexType);
     while(position.row < 0) {
       boardModel.addRowTop();
       boardView.addRowTop();
@@ -635,18 +718,18 @@ class PlayState extends FlxState {
   }
 
   /** Sets the presence of the given color for the source at the given location */
-  private inline function setColorOnSource(position : Point, color : Color, present : Bool) : Void {
+  private inline function setColorOnSource(position : Point, color : Color, present : Bool = true) : Void {
     var sourceModel : Source = boardModel.getAt(position).asSource();
     var sourceSprite : SourceSprite = boardView.getAt(position).asSourceSprite();
 
     if (present) {
       sourceModel.addColor(color);
       sourceSprite.litColor = sourceModel.getCurrentColor();
-      trace("Added " + color + " to Source at " + position);
+      if (gameType == GameType.EDIT) trace("Added " + color + " to Source at " + position);
     } else {
       sourceModel.removeColor(color);
       sourceSprite.litColor = sourceModel.getCurrentColor();
-      trace("Removed " + color + " from Source at " + position);
+      if (gameType == GameType.EDIT) trace("Removed " + color + " from Source at " + position);
     }
 
     viewNeedsSync = true;
@@ -677,7 +760,7 @@ class PlayState extends FlxState {
     } else if (boardModel.getAt(position, true) != null){
       boardModel.removeAt(position);
       boardView.removeAt(position);
-      trace("Hex at " + position +" deleted");
+      if (gameType == GameType.EDIT) trace("Hex at " + position +" deleted");
       viewNeedsSync = true;
     }
   }
