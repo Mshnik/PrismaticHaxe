@@ -182,16 +182,24 @@ class BoardView extends Array2D<HexSprite> {
     var h1WasHidden = h1 != null && h1.isHidden;
     var h2 = getAt(p2);
     var h2WasHidden = h2 != null && h2.isHidden;
+    if (h1 != null) sourceLitMap.remove(h1.position);
+    if (h2 != null) sourceLitMap.remove(h2.position);
 
     super.swap(p1,p2);
 
     if (h1 != null) {
       setGraphicPosition(spriteGroup.add(h1));
       h1.isHidden = h1WasHidden;
+      if (h1.isSourceSprite()) {
+        sourceLitMap[h1.position] = !h1.isHidden;
+      }
     }
     if (h2 != null) {
       setGraphicPosition(spriteGroup.add(h2));
       h2.isHidden = h2WasHidden;
+      if (h2.isSourceSprite()) {
+        sourceLitMap[h2.position] = !h2.isHidden;
+      }
     }
 
     return this;

@@ -544,6 +544,9 @@ class PlayState extends FlxState {
     var model : Hex = boardModel.getAt(sprite.position);
     if (model.hasLightIn || model.hasLightOut) {
       sprite.isHidden = false;
+      if (sprite.isSinkSprite()) {
+        replaceSinkWithSource(sprite.position);
+      }
     }
   }
 
@@ -752,6 +755,20 @@ class PlayState extends FlxState {
     }
 
     viewNeedsSync = true;
+  }
+
+  /** Replaces the sink at the given position with a source */
+  private inline function replaceSinkWithSource(position : Point) : Void {
+    if (boardModel.getAtSafe(position) == null || ! boardModel.getAt(position).isSink()) {
+      throw "Illegal Op. Got " + boardModel.getAtSafe(position);
+    }
+
+    var c : Color = boardModel.getAt(position).asSink().getCurrentColor();
+    deleteHex(position);
+    createAndAddHex(position, HexType.SOURCE);
+    setColorOnSource(position, c);
+    boardView.getAt(position).isHidden = false;
+    boardView.sourceLitMap[position] = true;
   }
 
   /** Deletes the hex at the given position, if any */
