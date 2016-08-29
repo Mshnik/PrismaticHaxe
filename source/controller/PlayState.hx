@@ -84,9 +84,9 @@ class PlayState extends FlxState {
    *
    *
    **/
-  private static var HEX_TYPE_CHANCES : Array<Float> = [75.0,5.0,15.0,5.0]; //Prism, source, sink, rotator
+  private static var HEX_TYPE_CHANCES : Array<Float> = [75.0,0.0,10.0,15.0]; //Prism, source, sink, rotator
   private static var SOURCE_COUNT_CHANCES : Array<Float> = [40.0,30.0,20.0,10.0]; //Single, double, triple, quad
-  private static inline var PRISM_CONNECTOR_PRESENCE_CHANCE = 25.0;
+  private static inline var PRISM_CONNECTOR_PRESENCE_CHANCE = 15.0;
   private var random : FlxRandom;
 
   /**
@@ -349,6 +349,7 @@ class PlayState extends FlxState {
       setColorOnSource(centerPt, c);
     }
     boardView.getAt(centerPt).isHidden = false;
+    boardView.sourceLitMap[centerPt] = true;
 
     for(r in 0...boardModel.getHeight()) {
       for(c in 0...boardModel.getWidth()) {
@@ -520,7 +521,7 @@ class PlayState extends FlxState {
     //Check for view sync, if needed perform that
     if(viewNeedsSync) {
       viewNeedsSync = false;
-      var score : Score = boardModel.relight();
+      var score : Score = boardModel.relight(boardView.sourceLitMap);
       boardView.spriteGroup.forEachOfType(PrismSprite, updatePrismSpriteLightings);
       boardView.spriteGroup.forEachOfType(SinkSprite, updateSinkSpriteLighting);
       if (gameType == GameType.EXPLORATION) {

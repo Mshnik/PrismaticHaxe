@@ -278,9 +278,10 @@ class Board extends Array2D<Hex> {
   }
 
   /** Causes the board to relight entirely.
+   * Arg is a mask of which sources are currently pushing light. If null, all are on.
    * Returns the score object stored in this board, updated with the new lighting.
    **/
-  public function relight() : Score {
+  public function relight(sourceMask : Map<Point, Bool> = null) : Score {
     score.reset();
 
     //First, remove light from the whole board.
@@ -292,8 +293,10 @@ class Board extends Array2D<Hex> {
     //Setup - all sources push their color of light out in all directions
     for(s in sources) {
       s.updateLightOut();
-      for(i in 0...Util.HEX_SIDES) {
-        queue.push(LightPusher.get(s.position, s.getCurrentColor(), i, s.connectionGroup));
+      if (sourceMask == null || sourceMask.get(s.position)){
+        for(i in 0...Util.HEX_SIDES) {
+          queue.push(LightPusher.get(s.position, s.getCurrentColor(), i, s.connectionGroup));
+        }
       }
     }
 

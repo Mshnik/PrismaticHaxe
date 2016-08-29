@@ -22,6 +22,7 @@ class BoardView extends Array2D<HexSprite> {
   public static var COL_WIDTH(default, null) : Float;
 
   private var hideTilesUntilLit : Bool;
+  public var sourceLitMap(default, null) : Map<Point, Bool>;
   public var vertMargin(default, set) : Float;
   public var horizMargin(default, set) : Float;
   @final public var spriteGroup(default, null) : FlxTypedSpriteGroup<HexSprite>;
@@ -30,6 +31,7 @@ class BoardView extends Array2D<HexSprite> {
     super(rows, cols);
 
     this.hideTilesUntilLit = hideTilesUntilLit;
+    sourceLitMap = new Map<Point, Bool>();
     spriteGroup = new FlxTypedSpriteGroup<HexSprite>();
 
     vertMargin = 0;
@@ -146,12 +148,16 @@ class BoardView extends Array2D<HexSprite> {
     var oldH = get(row,col);
     if (oldH != null) {
       spriteGroup.remove(oldH);
+      sourceLitMap.remove(oldH.position);
       oldH.isHidden = false;
     }
     super.set(row,col,h);
     if (h != null) {
       spriteGroup.add(h);
       h.isHidden = hideTilesUntilLit;
+      if (h.isSourceSprite()) {
+        sourceLitMap[h.position] = !h.isHidden;
+      }
       setGraphicPosition(h);
     }
     return h;
